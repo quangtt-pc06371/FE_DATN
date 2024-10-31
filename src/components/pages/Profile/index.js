@@ -104,15 +104,19 @@ const Profile = () => {
          </div>
          <div className="info-row">
            <label>Email:</label>
-           <span>email@example.com</span>
+           <span> {profile.email}</span>
          </div>
          <div className="info-row">
            <label>Số điện thoại:</label>
-           <span>0123456789</span>
+           <span> {profile.sdt}</span>
          </div>
          <div className="info-row">
            <label>Địa chỉ:</label>
-           <span>123 Đường ABC, Phường XYZ</span>
+           <span> {profile.diachi}</span>
+         </div>
+         <div className="info-row">
+           <label>căn cước công dân:</label>
+           <span> {profile.cmnd}</span>
          </div>
        </div>
      </div>
