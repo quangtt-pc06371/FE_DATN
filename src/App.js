@@ -10,8 +10,9 @@ import ShopRegistration from './components/pages/user/ShopRegistration';
 import DangKy from "./components/compoments/Addtaikhoan";
 import Profile from "./components/pages/Profile/index";
 import Login from "./components/pages/Login";
-
+// import Dangnhap from "./components/pages/Login/App";
 function App() {
+  
   return (
     <Router>
       <NavbarAdmin />
@@ -21,7 +22,7 @@ function App() {
         <Route path="/" element={<CategoryManagement />} />
         <Route path="/shop-management" element={<ShopManagement />} />
         <Route path="/shop-register" element={<ShopRegistration />} />
-
+        {/* <Route path="app" element={<Dangnhap/>} /> */}
         <Route path="login" element={<Login />} />
         <Route path="profile" element={<Profile />} />
         <Route path="dangky" element={<DangKy />} />

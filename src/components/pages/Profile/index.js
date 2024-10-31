@@ -61,19 +61,63 @@ const Profile = () => {
   }
 
   return (
-    <div className="profile-container">
-      <h2>Thông Tin Cá Nhân</h2>
-      <p><strong>ID:</strong> {profile.id}</p>
-      <p><strong>Họ tên:</strong> {profile.hoten}</p>
-      <p><strong>Email:</strong> {profile.email}</p>
-      {/* <p><strong>quyền :</strong> {profile.quyen?.[0].name}</p> */}
-      <div className="text-center zoom-wrapper">
-    <img src={profile.anh} alt="Profile" width="300px" height="300px" />
-  </div>
-      <div>
-      <p><strong>Token:</strong> {profile.token}</p>
-      </div>
-    </div>
+
+  //   <div className="profile-container">
+  //     <div className='row'>
+  //     <h2>Thông Tin Cá Nhân</h2>
+  //     <p><strong>ID:</strong> {profile.id}</p>
+  //     <p><strong>Họ tên:</strong> {profile.hoten}</p>
+  //     <p><strong>Email:</strong> {profile.email}</p>
+  //     {/* <p><strong>quyền :</strong> {profile.quyen?.[0].name}</p> */}
+  //     <div className="text-center zoom-wrapper">
+  //   <img src={profile.anh} alt="Profile" width="300px" height="300px" />
+  // </div>
+  //     <div>
+  //     <p><strong>Token:</strong> {profile.token}</p>
+  //     </div>
+  //     </div>
+  //   </div>
+     <div className="profile-container">
+     <div className="profile-sidebar">
+       <img
+         src={profile.anh}
+         alt="User Avatar"
+         className="profile-avatar"
+       />
+       <h3 className="profile-name"> {profile.hoten}</h3>
+       <button className="edit-profile-button">Chỉnh sửa hồ sơ</button>
+
+       <ul className="profile-menu">
+         <li className="menu-item active">Hồ sơ của tôi</li>
+         <li className="menu-item">Đơn hàng</li>
+         <li className="menu-item">Địa chỉ</li>
+         <li className="menu-item">Mã giảm giá</li>
+       </ul>
+     </div>
+
+     <div className="profile-content">
+       <h2>Thông tin cá nhân</h2>
+       <div className="profile-info">
+         <div className="info-row">
+           <label>Tên:</label>
+           <span>Tên Người Dùng</span>
+         </div>
+         <div className="info-row">
+           <label>Email:</label>
+           <span>email@example.com</span>
+         </div>
+         <div className="info-row">
+           <label>Số điện thoại:</label>
+           <span>0123456789</span>
+         </div>
+         <div className="info-row">
+           <label>Địa chỉ:</label>
+           <span>123 Đường ABC, Phường XYZ</span>
+         </div>
+       </div>
+     </div>
+   </div>
+ 
   );
 };
 
