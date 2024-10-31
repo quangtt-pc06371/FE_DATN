@@ -12,8 +12,11 @@ const NavbarAdmin = () => {
           <LinkContainer to="/category-management">
             <Nav.Link>Quản lý danh mục</Nav.Link>
           </LinkContainer>
-          <LinkContainer to="/product-approval">
-            <Nav.Link>Duyệt sản phẩm</Nav.Link>
+          <LinkContainer to="/shop-approval">
+            <Nav.Link>Duyệt shop</Nav.Link>
+          </LinkContainer>
+          <LinkContainer to="/shop-management">
+            <Nav.Link>Quản lý shop</Nav.Link>
           </LinkContainer>
         </Nav>
       </Navbar.Collapse>

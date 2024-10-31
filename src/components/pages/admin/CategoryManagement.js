@@ -89,7 +89,7 @@ const CategoryManagement = () => {
               'Danh mục đã được xóa thành công.',
               'success'
             );
-            fetchCategories(); // Refresh the categories list
+            fetchCategories();
           })
           .catch(error => {
             console.error('Có lỗi xảy ra khi xóa danh mục:', error);
