@@ -3,10 +3,12 @@ import { Container, Row, Col, Table, Button, Pagination } from 'react-bootstrap'
 import axios from 'axios';
 import Swal from 'sweetalert2'; // Import Swal
 import Cookies from 'js-cookie'; // Import js-cookie
+import { useNavigate } from "react-router-dom";
 
 const ShopApproval = () => {
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Lấy danh sách các shop chưa được duyệt
   useEffect(() => {
@@ -55,7 +57,16 @@ const ShopApproval = () => {
         Swal.fire('Thành công!', 'Shop đã được duyệt.', 'success'); // Thông báo thành công
       } catch (error) {
         console.error('Lỗi khi duyệt shop:', error);
-        Swal.fire('Lỗi!', 'Có lỗi xảy ra khi duyệt shop.', 'error'); // Thông báo lỗi
+        console.error('Có lỗi xảy ra khi sửa shop:', error);
+        const isConfirmed = window.confirm("Vui lòng đăng nhập để thực hiện thao tác này !");
+        if (!isConfirmed) {
+            return; // Dừng thực hiện nếu người dùng không xác nhận
+        }
+        try {
+          navigate("/login");
+        } catch (error) {
+            console.error("Có lỗi xảy ra", error);
+        }   
       }
     }
   };
@@ -86,14 +97,18 @@ const ShopApproval = () => {
         Swal.fire('Đã hủy!', 'Yêu cầu đã được hủy.', 'success'); // Thông báo thành công
       } catch (error) {
         console.error('Lỗi khi từ chối shop:', error);
-        Swal.fire('Lỗi!', 'Có lỗi xảy ra khi hủy yêu cầu.', 'error'); // Thông báo lỗi
+        const isConfirmed = window.confirm("Vui lòng đăng nhập để thực hiện thao tác này !");
+        if (!isConfirmed) {
+            return; // Dừng thực hiện nếu người dùng không xác nhận
+        }
+        try {
+          navigate("/login");
+        } catch (error) {
+            console.error("Có lỗi xảy ra", error);
+        }   
       }
     }
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <Container>

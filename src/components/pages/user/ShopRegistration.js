@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { useCookies } from "react-cookie";
-import { jwtDecode } from "jwt-decode";
 
 const ShopRegistration = () => {
   const [shopName, setShopName] = useState("");
   const [shopDescription, setShopDescription] = useState("");
   const [shopImage, setShopImage] = useState(null);
   const [cookies] = useCookies(['token']); // Lấy token từ cookie
+  const [successMessage, setSuccessMessage] = useState(""); // Trạng thái thông báo thành công
   const navigate = useNavigate();
 
   const handleImageChange = (e) => {
@@ -17,13 +17,14 @@ const ShopRegistration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSuccessMessage(""); // Reset thông báo thành công mỗi lần gửi
 
     const formData = new FormData();
-    formData.append("shopName", shopName); // Giả sử bạn đã khai báo `shopName`
-    formData.append("shopDescription", shopDescription); // Giả sử bạn đã khai báo `shopDescription`
+    formData.append("shopName", shopName);
+    formData.append("shopDescription", shopDescription);
 
     if (shopImage) {
-        formData.append("shopImage", shopImage); // Giả sử bạn đã khai báo `shopImage`
+        formData.append("shopImage", shopImage);
     }
 
     const token = cookies.token; // Lấy token từ cookie
@@ -41,20 +42,21 @@ const ShopRegistration = () => {
             }
         });
         console.log("Shop created successfully:", response.data);
+        setSuccessMessage("Shop đã được đăng ký thành công!"); // Cập nhật thông báo thành công
         // Reset form sau khi thành công
         setShopName("");
         setShopDescription("");
         setShopImage(null);
-        navigate("/"); // Chuyển hướng người dùng về trang khác sau khi đăng ký thành công
     } catch (error) {
         console.error("Error creating shop:", error.response?.data || error.message);
         alert("Lỗi khi tạo shop: " + (error.response?.data?.error || "Vui lòng kiểm tra lại thông tin."));
     }
-};
+  };
 
   return (
     <div className="container mt-5">
       <h2 className="text-center">Đăng Ký Shop</h2>
+      {successMessage && <div className="alert alert-success">{successMessage}</div>} {/* Hiển thị thông báo thành công */}
       <form onSubmit={handleSubmit} className="mt-4">
         <div className="mb-3">
           <label className="form-label">Tên Shop:</label>
