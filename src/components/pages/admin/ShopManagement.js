@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Form, Button, Table, Pagination, InputGroup } from 'react-bootstrap';
 import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie';
 import Swal from 'sweetalert2';
-import './ShopManagement.css';
 import { useNavigate } from "react-router-dom";
 
 const ShopManagement = () => {
@@ -14,29 +12,44 @@ const ShopManagement = () => {
   const [shopRating, setShopRating] = useState('');
   const [selectedShop, setSelectedShop] = useState(null);
   const navigate = useNavigate();
+
   useEffect(() => {
     fetchApprovedShops();
   }, []);
 
-  const fetchApprovedShops = () => {
-    axios.get('http://localhost:8080/api/shops/approved')
-      .then(response => {
-        setShops(response.data);
-      })
-      .catch(error => {
-        console.error('Có lỗi xảy ra khi lấy danh sách shop đã được duyệt:', error);
-        toast.error('Không thể lấy danh sách shop đã được duyệt.');
+  const fetchApprovedShops = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/shops/approved', {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
       });
+      setShops(response.data);
+    } catch (error) {
+      console.error('Lỗi khi tải danh sách cửa hàng:', error);
+    }
   };
 
-  const handleUpdateShop = () => {
+  const handleUpdateShop = async () => {
     if (!selectedShop) {
-      toast.warning('Chưa chọn shop để sửa.');
+      Swal.fire('Chọn cửa hàng để sửa', '', 'warning');
       return;
     }
 
-    if (!shopName || !shopDescription) {
-      toast.warning('Tên shop và mô tả không được để trống.');
+    const token = Cookies.get('token');
+    if (!token) {
+      Swal.fire({
+        title: 'Yêu cầu đăng nhập',
+        text: 'Vui lòng đăng nhập để thực hiện thao tác này!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Đăng nhập',
+        cancelButtonText: 'Hủy',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/login');
+        }
+      });
       return;
     }
 
@@ -44,68 +57,69 @@ const ShopManagement = () => {
       shopName: shopName,
       shopDescription: shopDescription,
     };
-
+    
     if (shopRating) {
       shopData.shopRating = shopRating;
     }
 
-    axios.put(`http://localhost:8080/api/shops/${selectedShop.id}`, shopData)
-      .then(response => {
-        toast.success('Sửa shop thành công!');
-        fetchApprovedShops();
-        setSelectedShop(null);
-        setShopName('');
-        setShopDescription('');
-        setShopRating('');
-      })
-      .catch(error => {
-        console.error('Có lỗi xảy ra khi sửa shop:', error);
-        const isConfirmed = window.confirm("Vui lòng đăng nhập để thực hiện thao tác này !");
-        if (!isConfirmed) {
-            return; // Dừng thực hiện nếu người dùng không xác nhận
-        }
-        try {
-          navigate("/login");
-        } catch (error) {
-            console.error("Có lỗi xảy ra", error);
-        }       
-      });
+    try {
+      await axios.put(`http://localhost:8080/api/shops/${selectedShop.id}`, 
+        shopData, 
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      Swal.fire('Sửa cửa hàng thành công!', '', 'success');
+      fetchApprovedShops();
+      setSelectedShop(null);
+      setShopName('');
+      setShopDescription('');
+      setShopRating('');
+    } catch (error) {
+      console.error('Lỗi khi sửa cửa hàng:', error);
+    }
   };
 
-  const handleDeleteShop = (shopId) => {
-    if (!shopId) {
-      toast.warning('Chưa chọn shop để xóa.');
+  const handleDeleteShop = async (shopId) => {
+    if (!selectedShop) {
+      Swal.fire('Chọn cửa hàng để xóa', '', 'warning');
+      return;
+    }
+    const token = Cookies.get('token');
+    if (!token) {
+      Swal.fire({
+        title: 'Yêu cầu đăng nhập',
+        text: 'Vui lòng đăng nhập để thực hiện thao tác này!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Đăng nhập',
+        cancelButtonText: 'Hủy',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/login');
+        }
+      });
       return;
     }
 
     Swal.fire({
       title: 'Bạn có chắc chắn?',
-      text: 'Bạn sẽ không thể khôi phục shop này!',
+      text: 'Bạn sẽ không thể khôi phục cửa hàng này!',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
       confirmButtonText: 'Xóa',
-      cancelButtonText: 'Hủy'
-    }).then((result) => {
+      cancelButtonText: 'Hủy',
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        axios.delete(`http://localhost:8080/api/shops/${shopId}`)
-          .then(response => {
-            Swal.fire('Đã xóa!', 'Shop đã được xóa thành công.', 'success');
-            fetchApprovedShops();
-          })
-          .catch(error => {
-            console.error('Có lỗi xảy ra khi sửa shop:', error);
-              const isConfirmed = window.confirm("Vui lòng đăng nhập để thực hiện thao tác này !");
-              if (!isConfirmed) {
-                  return; // Dừng thực hiện nếu người dùng không xác nhận
-              }
-              try {
-                navigate("/login");
-              } catch (error) {
-                  console.error("Có lỗi xảy ra", error);
-              }   
+        try {
+          await axios.delete(`http://localhost:8080/api/shops/${shopId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           });
+          Swal.fire('Xóa thành công!', '', 'success');
+          fetchApprovedShops();
+        } catch (error) {
+          console.error('Lỗi khi xóa cửa hàng:', error);
+        }
       }
     });
   };
@@ -121,16 +135,15 @@ const ShopManagement = () => {
     <>
       <div className="full-screen-background"></div>
       <Container className="content-overlay">
-        <ToastContainer />
         <h2 className="text-center my-4 fw-bold text-primary animated-title">QUẢN LÝ SHOP</h2>
         <Row>
           <Col md={4}>
             <Form className="border p-4 rounded shadow-sm bg-light">
               <Form.Group controlId="formShopName" className="mb-3">
-                <Form.Label>Tên shop:</Form.Label>
+                <Form.Label>Tên cửa hàng:</Form.Label>
                 <Form.Control
                   type="text"
-                  placeholder="Nhập tên shop"
+                  placeholder="Nhập tên cửa hàng"
                   value={shopName}
                   onChange={(e) => setShopName(e.target.value)}
                 />
@@ -165,8 +178,9 @@ const ShopManagement = () => {
             </Form>
           </Col>
           <Col md={8}>
+            <div className="border p-2 rounded shadow-sm bg-light">
             <Row className="mb-3">
-              <InputGroup className="mb-3">
+              <InputGroup className="">
                 <Form.Control placeholder="Tìm theo tên cửa hàng" />
                 <Button variant="outline-primary">Tìm kiếm</Button>
               </InputGroup>
@@ -193,7 +207,7 @@ const ShopManagement = () => {
                       <img 
                         src={`http://localhost:8080/api/shops/images/${shop.shopImage}`} 
                         alt={shop.shopName} 
-                        style={{ width: '100px', height: 'auto' }} 
+                        style={{ width: '91.5px', height: 'auto' }} 
                       />
                     </td>
                     <td>{shop.shopDescription}</td>
@@ -211,6 +225,7 @@ const ShopManagement = () => {
                 )}
               </tbody>
             </Table>
+            </div>
             <div className="d-flex justify-content-center mt-3">
               <Pagination>
                 <Pagination.First />
