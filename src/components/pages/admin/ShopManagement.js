@@ -67,14 +67,14 @@ const ShopManagement = () => {
         shopData, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      Swal.fire('Sửa cửa hàng thành công!', '', 'success');
+      Swal.fire('Cập nhật cửa hàng thành công!', '', 'success');
       fetchApprovedShops();
       setSelectedShop(null);
       setShopName('');
       setShopDescription('');
       setShopRating('');
     } catch (error) {
-      console.error('Lỗi khi sửa cửa hàng:', error);
+      console.error('Lỗi khi Cập nhật cửa hàng:', error);
     }
   };
 
@@ -170,7 +170,7 @@ const ShopManagement = () => {
                 />
               </Form.Group>
               <Button variant="warning" className="me-2 w-100 mb-2" onClick={handleUpdateShop}>
-                Sửa
+                Cập nhật
               </Button>
               <Button variant="danger" className="w-100" onClick={() => handleDeleteShop(selectedShop?.id)}>
                 Xóa
