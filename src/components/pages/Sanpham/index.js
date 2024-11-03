@@ -1,36 +1,70 @@
 import React, { useState, useEffect } from 'react';
 import Carousel from 'react-bootstrap/Carousel';
 import axios from "axios";
-
+import { useLocation } from 'react-router-dom';
 const SanPham = () => {
+    const location = useLocation();
     const [data, setData] = useState([]);
     const [danhMucForm, setDanhMucForm] = useState([]);
-    const [selectedDanhMuc, setSelectedDanhMuc] = useState({ id: null, name: "Tất cả sản phẩm" });
+    const [dataSanPhamTen, setDataSanPhamTen] = useState(false);
+    const [sapXep, setSapXep] = useState('');
+    const noiDungTimKiem = location.state?.noiDungTimKiem || '';
 
     async function getDanhMuc() {
         const response = await axios.get('http://localhost:8080/api/danhmuc');
         setDanhMucForm(response.data);
     }
 
-    async function hienThiSanPham(idDanhMuc) {
-        const url = idDanhMuc
-            ? `http://localhost:8080/api/sanpham/danhmuc/${idDanhMuc}`
-            : `http://localhost:8080/api/sanpham`;
-
+    async function hienThiSanPhamTheoDanhMuc(idDanhMuc) {
+        const url = `http://localhost:8080/api/sanpham/danhmuc/${idDanhMuc}`;
         const response = await axios.get(url);
         setData(response.data);
+
+    }
+    async function hienThiSanPham() {
+        const url = `http://localhost:8080/api/sanpham`;
+        const response = await axios.get(url);
+        setData(response.data);
+
+    }
+    async function hienThiSanPhamTheoTen() {
+        const url = `http://localhost:8080/api/sanpham/timkiem?ten=${noiDungTimKiem}`;
+        const response = await axios.get(url);
+        setData(response.data);
+
+    }
+
+    function sapXepProducts(data) {
+        const sapXepData = [...data];
+        if (sapXep === 'asc') {
+            sapXepData.sort((a, b) => a.skus[0].giaSanPham - b.skus[0].giaSanPham);
+        } else if (sapXep === 'desc') {
+            sapXepData.sort((a, b) => b.skus[0].giaSanPham - a.skus[0].giaSanPham);
+        }
+        setData(sapXepData);
     }
 
     useEffect(() => {
         getDanhMuc();
-        if (selectedDanhMuc !== null) {
-            hienThiSanPham(selectedDanhMuc.id); // Gọi API để hiển thị sản phẩm theo danh mục
-        } else {
-            hienThiSanPham(null);
-        }
-    }, [selectedDanhMuc]);
 
-    
+        if (noiDungTimKiem) {
+            hienThiSanPhamTheoTen(noiDungTimKiem);
+            setDataSanPhamTen(true)
+        }
+        if (dataSanPhamTen === false) {
+            hienThiSanPham();
+        }
+
+  
+
+
+    }, [noiDungTimKiem]);
+    useEffect(() => {
+        if (data.length > 0) {
+            sapXepProducts(data);
+        }
+    }, [sapXep]);
+
 
     return (
         <div className='container'>
@@ -42,7 +76,7 @@ const SanPham = () => {
                             <ul className="list-group list-group-flush">
                                 <li
                                     className="list-group-item d-flex align-items-center"
-                                    onClick={() => setSelectedDanhMuc({ id: null, name: "Tất cả sản phẩm" })} // Chọn tất cả sản phẩm
+                                    onClick={() => hienThiSanPham()}
                                     style={{ cursor: 'pointer' }}
                                 >
                                     Tất cả
@@ -51,7 +85,7 @@ const SanPham = () => {
                                     <li
                                         key={danhMuc.idDanhMuc}
                                         className="list-group-item d-flex align-items-center"
-                                        onClick={() => setSelectedDanhMuc({ id: danhMuc.idDanhMuc, name: danhMuc.tenDanhMuc })}
+                                        onClick={() => hienThiSanPhamTheoDanhMuc(danhMuc.idDanhMuc)}
                                         style={{ cursor: 'pointer' }}
                                     >
                                         {danhMuc.tenDanhMuc}
@@ -63,7 +97,7 @@ const SanPham = () => {
                 </div>
 
                 <div className='col-9'>
-                    <h3 className='my-3'> {selectedDanhMuc.name}</h3>
+                    {/* <h3 className='my-3'> {data.danhMuc.tenDanhMuc}</h3> */}
 
                     <Carousel className='my-4'>
                         <Carousel.Item>
@@ -74,6 +108,21 @@ const SanPham = () => {
                         </Carousel.Item>
                     </Carousel>
 
+                    <hr></hr>
+                    <h5 className="card-title">Tìm kiếm theo giá</h5>
+                    <div className='my-3'>
+                    
+                    <select
+                        className="form-select"
+                        value={sapXep}
+                        onChange={(e) => setSapXep(e.target.value)}
+                    >
+                        <option value="">Chọn thứ tự giá</option>
+                        <option value="asc">Từ Thấp đến Cao</option>
+                        <option value="desc">Từ Cao đến Thấp</option>
+                    </select>
+                    </div>
+                   
                     <div className="row">
                         {data.map((sanPham) => (
                             <div key={sanPham.idSanPham} className="col-md-3 mb-3">
