@@ -18,6 +18,15 @@ const NavbarAdmin = () => {
           <LinkContainer to="/shop-management">
             <Nav.Link>Quản lý shop</Nav.Link>
           </LinkContainer>
+          <LinkContainer to="/login">
+            <Nav.Link>đăng nhập</Nav.Link>
+          </LinkContainer>
+          <LinkContainer to="/profile">
+            <Nav.Link>profile</Nav.Link>
+          </LinkContainer>
+          <LinkContainer to="/updateuser">
+            <Nav.Link>update user</Nav.Link>
+          </LinkContainer>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

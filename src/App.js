@@ -13,6 +13,9 @@ import Profile from "./components/pages/Profile/index";
 import Login from "./components/pages/Login";
 import Cookies from 'js-cookie';
  import { refreshToken } from './components/pages/Refresh';
+ import Updateuser from './components/pages/UpdateUser';
+ import Updateuser2 from './components/compoments/updatetaikhoan';
+ import Listtk from './components/compoments/Listtaikhoan';
 // import Dangnhap from "./components/pages/Login/App";
 function App() {
   useEffect(() => {
@@ -51,6 +54,8 @@ function App() {
         <Route path="/shop-register" element={<ShopRegistration />} />
         {/* <Route path="app" element={<Dangnhap/>} /> */}
         <Route path="login" element={<Login />} />
+        <Route path="listtaikhoan" element={<Listtk />} />
+        <Route path="updateuser" element={<Updateuser2 />} />
         <Route path="profile" element={<Profile />} />
         <Route path="dangky" element={<DangKy />} />
       </Routes>
