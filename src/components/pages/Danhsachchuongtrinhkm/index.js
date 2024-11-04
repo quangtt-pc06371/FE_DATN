@@ -1,12 +1,9 @@
-// src/components/DanhSachKhuyenMai.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useState } from "react";
-import { useEffect } from "react";
-import axios from "axios";
-import { format } from "date-fns";
-const DanhSachSanPhamKM = () => {
+import axios from 'axios';
+import { format } from 'date-fns';
 
+const DanhSachSanPhamKM = () => {
   const [data, setData] = useState([]);
 
   async function hienThi() {
@@ -23,13 +20,12 @@ const DanhSachSanPhamKM = () => {
     const apiKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai';
     await axios.delete(apiKhuyenMai + '/' + id);
     hienThi();
-    alert("Xóa thành công")
+    alert("Xóa thành công");
   }
 
   useEffect(() => {
     hienThi();
   }, []);
-
 
   return (
     <div className="container my-5 d-flex justify-content-center">
@@ -43,31 +39,38 @@ const DanhSachSanPhamKM = () => {
               <tr>
                 <th>ID</th>
                 <th>Sản Phẩm</th>
+                <th>Giá Gốc</th>
                 <th>Khuyến Mãi</th>
+                <th>Giá Sau Khuyến Mãi</th>
                 <th>Ngày Bắt Đầu</th>
                 <th>Ngày Kết Thúc</th>
                 <th>Hành Động</th>
               </tr>
             </thead>
             <tbody>
-              {/* Thêm các hàng dữ liệu từ API hoặc dữ liệu động tại đây */}
-              {/* Ví dụ hàng trống để hiển thị */}
-              {data.map(sanPhamKhuyenMai => (
-                <tr>
-                  <td>{sanPhamKhuyenMai.idSanPhamKM}</td>
-                  <td>{sanPhamKhuyenMai.sanPham.tenSanPham}</td>
-                  <td>{sanPhamKhuyenMai.khuyenMai.tenKhuyenMai}</td>
-                  <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayBatDau)}</td>
-                  <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayKetThuc)}</td>
-                  <td className="text-center">
-                    <div className="mb-1">                     <a className="btn btn-warning " href={`/sanphamkhuyenmai/${sanPhamKhuyenMai.idSanPhamKM}`}>Sửa</a></div>
-                    <button className="btn btn-danger" onClick={() => handleDelete(sanPhamKhuyenMai.idSanPhamKM)}>Xóa</button>
-                  </td>
-                </tr>
+              {data.map(sanPhamKhuyenMai => {
+                const giaGoc = sanPhamKhuyenMai.sanPham.skus[0]?.giaSanPham || 0; // Lấy giá gốc
+                const khuyenMai = sanPhamKhuyenMai.khuyenMai.giaTriKhuyenMai || 0; // Lấy giá trị khuyến mãi
+                const giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMai / 100)); 
 
-              ))}
-
-
+                return (
+                  <tr key={sanPhamKhuyenMai.idSanPhamKM}>
+                    <td>{sanPhamKhuyenMai.idSanPhamKM}</td>
+                    <td>{sanPhamKhuyenMai.sanPham.tenSanPham}</td>
+                    <td>{giaGoc.toFixed(2)} VNĐ</td>
+                    <td>{sanPhamKhuyenMai.khuyenMai.tenKhuyenMai} ({khuyenMai}%)</td>
+                    <td>{giaSauKhuyenMai.toFixed(2)} VNĐ</td>
+                    <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayBatDau)}</td>
+                    <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayKetThuc)}</td>
+                    <td className="text-center">
+                      <div className="mb-1">
+                        <a className="btn btn-warning" href={`/sanphamkhuyenmai/${sanPhamKhuyenMai.idSanPhamKM}`}>Sửa</a>
+                      </div>
+                      <button className="btn btn-danger" onClick={() => handleDelete(sanPhamKhuyenMai.idSanPhamKM)}>Xóa</button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
           <a className="btn btn-success mt-3" href='/sanphamkhuyenmai'>Thêm Chương Trình Khuyến Mãi Mới</a>
