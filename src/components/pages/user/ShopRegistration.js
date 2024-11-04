@@ -9,7 +9,7 @@ const ShopRegistration = () => {
   const [shopDescription, setShopDescription] = useState("");
   const [shopImage, setShopImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
-  const [errors, setErrors] = useState({}); // Trạng thái lưu lỗi
+  const [errors, setErrors] = useState({});
   const [cookies] = useCookies(['token']);
   const navigate = useNavigate();
 
@@ -57,25 +57,38 @@ const ShopRegistration = () => {
     }
 
     try {
-      await axios.post("http://localhost:8080/api/shops/register", formData, {
+      const response = await axios.post("http://localhost:8080/api/shops/register", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${token}`
         }
       });
 
+      // Kiểm tra nếu máy chủ trả về thông báo rằng người dùng đã có cửa hàng
+      if (response.data.error && response.data.error === "Người dùng đã có cửa hàng") {
+        Swal.fire({
+          icon: 'error',
+          title: 'Đã có cửa hàng',
+          text: 'Bạn đã đăng ký một cửa hàng trước đó. Vui lòng kiểm tra lại.',
+        });
+        return;
+      }
+
+      // Xử lý khi đăng ký thành công
       Swal.fire({
         icon: 'success',
         title: 'Đăng ký thành công',
         text: 'Cửa hàng đã được đăng ký, vui lòng chờ xét duyệt!',
       });
 
+      // Reset form
       setShopName("");
       setShopDescription("");
       setShopImage(null);
       setPreviewUrl("");
       setErrors({});
     } catch (error) {
+      // Hiển thị lỗi từ phản hồi của máy chủ hoặc một thông báo lỗi chung
       Swal.fire({
         icon: 'error',
         title: 'Lỗi',

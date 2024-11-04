@@ -1,117 +1,101 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import Cookies from 'js-cookie';
 import Swal from "sweetalert2";
 
 const ShopUser = () => {
-  const [shopInfo, setShopInfo] = useState({
-    name: "Tên cửa hàng của bạn",
-    description: "Mô tả cửa hàng của bạn",
-    image: "" // Chứa URL ảnh đại diện của cửa hàng nếu có
-  });
-  const [products, setProducts] = useState([
-    { id: 1, name: "Sản phẩm 1", price: 100000 },
-    { id: 2, name: "Sản phẩm 2", price: 200000 },
-  ]);
+  const [shop, setShop] = useState(null);
+  const [isApproved, setIsApproved] = useState(false); // Trạng thái phê duyệt
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Lấy token từ cookie
+    const token = Cookies.get("token");
+
+    if (!token) {
+      Swal.fire("Thông báo", "Bạn cần đăng nhập để truy cập trang này", "warning");
+      navigate("/login");
+      return;
+    }
+
+    axios
+      .get("http://localhost:8080/api/shops/user", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        const fetchedShop = response.data;
+        setShop(fetchedShop);
+        setIsApproved(fetchedShop.isApproved); // Cập nhật trạng thái phê duyệt từ phản hồi
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy thông tin cửa hàng:", error);
+        if (error.response && error.response.status === 403) {
+          Swal.fire("Lỗi", "Bạn chưa có cửa hàng", "error");
+        }
+      });
+  }, [navigate]);
+
+  const imageUrl = shop?.shopImage
+    ? `http://localhost:8080/api/shops/images/${shop.shopImage}`
+    : "link_to_default_image"; // Đường dẫn ảnh mặc định nếu không có ảnh
+
   const handleEditShopInfo = () => {
-    // Hàm này sẽ xử lý cập nhật thông tin cửa hàng sau khi có API
-    Swal.fire({
-      icon: "info",
-      title: "Chỉnh sửa thông tin cửa hàng",
-      text: "Chức năng sẽ cập nhật sau khi có API",
-    });
+    // Thêm logic chỉnh sửa thông tin cửa hàng ở đây
   };
 
   const handleAddProduct = () => {
-    // Hàm này sẽ mở modal thêm sản phẩm mới sau khi có API
-    Swal.fire({
-      icon: "info",
-      title: "Thêm sản phẩm",
-      text: "Chức năng sẽ cập nhật sau khi có API",
-    });
+    // Thêm logic thêm sản phẩm ở đây
   };
 
   const handleEditProduct = (productId) => {
-    // Hàm này sẽ xử lý chỉnh sửa sản phẩm theo ID sau khi có API
-    Swal.fire({
-      icon: "info",
-      title: "Chỉnh sửa sản phẩm",
-      text: `Sản phẩm ID: ${productId} - Chức năng sẽ cập nhật sau khi có API`,
-    });
+    // Thêm logic chỉnh sửa sản phẩm ở đây
   };
 
   return (
     <div className="container mt-5">
       <h2 className="text-center my-4 fw-bold text-primary">Quản Lý Cửa Hàng</h2>
+      {isApproved ? (
+        <>
+          <div className="card mb-4">
+            <div className="card-header text-center">Thông Tin Cửa Hàng</div>
+            <div className="card-body text-center">
+              <div
+                className="image-preview mb-3"
+                style={{
+                  width: "150px",
+                  height: "150px",
+                  borderRadius: "50%",
+                  backgroundColor: "#f0f0f0",
+                  backgroundImage: `url(${imageUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  margin: "0 auto",
+                }}
+              />
+              <h5>{shop?.shopName}</h5>
+              <p>{shop?.shopDescription}</p>
+              <button onClick={handleEditShopInfo} className="btn btn-warning">
+                Chỉnh Sửa
+              </button>
+            </div>
+          </div>
 
-      <div className="card mb-4">
-        <div className="card-header text-center">Thông Tin Cửa Hàng</div>
-        <div className="card-body text-center">
-          <div
-            className="image-preview mb-3"
-            style={{
-              width: "150px",
-              height: "150px",
-              borderRadius: "50%",
-              backgroundColor: "#f0f0f0",
-              backgroundImage: `url(${shopInfo.image})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              margin: "0 auto",
-            }}
-          />
-          <h5>{shopInfo.name}</h5>
-          <p>{shopInfo.description}</p>
-          <button onClick={handleEditShopInfo} className="btn btn-primary">
-            Chỉnh Sửa Thông Tin Cửa Hàng
-          </button>
+          <div className="card">
+            <div className="card-header d-flex justify-content-between align-items-center">
+              <span>Sản Phẩm Trong Cửa Hàng</span>
+              <button onClick={handleAddProduct} className="btn btn-success btn-sm">
+                Thêm Sản Phẩm
+              </button>
+            </div>
+            {/* Hiển thị danh sách sản phẩm ở đây */}
+          </div>
+        </>
+      ) : (
+        <div className="alert alert-warning text-center">
+          Cửa hàng của bạn chưa được duyệt. Vui lòng chờ xét duyệt từ quản trị viên.
         </div>
-      </div>
-
-      <div className="card">
-        <div className="card-header d-flex justify-content-between align-items-center">
-          <span>Sản Phẩm Trong Cửa Hàng</span>
-          <button onClick={handleAddProduct} className="btn btn-success btn-sm">
-            Thêm Sản Phẩm
-          </button>
-        </div>
-        <div className="card-body">
-          {products.length > 0 ? (
-            <table className="table table-hover">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Tên Sản Phẩm</th>
-                  <th>Hình Ảnh</th>
-                  <th>Giá</th>
-                  <th>Thao Tác</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map((product) => (
-                  <tr key={product.id}>
-                    <td>{product.id}</td>
-                    <td>{product.name}</td>
-                    <td>{product.image}</td>
-                    <td>{product.price.toLocaleString()} VND</td>
-                    <td>
-                      <button
-                        onClick={() => handleEditProduct(product.id)}
-                        className="btn btn-warning btn-sm"
-                      >
-                        Chỉnh Sửa
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p className="text-center">Không có sản phẩm nào</p>
-          )}
-        </div>
-      </div>
+      )}
     </div>
   );
 };
