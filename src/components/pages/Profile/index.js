@@ -100,7 +100,7 @@ const Profile = () => {
        <div className="profile-info">
          <div className="info-row">
            <label>Tên:</label>
-           <span>Tên Người Dùng</span>
+           <span>{profile.hoten}</span>
          </div>
          <div className="info-row">
            <label>Email:</label>

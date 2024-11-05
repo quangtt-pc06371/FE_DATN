@@ -1,5 +1,6 @@
 import React,{ useEffect }  from 'react';
-
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import NavbarAdmin from './components/pages/admin/NavbarAdmin';
@@ -16,17 +17,51 @@ import Cookies from 'js-cookie';
  import Updateuser from './components/pages/UpdateUser';
  import Updateuser2 from './components/compoments/updatetaikhoan';
  import Listtk from './components/compoments/Listtaikhoan';
+ import Re from './components/pages/Refe';
+//  import {YourComponent} from './components/pages/Refe';
+ 
+ import { startTokenRefreshInterval } from "./components/pages/Refresh";
+
 // import Dangnhap from "./components/pages/Login/App";
 function App() {
   useEffect(() => {
     const checkTokenExpiry = () => {
-      const expires = Cookies.get('token');
-      if (!expires) return true; // Nếu không có thời gian hết hạn, cần làm mới token
-
-      const now = new Date();
-      return now >= new Date(expires); // Kiểm tra nếu token đã hết hạn
+      const token = Cookies.get('token');
+      if (token==null) {
+        console.error("Không tìm thấy token trong cookie.");
+        return true; // Nếu không có token, cần làm mới
+      }
+    
+      try {
+        const decoded = jwtDecode(token); // Sử dụng jwtDecode thay vì jwt_decode
+        const now = Date.now() / 1000; // Lấy thời gian hiện tại tính bằng giây
+    
+        return decoded.exp ? now >= decoded.exp : true; // Kiểm tra nếu token đã hết hạn
+      } catch (error) {
+        console.error("Lỗi khi giải mã token:", error);
+        return true; // Nếu lỗi khi giải mã, cần làm mới token
+      }
     };
-
+    const refreshToken = async () => {
+      const refreshToken = Cookies.get('refreshToken');
+      if (!refreshToken) {
+        console.error('Không tìm thấy refresh token');
+        return;
+      }
+    
+      try {
+        const response = await axios.post('http://localhost:8080/api/auth/refresh', { refreshToken });
+        const newAccessToken = response.data.token;
+    
+        // Cập nhật access token mới vào cookie, với thời gian hết hạn là 1 ngày
+        Cookies.set('token', newAccessToken, { expires: 1 });
+        console.log("Token đã được làm mới thành công");
+      } catch (error) {
+        console.error("Làm mới token thất bại:", error);
+        // Điều hướng người dùng đến trang đăng nhập nếu token không thể làm mới
+        window.location.href = '/login';
+      }
+    };
     // Thiết lập để tự động làm mới token mỗi 2 phút (120000 ms)
     const interval = setInterval(() => {
       if (checkTokenExpiry()) {
@@ -35,11 +70,15 @@ function App() {
           window.location.href = '/login'; // Điều hướng người dùng đến trang đăng nhập
         });
       }
-    }, 2 * 60 * 1000); // 2 phút
+    }, 1 * 60 * 1000); // 2 phút
 
-    // Dọn dẹp khi component unmount
+    // // // Dọn dẹp khi component unmount
     return () => clearInterval(interval);
+
+    // startTokenRefreshInterval();
+    // YourComponent();
   }, []);
+
   return (
     
     <Router>
@@ -54,6 +93,7 @@ function App() {
         <Route path="/shop-register" element={<ShopRegistration />} />
         {/* <Route path="app" element={<Dangnhap/>} /> */}
         <Route path="login" element={<Login />} />
+        <Route path="refresh" element={<Re />} />
         <Route path="listtaikhoan" element={<Listtk />} />
         <Route path="updateuser" element={<Updateuser2 />} />
         <Route path="profile" element={<Profile />} />
