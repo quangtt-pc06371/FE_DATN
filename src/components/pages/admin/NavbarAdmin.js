@@ -27,6 +27,12 @@ const NavbarAdmin = () => {
           <LinkContainer to="/updateuser">
             <Nav.Link>update user</Nav.Link>
           </LinkContainer>
+          <LinkContainer to="/register">
+            <Nav.Link>dangki</Nav.Link>
+          </LinkContainer>
+          <LinkContainer to="/registergg">
+            <Nav.Link>dangkigg</Nav.Link>
+          </LinkContainer>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

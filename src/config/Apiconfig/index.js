@@ -1,18 +1,19 @@
 import axios from "axios";
-import { Cookies } from "react-cookie";
-
-const BASE_URL = "http://localhost:3001";
+import Cookies from "js-cookie";
+ 
+import {refreshToken, startTokenRefreshInterval } from "../../components/pages/Refresh";
+const BASE_URL = 'http://localhost:8080';
 
 const request = async ({
-  method = "GET",
+  method = "",
   path = "",
   data = {},
   headers = {},
 }) => {
   try {
-    const cookie = new Cookies();
-    const token = cookie.get("token");
-
+    // const cookie = new Cookies();
+    const token = Cookies.get('token'); 
+    // console.log(token);
     const res = await axios({
       method: method,
       baseURL: BASE_URL,
@@ -20,17 +21,23 @@ const request = async ({
       data: data,
       headers: {
         ...headers,
-        Authorization: `Bearer ${token}`,
+        Authorization: `${token}`,
       },
     });
 
-    console.log("API request: ", res);
+    console.log("API request: ", res.data);
 
     return res.data;
   } catch (error) {
     console.log(error);
-    alert(error?.response?.data?.message || "Error");
-    return null;
+   if(error.status == 401){
+    // startTokenRefreshInterval();
+
+    refreshToken()
+    // return ;
+   }
+    // alert(error?.response?.data?.message || "Error");
+    // return null;
   }
 };
 

@@ -26,6 +26,9 @@ const refreshToken = async () => {
   const refreshToken = Cookies.get('refreshToken');
   if (!refreshToken) {
     console.error('Không tìm thấy refresh token');
+    alert("vui lòng đăng nhập");
+    window.location.href = '/login';
+
     return;
   }
 
@@ -36,6 +39,7 @@ const refreshToken = async () => {
     // Cập nhật access token mới vào cookie, với thời gian hết hạn là 1 ngày
     Cookies.set('token', newAccessToken, { expires: 1 });
     console.log("Token đã được làm mới thành công");
+    window.location.reload()
   } catch (error) {
     console.error("Làm mới token thất bại:", error);
     // Điều hướng người dùng đến trang đăng nhập nếu token không thể làm mới

@@ -1,0 +1,19 @@
+.container {
+    max-width: 600px;
+    margin-top: 50px;
+  }
+  
+  h2 {
+    color: #007bff;
+  }
+  
+  .shadow {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+  
+  

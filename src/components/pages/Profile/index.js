@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useCookies } from "react-cookie";
 import './css.css';
+import { getProfile, loginApi } from "../../../config/Auth";
+
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState('');
@@ -12,26 +14,18 @@ const Profile = () => {
     // Hàm để lấy dữ liệu profile từ API
     const fetchProfile = async () => {
       try {
-       
-         const token = cookies?.token;
-      console.log(cookies?.token)
-        if (!token) {
-          setError('Token không tồn tại, vui lòng đăng nhập lại.');
-          setLoading(false);
-          return;
-        }
+     
+        //  const token = cookies?.token;
+    
 
         // Gửi yêu cầu đến API với token
-        const response = await axios.get('http://localhost:8080/api/taikhoan/profile', {
-          headers: {
-            Authorization: ` ${token}`,
-          },
+        const res = await getProfile({
         
-        });
-        console.log(response.data)
+        })
+        // console.log(res)
         // Lưu dữ liệu profile vào state
         
-        setProfile(response.data);
+        setProfile(res);
         
       } catch (err) {
         // Xử lý lỗi
