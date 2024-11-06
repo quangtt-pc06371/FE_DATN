@@ -7,15 +7,21 @@ import { useNavigate } from "react-router-dom";
 
 const ShopManagement = () => {
   const [shops, setShops] = useState([]);
+  const [filteredShops, setFilteredShops] = useState([]);
   const [shopName, setShopName] = useState('');
   const [shopDescription, setShopDescription] = useState('');
   const [shopRating, setShopRating] = useState('');
   const [selectedShop, setSelectedShop] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchApprovedShops();
   }, []);
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm, shops]);
 
   const fetchApprovedShops = async () => {
     try {
@@ -25,8 +31,20 @@ const ShopManagement = () => {
         },
       });
       setShops(response.data);
+      setFilteredShops(response.data);
     } catch (error) {
       console.error('Lỗi khi tải danh sách cửa hàng:', error);
+    }
+  };
+
+  const handleSearch = () => {
+    if (searchTerm.trim() === "") {
+      setFilteredShops(shops);
+    } else {
+      const filtered = shops.filter(shop =>
+        shop.shopName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredShops(filtered);
     }
   };
 
@@ -74,7 +92,7 @@ const ShopManagement = () => {
       setShopDescription('');
       setShopRating('');
     } catch (error) {
-      console.error('Lỗi khi Cập nhật cửa hàng:', error);
+      console.error('Lỗi khi cập nhật cửa hàng:', error);
     }
   };
 
@@ -179,52 +197,56 @@ const ShopManagement = () => {
           </Col>
           <Col md={8}>
             <div className="border p-2 rounded shadow-sm bg-light">
-            <Row className="mb-3">
-              <InputGroup className="">
-                <Form.Control placeholder="Tìm theo tên cửa hàng" />
-                <Button variant="outline-primary">Tìm kiếm</Button>
-              </InputGroup>
-            </Row>
-            <Table striped bordered hover responsive className="shadow-sm">
-              <thead>
-                <tr className="bg-primary text-white">
-                  <th>ID</th>
-                  <th>Tên Shop</th>
-                  <th>Ảnh Shop</th>
-                  <th>Mô Tả</th>
-                  <th>Đánh Giá</th>
-                  <th>Ngày Tạo</th>
-                  <th>Ngày Cập Nhật</th>
-                  <th>Hành Động</th>
-                </tr>
-              </thead>
-              <tbody>
-                {shops.length > 0 ? shops.map(shop => (
-                  <tr key={shop.id}>
-                    <td>{shop.id}</td>
-                    <td>{shop.shopName}</td>
-                    <td>
-                      <img 
-                        src={`http://localhost:8080/api/shops/images/${shop.shopImage}`} 
-                        alt={shop.shopName} 
-                        style={{ width: '91.5px', height: 'auto' }} 
-                      />
-                    </td>
-                    <td>{shop.shopDescription}</td>
-                    <td>{shop.shopRating}</td>
-                    <td>{shop.createAt}</td>
-                    <td>{shop.updateAt}</td>
-                    <td>
-                      <Button variant="info" size="sm" onClick={() => handleSelectShop(shop)}>Chọn</Button>
-                    </td>
+              <Row className="mb-3">
+                <InputGroup>
+                  <Form.Control
+                    placeholder="Tìm theo tên cửa hàng"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  <Button variant="outline-primary" onClick={handleSearch}>Tìm kiếm</Button>
+                </InputGroup>
+              </Row>
+              <Table striped bordered hover responsive className="shadow-sm">
+                <thead>
+                  <tr className="bg-primary text-white">
+                    <th>ID</th>
+                    <th>Tên Shop</th>
+                    <th>Ảnh Shop</th>
+                    <th>Mô Tả</th>
+                    <th>Đánh Giá</th>
+                    <th>Ngày Tạo</th>
+                    <th>Ngày Cập Nhật</th>
+                    <th>Hành Động</th>
                   </tr>
-                )) : (
-                  <tr>
-                    <td colSpan="8" className="text-center">Không có shop nào</td>
-                  </tr>
-                )}
-              </tbody>
-            </Table>
+                </thead>
+                <tbody>
+                  {filteredShops.length > 0 ? filteredShops.map(shop => (
+                    <tr key={shop.id}>
+                      <td>{shop.id}</td>
+                      <td>{shop.shopName}</td>
+                      <td>
+                        <img 
+                          src={`http://localhost:8080/api/shops/images/${shop.shopImage}`} 
+                          alt={shop.shopName} 
+                          style={{ width: '91.5px', height: 'auto' }} 
+                        />
+                      </td>
+                      <td>{shop.shopDescription}</td>
+                      <td>{shop.shopRating}</td>
+                      <td>{shop.createAt}</td>
+                      <td>{shop.updateAt}</td>
+                      <td>
+                        <Button variant="info" size="sm" onClick={() => handleSelectShop(shop)}>Chọn</Button>
+                      </td>
+                    </tr>
+                  )) : (
+                    <tr>
+                      <td colSpan="8" className="text-center">Không có shop nào</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
             </div>
             <div className="d-flex justify-content-center mt-3">
               <Pagination>
