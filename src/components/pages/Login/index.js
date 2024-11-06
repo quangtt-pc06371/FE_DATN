@@ -32,7 +32,7 @@ const Login = () => {
       setCookie("refreshToken", refreshToken, { expires: date });
 
       alert("Đăng nhập thành công!");
-      navigate("/");
+      // navigate("/");
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
         setError(err.response.data.error);
