@@ -12,7 +12,7 @@ const QuanLySanPhamKhuyenMai = () => {
   const [khuyenMaiData, setKhuyenMaiData] = useState([]);
   const { idSanPhamKhuyenMai } = useParams();
   const [edit, setEdit] = useState(true);
-
+  const [sanPhamKhuyenMaiData, setSanPhamKhuyenMaiData] = useState([]);
   async function laySanPham() {
     const response = await axios.get('http://localhost:8080/api/sanpham');
     setSanPhamData(response.data);
@@ -30,15 +30,20 @@ const QuanLySanPhamKhuyenMai = () => {
     setFormData(response.data);
     console.log(response.data);
   }
+  async function laySanPhamKhuyenMai() {
+    const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+    setSanPhamKhuyenMaiData(response.data);
+  }
 
   useEffect(() => {
-    if (idSanPhamKhuyenMai) {
-      getDataDisplayId();
-      setEdit(false);
-    }
+    // if (idSanPhamKhuyenMai) {
+    //   getDataDisplayId();
+    //   setEdit(false);
+    // }
     laySanPham();
     layKhuyenMai();
-  }, [idSanPhamKhuyenMai]);
+    laySanPhamKhuyenMai();
+  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -72,6 +77,16 @@ const QuanLySanPhamKhuyenMai = () => {
 
     if (!formData.khuyenMai.idKhuyenMai) {
       alert("Vui lòng chọn khuyến mãi trước khi thêm!");
+      return;
+    }
+    
+
+    const existingPromotion = sanPhamKhuyenMaiData.find(
+      (item) => item.sanPham.idSanPham === formData.sanPham.idSanPham
+    );
+  
+    if (existingPromotion) {
+      alert('Sản phẩm này đã có khuyến mãi và không thể áp dụng thêm!');
       return;
     }
   
@@ -155,7 +170,7 @@ const QuanLySanPhamKhuyenMai = () => {
                   <button type="button" className="btn btn-primary me-2 form-control" onClick={handleAdd}>
                     Thêm Mới
                   </button>
-                  {/* ) : ( */}
+                  {/* ) : ( 
                   {/* <button type="button" className="btn btn-primary me-2 form-control" onClick={handleUpdate}>
                       Cập Nhật
                     </button>

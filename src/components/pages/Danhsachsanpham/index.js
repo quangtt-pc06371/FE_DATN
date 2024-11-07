@@ -26,7 +26,7 @@ const DanhSachSanPham = () => {
       <div className="card shadow w-100">
         <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
           <h2>Danh Sách Sản Phẩm</h2>
-          <a href='/sanpham' className="btn btn-success">Thêm Sản Phẩm</a>
+          <a href='/quanlysanpham' className="btn btn-success">Thêm Sản Phẩm</a>
         </div>
         <div className="card-body">
           <table className="table table-hover">
@@ -50,23 +50,23 @@ const DanhSachSanPham = () => {
                   <td>{sanPham.shop.shopName}</td>
                   <td>{sanPham.danhMuc.tenDanhMuc}</td>
                   <td>
-                    <ul className="list-unstyled">
-                      {sanPham.skus.map((sku, index) => (
-                        <li key={sku.idSku}>
-                          <strong>Phiên bản {index + 1}:</strong>
+
+                    Số lượng phiên bản: {sanPham.skus.length}
+                    {sanPham.skus.length > 0 && (
+                      <ul className="list-unstyled">
+                        <li>
                           <ul>
-                           
-                            <li>Giá: {sku.giaSanPham} VNĐ</li>
-                            <li>Số lượng: {sku.soLuong}</li>
-                            {sku.tuyChonThuocTinhSkus.map(tcSkus => (
+                            <li>Giá: {sanPham.skus[0].giaSanPham} VNĐ</li>
+                            <li>Số lượng: {sanPham.skus[0].soLuong}</li>
+                            {sanPham.skus[0].tuyChonThuocTinhSkus.map(tcSkus => (
                               <li key={tcSkus.idtuyChonThuocTinhSku}>
-                                {tcSkus.tuyChonThuocTinh.thuocTinh.ten}: {tcSkus.tuyChonThuocTinh.giaTri}
+                                {tcSkus.tuyChonThuocTinh.thuocTinh.ten}:  {tcSkus.tuyChonThuocTinh.giaTri}
                               </li>
                             ))}
                           </ul>
                         </li>
-                      ))}
-                    </ul>
+                      </ul>
+                    )}
                   </td>
                   <td>
                     <a href={`/sanpham/${sanPham.idSanPham}`} className="btn btn-warning me-2">Sửa</a>
@@ -75,6 +75,7 @@ const DanhSachSanPham = () => {
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
       </div>
@@ -83,3 +84,5 @@ const DanhSachSanPham = () => {
 };
 
 export default DanhSachSanPham;
+
+

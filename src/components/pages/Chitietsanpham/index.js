@@ -15,6 +15,7 @@ export default function ChiTietSanPham() {
     const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
     const { id } = useParams();
 
+
     async function getSanPhamKhuyenMai() {
         const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
         setSanPhamKhuyenMaiForm(response.data);
@@ -39,10 +40,13 @@ export default function ChiTietSanPham() {
                     tieuDe: tuyChon.tuyChonThuocTinh.thuocTinh.ten,
                     noiDungTieuDe: tuyChon.tuyChonThuocTinh.giaTri,
                 })),
+                hinhanhs: sku.hinhanhs.map((image) => image.tenAnh) // Lấy tất cả ảnh từ hinhanhs
             }))
         );
-    }
 
+
+    }
+    console.log(skusList)
     useEffect(() => {
         if (id) {
             getDataDisplayId();
@@ -52,54 +56,65 @@ export default function ChiTietSanPham() {
 
     const giaGoc = skusList[0]?.giaSanPham || 0;
 
-    const khuyenMai = sanPhamKhuyenMaiForm.find(
+    const khuyenMaiData = sanPhamKhuyenMaiForm.find(
         (sanPhamKM) => sanPhamKM.sanPham.idSanPham === Number(id)
     );
+    const now = new Date();
 
-    const giaSauKhuyenMai = khuyenMai
-        ? giaGoc - (giaGoc * (khuyenMai.khuyenMai.giaTriKhuyenMai / 100))
-        : null;
+    let giaSauKhuyenMai = 0;
+    let khuyenMaiConHieuLuc = false;
+    if (khuyenMaiData) {
+        const startDate = new Date(khuyenMaiData.khuyenMai.ngayBatDau);
+        const endDate = new Date(khuyenMaiData.khuyenMai.ngayKetThuc);
 
+
+        giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMaiData.khuyenMai.giaTriKhuyenMai / 100));
+
+
+        khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
+    }
     // Tính tổng số lượng của sản phẩm
     const tongSoLuong = skusList.reduce((total, sku) => total + sku.soLuong, 0);
 
+    const firstSku = skusList?.[0];
+    const firstImage = firstSku?.hinhanhs?.[0];
+    
     return (
         <div className="container mt-5 ">
             <div className="row my-3 m-5 border p-3 mb-5 shadow-sm">
                 <div className="col-md-4">
                     <div className="card" style={{ width: '18rem' }}>
-                        <div className='card-header'>
-                            <img
-                                src="/img/e13cbafd569195b491a654c5ce34922a.jpg.webp"
-                                className="card-img-top"
-                                alt="Watch"
-                            />
-                        </div>
-                        <div className="card-body">
-                            <div className="d-flex justify-content-between mt-3">
+                        {firstImage ? (
+                            <div className='card-header'>
                                 <img
-                                    src="/img/e13cbafd569195b491a654c5ce34922a.jpg.webp"
-                                    alt="Thumbnail 1"
-                                    className="img-thumbnail"
-                                    width="80px"
-                                    height="80px"
-                                />
-                                <img
-                                    src="/img/e13cbafd569195b491a654c5ce34922a.jpg.webp"
-                                    alt="Thumbnail 2"
-                                    className="img-thumbnail"
-                                    width="80px"
-                                    height="80px"
-                                />
-                                <img
-                                    src="/img/e13cbafd569195b491a654c5ce34922a.jpg.webp"
-                                    alt="Thumbnail 3"
-                                    className="img-thumbnail"
-                                    width="80px"
-                                    height="80px"
+                                    src={firstImage}
+                                    className="card-img-top"
+                                    alt="Watch"
                                 />
                             </div>
+                        ) : (
+                            <div className="img-placeholder">No Image Available</div>
+                        )}
+                        <div className="card-body">
+                            <div className="d-flex justify-content-between mt-3">
+                                {skusList.map(sku => (
+
+                                    sku.hinhanhs.map(hinhAnh => (
+                                        <img
+                                            src={hinhAnh}
+                                            alt="Thumbnail 1"
+                                            className="img-thumbnail"
+                                            width="80px"
+                                            height="80px"
+                                        />
+                                    ))
+
+
+                                ))}
+                            </div>
                         </div>
+
+
                         <div className="card-footer text-muted">
                             <small>Xem thêm ưu điểm & lưu ý của sản phẩm</small>
                         </div>
@@ -110,8 +125,8 @@ export default function ChiTietSanPham() {
                     <hr />
                     <h3>{data.tenSanPham}</h3>
 
-                    {/* Hiển thị giá gốc */}
-                    {khuyenMai ? (
+
+                    {khuyenMaiConHieuLuc ? (
                         <h1 className="text-muted" style={{ textDecoration: 'line-through' }}>
                             {`${giaGoc.toLocaleString()} VNĐ`}
                         </h1>
@@ -122,8 +137,8 @@ export default function ChiTietSanPham() {
                     )}
 
 
-                    {/* Nếu có giá khuyến mãi, hiển thị giá khuyến mãi */}
-                    {giaSauKhuyenMai !== null && (
+
+                    {khuyenMaiConHieuLuc && (
                         <h1 className='text-danger'>
                             {`${giaSauKhuyenMai.toLocaleString()} VNĐ`}
                         </h1>
