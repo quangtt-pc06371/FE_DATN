@@ -1,29 +1,33 @@
-import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+import { auth, GoogleAuthProvider, signInWithPopup } from "../../../config/firebase";
+import axios from "axios";
 import Cookies from "js-cookie";
- const  logingoogle =() =>{
-   
-    const handleSuccess = async () => {
-        try {
-            // const token = Cookies.get('token'); 
-            const result = await axios.post('http://localhost:8080/api/taikhoan/google');
-            console.log("Đăng ký/Đăng nhập thành công:", result.data);
-        } catch (error) {
-            console.log("Đăng ký/Đăng nhập thất bại:", error);
-        }
-    };
+const signInWithGoogle = async () => {
+    // const [cookies, setCookie] = useCookies(["user"]);
+  const provider = new GoogleAuthProvider();
+  
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const idToken = await result.user.getIdToken();
 
-    const handleFailure = (error) => {
-        console.log("Login Failed:", error);
-    };
-
-    return (
-        <GoogleOAuthProvider clientId="723213997945-fihuct7hjfk5hnthvr1rogb5gev5g6j8.apps.googleusercontent.com">
-            <GoogleLogin
-                onSuccess={handleSuccess}
-                onFailure={handleFailure}
-            />
-        </GoogleOAuthProvider>
+    // Gửi token về Spring Boot để xác thực
+    const response = await axios.post(
+      "http://localhost:8080/api/taikhoan/google", 
+      { token: idToken }, // Gửi token trong đối tượng JSON
+      { headers: { "Content-Type": "application/json" } }
     );
-}
-export default  logingoogle
+    const { token, refreshToken } = response.data;
+    Cookies.set('token',token); 
+   Cookies.set('refreshToken',refreshToken); 
+    console.log(idToken);
+    // In ra kết quả từ server
+    console.log("Response from backend: ", response.data);
+  } catch (error) {
+    console.error("Lỗi đăng nhập:", error);
+  }
+};
+
+const GoogleLoginButton = () => {
+  return <button onClick={signInWithGoogle}>Đăng nhập bằng Google</button>;
+};
+
+export default GoogleLoginButton;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min'; 
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useCookies } from "react-cookie";
 import axios from "axios";
@@ -16,13 +16,32 @@ const Addtaikhoan = () => {
   const [file, setFile] = useState(null);
   const [cookies] = useCookies(['user']);
   const [error, setError] = useState('');
-  
+  const [errors, setErrors] = useState({});
+
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Khởi tạo đối tượng lỗi
+    const newErrors = {};
+
+    // Kiểm tra từng trường
+    if (!hoTen) newErrors.hoTen = "Họ tên là bắt buộc";
+    if (!email) newErrors.email = "Email là bắt buộc";
+    if (!matKhau) newErrors.matKhau = "Mật khẩu là bắt buộc";
+    if (!sdt) newErrors.sdt = "Số điện thoại là bắt buộc";
+    if (!diachi) newErrors.diachi = "Địa chỉ là bắt buộc";
+    if (!cmnd) newErrors.cmnd = "CMND là bắt buộc";
+    if (!file) newErrors.file = "Vui lòng chọn ảnh đại diện";
+
+    // Nếu có lỗi, cập nhật state và không gửi form
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     const taiKhoan = {   
       hoTen,
@@ -80,30 +99,37 @@ const Addtaikhoan = () => {
         <div className="mb-3">
           <label className="form-label">Họ tên</label>
           <input type="text" className="form-control" value={hoTen} onChange={(e) => setHoTen(e.target.value)} required />
+          {errors.hoTen && <p className="text-danger">{errors.hoTen}</p>}
         </div>
         <div className="mb-3">
           <label className="form-label">Email</label>
           <input type="email" className="form-control" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          {errors.email && <p className="text-danger">{errors.email}</p>}
         </div>
         <div className="mb-3">
           <label className="form-label">Mật khẩu</label>
           <input type="password" className="form-control" value={matKhau} onChange={(e) => setMatKhau(e.target.value)} required />
+          {errors.matKhau && <p className="text-danger">{errors.matKhau}</p>}
         </div>
         <div className="mb-3">
           <label className="form-label">Số điện thoại</label>
           <input type="text" className="form-control" value={sdt} onChange={(e) => setSdt(e.target.value)} required />
+          {errors.sdt && <p className="text-danger">{errors.sdt}</p>}
         </div>
         <div className="mb-3">
           <label className="form-label">Địa chỉ</label>
           <input type="text" className="form-control" value={diachi} onChange={(e) => setDiachi(e.target.value)} required />
+          {errors.diachi && <p className="text-danger">{errors.diachi}</p>}
         </div>
         <div className="mb-3">
           <label className="form-label">CMND</label>
           <input type="text" className="form-control" value={cmnd} onChange={(e) => setCmnd(e.target.value)} required />
+          {errors.cmnd && <p className="text-danger">{errors.cmnd}</p>}
         </div>
         <div className="mb-3">
           <label className="form-label">Ảnh đại diện</label>
           <input type="file" className="form-control" onChange={handleFileChange} />
+          {errors.file && <p className="text-danger">{errors.file}</p>}
         </div>
         <button type="submit" className="btn btn-primary w-100">Tạo tài khoản</button>
       </form>
