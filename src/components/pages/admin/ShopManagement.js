@@ -13,6 +13,8 @@ const ShopManagement = () => {
   const [shopRating, setShopRating] = useState('');
   const [selectedShop, setSelectedShop] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [shopsPerPage] = useState(4);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,6 +48,7 @@ const ShopManagement = () => {
       );
       setFilteredShops(filtered);
     }
+    setCurrentPage(1); // Reset về trang đầu khi tìm kiếm mới
   };
 
   const handleUpdateShop = async () => {
@@ -149,11 +152,20 @@ const ShopManagement = () => {
     setShopRating(shop.shopRating);
   };
 
+  // Tính toán phân trang
+  const indexOfLastShop = currentPage * shopsPerPage;
+  const indexOfFirstShop = indexOfLastShop - shopsPerPage;
+  const currentShops = filteredShops.slice(indexOfFirstShop, indexOfLastShop);
+
+  const totalPages = Math.ceil(filteredShops.length / shopsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <>
       <div className="full-screen-background"></div>
       <Container className="content-overlay">
-        <h2 className="text-center my-4 fw-bold text-primary animated-title">QUẢN LÝ SHOP</h2>
+        <h2 className="text-center my-4 fw-bold text-primary animated-title">QUẢN LÝ CỬA HÀNG</h2>
         <Row>
           <Col md={4}>
             <Form className="border p-4 rounded shadow-sm bg-light">
@@ -196,7 +208,7 @@ const ShopManagement = () => {
             </Form>
           </Col>
           <Col md={8}>
-            <div className="border p-2 rounded shadow-sm bg-light">
+            <div className="border p-4 rounded shadow-sm bg-light">
               <Row className="mb-3">
                 <InputGroup>
                   <Form.Control
@@ -204,7 +216,6 @@ const ShopManagement = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
-                  <Button variant="outline-primary" onClick={handleSearch}>Tìm kiếm</Button>
                 </InputGroup>
               </Row>
               <Table striped bordered hover responsive className="shadow-sm">
@@ -212,16 +223,15 @@ const ShopManagement = () => {
                   <tr className="bg-primary text-white">
                     <th>ID</th>
                     <th>Tên Shop</th>
-                    <th>Ảnh Shop</th>
+                    <th>Ảnh</th>
                     <th>Mô Tả</th>
-                    <th>Đánh Giá</th>
-                    <th>Ngày Tạo</th>
+                    <th>ĐG</th>
                     <th>Ngày Cập Nhật</th>
-                    <th>Hành Động</th>
+                    <th>HĐ</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredShops.length > 0 ? filteredShops.map(shop => (
+                  {currentShops.length > 0 ? currentShops.map(shop => (
                     <tr key={shop.id}>
                       <td>{shop.id}</td>
                       <td>{shop.shopName}</td>
@@ -234,7 +244,6 @@ const ShopManagement = () => {
                       </td>
                       <td>{shop.shopDescription}</td>
                       <td>{shop.shopRating}</td>
-                      <td>{shop.createAt}</td>
                       <td>{shop.updateAt}</td>
                       <td>
                         <Button variant="info" size="sm" onClick={() => handleSelectShop(shop)}>Chọn</Button>
@@ -250,13 +259,19 @@ const ShopManagement = () => {
             </div>
             <div className="d-flex justify-content-center mt-3">
               <Pagination>
-                <Pagination.First />
-                <Pagination.Prev />
-                <Pagination.Item active>{1}</Pagination.Item>
-                <Pagination.Item>{2}</Pagination.Item>
-                <Pagination.Item>{3}</Pagination.Item>
-                <Pagination.Next />
-                <Pagination.Last />
+                <Pagination.First onClick={() => paginate(1)} disabled={currentPage === 1} />
+                <Pagination.Prev onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} />
+                {Array.from({ length: totalPages }, (_, index) => (
+                  <Pagination.Item 
+                    key={index + 1} 
+                    active={index + 1 === currentPage}
+                    onClick={() => paginate(index + 1)}
+                  >
+                    {index + 1}
+                  </Pagination.Item>
+                ))}
+                <Pagination.Next onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} />
+                <Pagination.Last onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} />
               </Pagination>
             </div>
           </Col>

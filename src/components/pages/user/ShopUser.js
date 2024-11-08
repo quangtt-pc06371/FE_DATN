@@ -113,7 +113,7 @@ const ShopUser = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center my-4 fw-bold text-primary">Quản Lý Cửa Hàng</h2>
+      <h2 className="text-center my-4 fw-bold text-primary">QUẢN LÝ CỬA HÀNG</h2>
 
       {loading ? (
         <div className="text-center">Đang tải thông tin cửa hàng...</div>
@@ -181,7 +181,7 @@ const ShopUser = () => {
             </div>
           ) : (
             <div className="alert alert-warning text-center">
-              Cửa hàng của bạn chưa được duyệt. Vui lòng chờ xét duyệt từ quản trị viên.
+              Bạn chưa có cửa hàng hoặc cửa hàng của bạn chưa được xet duyệt.
             </div>
           )}
         </>

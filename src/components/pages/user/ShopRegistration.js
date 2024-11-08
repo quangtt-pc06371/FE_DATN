@@ -63,24 +63,25 @@ const ShopRegistration = () => {
           "Authorization": `Bearer ${token}`
         }
       });
-
-      // Kiểm tra nếu máy chủ trả về thông báo rằng người dùng đã có cửa hàng
-      if (response.data.error && response.data.error === "Người dùng đã có cửa hàng") {
+    
+      // Nếu phản hồi có lỗi
+      if (response.data && response.data.error) {
         Swal.fire({
           icon: 'error',
-          title: 'Đã có cửa hàng',
-          text: 'Bạn đã đăng ký một cửa hàng trước đó. Vui lòng kiểm tra lại.',
+          title: response.data.error,
+          text: response.data.error === "Người dùng đã có cửa hàng" ? 
+                'Bạn đã đăng ký một cửa hàng trước đó. Vui lòng kiểm tra lại.' : 'Có lỗi xảy ra. Vui lòng thử lại sau.',
         });
         return;
       }
-
+    
       // Xử lý khi đăng ký thành công
       Swal.fire({
         icon: 'success',
         title: 'Đăng ký thành công',
         text: 'Cửa hàng đã được đăng ký, vui lòng chờ xét duyệt!',
       });
-
+    
       // Reset form
       setShopName("");
       setShopDescription("");
@@ -88,13 +89,12 @@ const ShopRegistration = () => {
       setPreviewUrl("");
       setErrors({});
     } catch (error) {
-      // Hiển thị lỗi từ phản hồi của máy chủ hoặc một thông báo lỗi chung
       Swal.fire({
         icon: 'error',
         title: 'Lỗi',
-        text: error.response?.data?.error || "Vui lòng kiểm tra lại thông tin.",
+        text: error.response?.data?.error || "Đã có lỗi xảy ra. Vui lòng thử lại.",
       });
-    }
+    }    
   };
 
   return (
