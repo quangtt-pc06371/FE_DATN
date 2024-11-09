@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useCookies } from "react-cookie";
 import './css.css';
+import { getProfile, loginApi } from "../../../config/Auth";
+
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState('');
@@ -12,26 +14,18 @@ const Profile = () => {
     // Hàm để lấy dữ liệu profile từ API
     const fetchProfile = async () => {
       try {
-       
-         const token = cookies?.token;
-      console.log(cookies?.token)
-        if (!token) {
-          setError('Token không tồn tại, vui lòng đăng nhập lại.');
-          setLoading(false);
-          return;
-        }
+     
+        //  const token = cookies?.token;
+    
 
         // Gửi yêu cầu đến API với token
-        const response = await axios.get('http://localhost:8080/api/taikhoan/profile', {
-          headers: {
-            Authorization: ` ${token}`,
-          },
+        const res = await getProfile({
         
-        });
-        console.log(response.data)
+        })
+        // console.log(res)
         // Lưu dữ liệu profile vào state
         
-        setProfile(response.data);
+        setProfile(res);
         
       } catch (err) {
         // Xử lý lỗi
@@ -61,19 +55,67 @@ const Profile = () => {
   }
 
   return (
-    <div className="profile-container">
-      <h2>Thông Tin Cá Nhân</h2>
-      <p><strong>ID:</strong> {profile.id}</p>
-      <p><strong>Họ tên:</strong> {profile.hoten}</p>
-      <p><strong>Email:</strong> {profile.email}</p>
-      {/* <p><strong>quyền :</strong> {profile.quyen?.[0].name}</p> */}
-      <div className="text-center zoom-wrapper">
-    <img src={profile.anh} alt="Profile" width="300px" height="300px" />
-  </div>
-      <div>
-      <p><strong>Token:</strong> {profile.token}</p>
-      </div>
-    </div>
+
+  //   <div className="profile-container">
+  //     <div className='row'>
+  //     <h2>Thông Tin Cá Nhân</h2>
+  //     <p><strong>ID:</strong> {profile.id}</p>
+  //     <p><strong>Họ tên:</strong> {profile.hoten}</p>
+  //     <p><strong>Email:</strong> {profile.email}</p>
+  //     {/* <p><strong>quyền :</strong> {profile.quyen?.[0].name}</p> */}
+  //     <div className="text-center zoom-wrapper">
+  //   <img src={profile.anh} alt="Profile" width="300px" height="300px" />
+  // </div>
+  //     <div>
+  //     <p><strong>Token:</strong> {profile.token}</p>
+  //     </div>
+  //     </div>
+  //   </div>
+     <div className="profile-container">
+     <div className="profile-sidebar">
+       <img
+         src={profile.anh}
+         alt="User Avatar"
+         className="profile-avatar"
+       />
+       <h3 className="profile-name"> {profile.hoten}</h3>
+       <button className="edit-profile-button">Chỉnh sửa hồ sơ</button>
+
+       <ul className="profile-menu">
+         <li className="menu-item active">Hồ sơ của tôi</li>
+         <li className="menu-item">Đơn hàng</li>
+         <li className="menu-item">Địa chỉ</li>
+         <li className="menu-item">Mã giảm giá</li>
+       </ul>
+     </div>
+
+     <div className="profile-content">
+       <h2>Thông tin cá nhân</h2>
+       <div className="profile-info">
+         <div className="info-row">
+           <label>Tên:</label>
+           <span>{profile.hoten}</span>
+         </div>
+         <div className="info-row">
+           <label>Email:</label>
+           <span> {profile.email}</span>
+         </div>
+         <div className="info-row">
+           <label>Số điện thoại:</label>
+           <span> {profile.sdt}</span>
+         </div>
+         <div className="info-row">
+           <label>Địa chỉ:</label>
+           <span> {profile.diachi}</span>
+         </div>
+         <div className="info-row">
+           <label>căn cước công dân:</label>
+           <span> {profile.cmnd}</span>
+         </div>
+       </div>
+     </div>
+   </div>
+ 
   );
 };
 
