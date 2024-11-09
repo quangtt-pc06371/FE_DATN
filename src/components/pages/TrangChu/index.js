@@ -92,7 +92,7 @@ const TrangChu = () => {
                         </form>
                     </div>
                 </nav>
-                {/* <nav className="navbar navbar-expand-lg" style={{ backgroundColor: 'rgb(21,37,69)' }}>
+                <nav className="navbar navbar-expand-lg" style={{ backgroundColor: 'rgb(21,37,69)' }}>
                     <div className="container-fluid">
                         <div className="collapse navbar-collapse" id="navbarText">
                             <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
@@ -109,14 +109,14 @@ const TrangChu = () => {
                                     <a className="nav-link text-white fs-5 fw-bold" href="/lienhe">Liên Hệ</a>
                                 </li>
 
-                                {/* <li className="nav-item mx-3">
+                               <li className="nav-item mx-3">
                                     <a className="nav-link text-white fs-5 fw-bold" href="/listhoadon">Hóa đơn</a>
                                 </li>
                                 <li className="nav-item mx-3">
                                     <a className="nav-link text-white fs-5 fw-bold" href="/ListHoaDonadmin">Hóa đơn admin</a>
-                                </li> */}
+                                </li>
 
-                                {/* <li className="nav-item dropdown mx-3">
+                                 <li className="nav-item dropdown mx-3">
                                     <a className="nav-link dropdown-toggle text-white fs-5 fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Manager
                                     </a>
@@ -135,7 +135,7 @@ const TrangChu = () => {
                             </span>
                         </div>
                     </div>
-                </nav> */} 
+                </nav> 
 
             </header>
 
