@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';  // Import Bootstrap JS
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from "axios";
-
+// import NavbarAdmin from '../../pages/admin/NavbarAdmin';
 const TrangChu = () => {
 
     const [noiDungTimKiem, setNoidungTimKiem] = useState('');
@@ -92,7 +92,7 @@ const TrangChu = () => {
                         </form>
                     </div>
                 </nav>
-                <nav className="navbar navbar-expand-lg" style={{ backgroundColor: 'rgb(21,37,69)' }}>
+                {/* <nav className="navbar navbar-expand-lg" style={{ backgroundColor: 'rgb(21,37,69)' }}>
                     <div className="container-fluid">
                         <div className="collapse navbar-collapse" id="navbarText">
                             <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
@@ -116,7 +116,7 @@ const TrangChu = () => {
                                     <a className="nav-link text-white fs-5 fw-bold" href="/ListHoaDonadmin">Hóa đơn admin</a>
                                 </li> */}
 
-                                <li className="nav-item dropdown mx-3">
+                                {/* <li className="nav-item dropdown mx-3">
                                     <a className="nav-link dropdown-toggle text-white fs-5 fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                         Manager
                                     </a>
@@ -135,7 +135,7 @@ const TrangChu = () => {
                             </span>
                         </div>
                     </div>
-                </nav>
+                </nav> */} 
 
             </header>
 
@@ -143,7 +143,7 @@ const TrangChu = () => {
 
             {/* {content} */}
             <Outlet />
-
+           
 
 
             <footer style={{ height: '400px', backgroundColor: 'rgb(21,37,69)' }} className="text-white py-5">

@@ -105,7 +105,7 @@ function App() {
         <Route path="register" element={<Register/>} />
         <Route path="registergg" element={<Registergg/>} />
       </Routes>
-
+    
     </Router>
   );
 }
