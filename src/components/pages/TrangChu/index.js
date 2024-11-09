@@ -20,7 +20,7 @@ const TrangChu = () => {
 
     return (
         <>
-            <header>
+            {/* <header>
                 <nav className="navbar" style={{ backgroundColor: 'rgb(67,195,234)' }}>
                     <div className="container-fluid">
                         <span className="navbar-text text-white fs-5 d-flex align-items-center ms-5">
@@ -137,11 +137,11 @@ const TrangChu = () => {
                     </div>
                 </nav> 
 
-            </header>
+            </header> */}
 
 
-
-            {/* {content} */}
+{/* 
+            {content} */}
             <Outlet />
            
 
