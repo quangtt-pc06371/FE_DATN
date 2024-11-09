@@ -17,6 +17,7 @@ import Login from "./components/pages/Login";
  import Updateuser2 from './components/compoments/updatetaikhoan';
  import Listtk from './components/compoments/Listtaikhoan';
  import Registergg from "./components/pages/logingoogle";
+ import Index from "./components/pages/TrangChu";
 //  import {YourComponent} from './components/pages/Refe';
  
  import { startTokenRefreshInterval } from "./components/pages/Refresh";
@@ -87,7 +88,7 @@ function App() {
       <Routes>
         <Route path="/category-management" element={<CategoryManagement />} />
         <Route path="/shop-approval" element={<ShopApproval />} />
-        <Route path="/" element={<CategoryManagement />} />
+        <Route path="/" element={<Index />} />
         <Route path="/shop-management" element={<ShopManagement />} />
 
         <Route path="/shop-register" element={<ShopRegistration />} />
