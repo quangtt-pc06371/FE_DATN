@@ -26,14 +26,20 @@ import ShopUser from './components/pages/user/ShopUser';
 import Register from "./components/pages/Register";
 import Profile from "./components/pages/Profile/index";
 import Login from "./components/pages/Login";
+
 import Updateuser2 from './components/compoments/updatetaikhoan';
 import Listtk from './components/compoments/Listtaikhoan';
 import Registergg from "./components/pages/logingoogle";
-//  import {YourComponent} from './components/pages/Refe';
+
+
+
+ import Index from "./components/pages/TrangChu";
+
+
 
 import { startTokenRefreshInterval } from "./components/pages/Refresh";
 
-// import Dangnhap from "./components/pages/Login/App";
+
 export default function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
