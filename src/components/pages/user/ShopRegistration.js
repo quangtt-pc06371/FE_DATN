@@ -15,30 +15,34 @@ const ShopRegistration = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setShopImage(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (file && allowedTypes.includes(file.type)) {
+      setShopImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+      setErrors((prevErrors) => ({ ...prevErrors, shopImage: "" })); // Xóa lỗi ảnh nếu hợp lệ
+    } else {
+      setErrors((prevErrors) => ({ ...prevErrors, shopImage: "Ảnh phải có định dạng .jpg, .jpeg hoặc .png" }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Kiểm tra các trường và thiết lập thông báo lỗi
+  
     const newErrors = {};
     if (!shopName) newErrors.shopName = "Vui lòng nhập tên cửa hàng.";
     if (!shopDescription) newErrors.shopDescription = "Vui lòng nhập mô tả cho cửa hàng.";
     if (!shopImage) newErrors.shopImage = "Vui lòng chọn ảnh cho cửa hàng.";
     setErrors(newErrors);
-
-    // Nếu có lỗi, dừng quá trình gửi form
+  
     if (Object.keys(newErrors).length > 0) return;
-
+  
     const formData = new FormData();
     formData.append("shopName", shopName);
     formData.append("shopDescription", shopDescription);
     if (shopImage) {
       formData.append("shopImage", shopImage);
     }
-
+  
     const token = cookies.token;
     if (!token) {
       Swal.fire({
@@ -55,48 +59,41 @@ const ShopRegistration = () => {
       });
       return;
     }
-
+  
     try {
       const response = await axios.post("http://localhost:8080/api/shops/register", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
-          "Authorization": `Bearer ${token}`
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
         }
       });
-    
-      // Nếu phản hồi có lỗi
-      if (response.data && response.data.error) {
+      
+      if (response.status === 200 && response.data) {
         Swal.fire({
-          icon: 'error',
-          title: response.data.error,
-          text: response.data.error === "Người dùng đã có cửa hàng" ? 
-                'Bạn đã đăng ký một cửa hàng trước đó. Vui lòng kiểm tra lại.' : 'Có lỗi xảy ra. Vui lòng thử lại sau.',
+          icon: 'success',
+          title: 'Đăng ký thành công',
+          text: 'Cửa hàng đã được đăng ký, vui lòng chờ xét duyệt!',
         });
-        return;
+
+        // Reset form fields after successful registration
+        setShopName("");
+        setShopDescription("");
+        setShopImage(null);
+        setPreviewUrl("");
+        setErrors({});
       }
-    
-      // Xử lý khi đăng ký thành công
-      Swal.fire({
-        icon: 'success',
-        title: 'Đăng ký thành công',
-        text: 'Cửa hàng đã được đăng ký, vui lòng chờ xét duyệt!',
-      });
-    
-      // Reset form
-      setShopName("");
-      setShopDescription("");
-      setShopImage(null);
-      setPreviewUrl("");
-      setErrors({});
     } catch (error) {
+      const errorMessage = error.response?.data?.error || error.message || "Đã có lỗi xảy ra. Vui lòng thử lại.";
       Swal.fire({
         icon: 'error',
         title: 'Lỗi',
-        text: error.response?.data?.error || "Đã có lỗi xảy ra. Vui lòng thử lại.",
+        text: errorMessage === "Người dùng đã có cửa hàng"
+              ? 'Bạn đã đăng ký một cửa hàng trước đó. Vui lòng kiểm tra lại.'
+              : errorMessage,
       });
-    }    
+    }
   };
-
+  
   return (
     <div className="container mt-5">
       <div className="col-md-8 mx-auto">

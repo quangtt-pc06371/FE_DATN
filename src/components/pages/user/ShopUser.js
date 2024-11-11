@@ -55,48 +55,50 @@ const ShopUser = () => {
   };
 
   // Lưu thay đổi thông tin cửa hàng
-  const handleSaveChanges = async (e) => {
-    e.preventDefault(); // Ngừng hành động mặc định của form
-    const token = Cookies.get("token");
-    const formData = new FormData();
+  // Lưu thay đổi thông tin cửa hàng
+const handleSaveChanges = async (e) => {
+  e.preventDefault(); // Ngừng hành động mặc định của form
+  const token = Cookies.get("token");
+  const formData = new FormData();
 
-    // Tạo đối tượng shop
-    const shopData = {
-      shopName: updatedShop.shopName,
-      shopDescription: updatedShop.shopDescription,
-    };
+  // Tạo đối tượng shop
+  const shopData = {
+    shopName: updatedShop.shopName,
+    shopDescription: updatedShop.shopDescription,
+  };
 
-    // Thêm đối tượng shop vào formData dưới dạng JSON
-    formData.append("shop", JSON.stringify(shopData));
+  // Thêm đối tượng shop vào formData dưới dạng JSON
+  formData.append("shop", JSON.stringify(shopData));
 
-    // Nếu có ảnh, thêm vào formData
-    if (shopImage) {
-      formData.append("shopImageFile", shopImage);
-    }
+  // Nếu có ảnh, thêm vào formData
+  if (shopImage) {
+    formData.append("shopImageFile", shopImage);
+  }
 
-    try {
-      const response = await axios.put(
-        `http://localhost:8080/api/shops/user/${shop.id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",  // Đảm bảo kiểu nội dung đúng
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setShop(response.data);
-      setEditMode(false);
-      Swal.fire("Thành công", "Cập nhật thông tin cửa hàng thành công", "success");
-    } catch (error) {
-      console.error("Lỗi khi cập nhật cửa hàng:", error);
-      if (error.response) {
-        Swal.fire("Lỗi", error.response.data.message || "Cập nhật thông tin cửa hàng thất bại", "error");
-      } else {
-        Swal.fire("Lỗi", "Có lỗi xảy ra khi cập nhật cửa hàng", "error");
+  try {
+    const response = await axios.put(
+      `http://localhost:8080/api/shops/user/${shop.id}`,  // Sử dụng shop id đã lấy được
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",  // Đảm bảo kiểu nội dung đúng
+          Authorization: `Bearer ${token}`,  // Đưa token vào header
+        },
       }
+    );
+    setShop(response.data);  // Cập nhật lại dữ liệu shop
+    setEditMode(false);  // Tắt chế độ chỉnh sửa
+    Swal.fire("Thành công", "Cập nhật thông tin cửa hàng thành công", "success");
+  } catch (error) {
+    console.error("Lỗi khi cập nhật cửa hàng:", error);
+    if (error.response) {
+      Swal.fire("Lỗi", error.response.data.message || "Cập nhật thông tin cửa hàng thất bại", "error");
+    } else {
+      Swal.fire("Lỗi", "Có lỗi xảy ra khi cập nhật cửa hàng", "error");
     }
+  }
 };
+
   // Xử lý thay đổi input
   const handleInputChange = (e) => {
     const { name, value } = e.target;

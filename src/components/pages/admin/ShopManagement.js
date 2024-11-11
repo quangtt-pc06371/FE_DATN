@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Form, Button, Table, Pagination, InputGroup } from 'react-bootstrap';
+import { Container, Row, Col, Form, Table, Pagination, InputGroup, Button } from 'react-bootstrap';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Swal from 'sweetalert2';
@@ -8,10 +8,6 @@ import { useNavigate } from "react-router-dom";
 const ShopManagement = () => {
   const [shops, setShops] = useState([]);
   const [filteredShops, setFilteredShops] = useState([]);
-  const [shopName, setShopName] = useState('');
-  const [shopDescription, setShopDescription] = useState('');
-  const [shopRating, setShopRating] = useState('');
-  const [selectedShop, setSelectedShop] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [shopsPerPage] = useState(4);
@@ -48,62 +44,10 @@ const ShopManagement = () => {
       );
       setFilteredShops(filtered);
     }
-    setCurrentPage(1); // Reset về trang đầu khi tìm kiếm mới
-  };
-
-  const handleUpdateShop = async () => {
-    if (!selectedShop) {
-      Swal.fire('Chọn cửa hàng để sửa', '', 'warning');
-      return;
-    }
-
-    const token = Cookies.get('token');
-    if (!token) {
-      Swal.fire({
-        title: 'Yêu cầu đăng nhập',
-        text: 'Vui lòng đăng nhập để thực hiện thao tác này!',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Đăng nhập',
-        cancelButtonText: 'Hủy',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate('/login');
-        }
-      });
-      return;
-    }
-
-    const shopData = {
-      shopName: shopName,
-      shopDescription: shopDescription,
-    };
-    
-    if (shopRating) {
-      shopData.shopRating = shopRating;
-    }
-
-    try {
-      await axios.put(`http://localhost:8080/api/shops/${selectedShop.id}`, 
-        shopData, 
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      Swal.fire('Cập nhật cửa hàng thành công!', '', 'success');
-      fetchApprovedShops();
-      setSelectedShop(null);
-      setShopName('');
-      setShopDescription('');
-      setShopRating('');
-    } catch (error) {
-      console.error('Lỗi khi cập nhật cửa hàng:', error);
-    }
+    setCurrentPage(1);
   };
 
   const handleDeleteShop = async (shopId) => {
-    if (!selectedShop) {
-      Swal.fire('Chọn cửa hàng để xóa', '', 'warning');
-      return;
-    }
     const token = Cookies.get('token');
     if (!token) {
       Swal.fire({
@@ -145,14 +89,6 @@ const ShopManagement = () => {
     });
   };
 
-  const handleSelectShop = (shop) => {
-    setSelectedShop(shop);
-    setShopName(shop.shopName);
-    setShopDescription(shop.shopDescription);
-    setShopRating(shop.shopRating);
-  };
-
-  // Tính toán phân trang
   const indexOfLastShop = currentPage * shopsPerPage;
   const indexOfFirstShop = indexOfLastShop - shopsPerPage;
   const currentShops = filteredShops.slice(indexOfFirstShop, indexOfLastShop);
@@ -167,47 +103,7 @@ const ShopManagement = () => {
       <Container className="content-overlay">
         <h2 className="text-center my-4 fw-bold text-primary animated-title">QUẢN LÝ CỬA HÀNG</h2>
         <Row>
-          <Col md={4}>
-            <Form className="border p-4 rounded shadow-sm bg-light">
-              <Form.Group controlId="formShopName" className="mb-3">
-                <Form.Label>Tên cửa hàng:</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Nhập tên cửa hàng"
-                  value={shopName}
-                  onChange={(e) => setShopName(e.target.value)}
-                />
-              </Form.Group>
-              <Form.Group controlId="formDescription" className="mb-3">
-                <Form.Label>Mô tả:</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  placeholder="Nhập mô tả"
-                  value={shopDescription}
-                  onChange={(e) => setShopDescription(e.target.value)}
-                />
-              </Form.Group>
-              <Form.Group controlId="formRating" className="mb-3">
-                <Form.Label>Đánh giá:</Form.Label>
-                <Form.Control
-                  type="number"
-                  min="1"
-                  max="5"
-                  placeholder="Nhập đánh giá (1-5)"
-                  value={shopRating}
-                  onChange={(e) => setShopRating(e.target.value)}
-                />
-              </Form.Group>
-              <Button variant="warning" className="me-2 w-100 mb-2" onClick={handleUpdateShop}>
-                Cập nhật
-              </Button>
-              <Button variant="danger" className="w-100" onClick={() => handleDeleteShop(selectedShop?.id)}>
-                Xóa
-              </Button>
-            </Form>
-          </Col>
-          <Col md={8}>
+          <Col md={12}>
             <div className="border p-4 rounded shadow-sm bg-light">
               <Row className="mb-3">
                 <InputGroup>
@@ -225,9 +121,10 @@ const ShopManagement = () => {
                     <th>Tên Shop</th>
                     <th>Ảnh</th>
                     <th>Mô Tả</th>
-                    <th>ĐG</th>
+                    <th>Đánh Giá</th>
+                    <th>Ngày Tạo</th>
                     <th>Ngày Cập Nhật</th>
-                    <th>HĐ</th>
+                    <th>Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -244,14 +141,15 @@ const ShopManagement = () => {
                       </td>
                       <td>{shop.shopDescription}</td>
                       <td>{shop.shopRating}</td>
+                      <td>{shop.createAt}</td>
                       <td>{shop.updateAt}</td>
                       <td>
-                        <Button variant="info" size="sm" onClick={() => handleSelectShop(shop)}>Chọn</Button>
+                        <Button variant="danger" size="sm" onClick={() => handleDeleteShop(shop.id)}>Xóa</Button>
                       </td>
                     </tr>
                   )) : (
                     <tr>
-                      <td colSpan="8" className="text-center">Không có shop nào</td>
+                      <td colSpan="7" className="text-center">Không có shop nào</td>
                     </tr>
                   )}
                 </tbody>
