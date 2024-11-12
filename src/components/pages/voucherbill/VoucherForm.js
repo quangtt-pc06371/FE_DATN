@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { addVoucher, updateVoucher } from '../../services/voucherService';
 import './VoucherForm.css';
 
@@ -8,9 +9,10 @@ function VoucherForm({ voucherToEdit, onSave }) {
         soLuong: '',
         ngaybatdau: '',
         ngayHetHan: '',
-        donhang: ''
+        user: ''
     });
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (voucherToEdit) {
@@ -41,12 +43,13 @@ function VoucherForm({ voucherToEdit, onSave }) {
         }
 
         onSave();
-        setVoucher({ giamGia: '', soLuong: '', ngaybatdau: '', ngayHetHan: '', donhang: '' });
+        setVoucher({ giamGia: '', soLuong: '', ngaybatdau: '', ngayHetHan: '', user: '' });
     };
 
     return (
         <div className="form-container">
             <form onSubmit={handleSubmit}>
+                <h2 className="text-center my-4 fw-bold text-primary">QUẢN LÝ VOUCHER</h2>
                 <fieldset className="fieldset-section">
                     <legend>Điều kiện khuyến mãi</legend>
                     <input
@@ -95,8 +98,13 @@ function VoucherForm({ voucherToEdit, onSave }) {
 
                 <div className="button-container">
                     <button type="submit">{voucherToEdit ? 'Cập nhật' : 'Thêm'}</button>
-                    <button type="button" onClick={handleSubmit}>Sửa</button>
-                    <button type="button" onClick={() => alert('Xóa voucher')}>Xóa</button>
+                    <button
+                        type="button"
+                        onClick={() => navigate('/voucher-list')}
+                        style={{ marginLeft: '10px' }}
+                    >
+                        Danh sách Voucher
+                    </button>
                 </div>
             </form>
         </div>

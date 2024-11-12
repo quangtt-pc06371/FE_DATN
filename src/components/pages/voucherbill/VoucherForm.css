@@ -1,3 +1,4 @@
+/* Main form container styling */
 .form-container {
     display: flex;
     justify-content: center;
@@ -5,6 +6,7 @@
     min-height: 100vh;
 }
 
+/* Styling for the form itself */
 form {
     max-width: 800px;
     width: 100%;
@@ -27,6 +29,7 @@ form {
     padding: 0 10px;
 }
 
+/* Styling for input fields */
 input, select {
     margin-bottom: 10px;
     padding: 8px;
@@ -34,6 +37,7 @@ input, select {
     box-sizing: border-box;
 }
 
+/* Styling for the date container */
 .date-container {
     display: flex;
     gap: 20px;
@@ -46,17 +50,16 @@ input, select {
     width: 100%;
 }
 
-/* Styling for the button container to align buttons horizontally */
+/* Button container to center-align buttons and add space */
 .button-container {
     display: flex;
-    gap: 10px; /* Space between buttons */
-    margin-top: 10px;
+    justify-content: center; /* Center-align buttons */
+    margin-top: 20px;
 }
 
-/* Styling for individual buttons */
-button {
-    padding: 8px 12px; /* Smaller padding for compact size */
-    width: auto; /* Adjust width to fit the text */
+/* Styling for the main form button (Add or Update) */
+button[type="submit"] {
+    padding: 8px 16px;
     background-color: #28a745;
     color: white;
     border: none;
@@ -65,26 +68,39 @@ button {
     transition: background-color 0.3s;
 }
 
-button:hover {
+button[type="submit"]:hover {
     background-color: #218838;
 }
 
-button[type="button"]:nth-child(2) { /* "Sửa" button */
+/* Styling for buttons in Voucher List (Edit and Delete) */
+button[type="button"] {
+    padding: 5px 10px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Edit button styling */
+button[type="button"]:nth-child(1) { /* Edit button */
     background-color: #ffc107;
 }
 
-button[type="button"]:nth-child(2):hover {
+button[type="button"]:nth-child(1):hover {
     background-color: #e0a800;
 }
 
-button[type="button"]:nth-child(3) { /* "Xóa" button */
+/* Delete button styling */
+button[type="button"]:nth-child(2) { /* Delete button */
     background-color: #dc3545;
 }
 
-button[type="button"]:nth-child(3):hover {
+button[type="button"]:nth-child(2):hover {
     background-color: #c82333;
 }
 
+/* Table styling for voucher list */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -93,25 +109,17 @@ table {
 
 th, td {
     padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+    text-align: center; /* Center-align table content */
+    border-bottom: 1px solid #d61414;
 }
 
 th {
     background-color: #f2f2f2;
 }
 
-button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
-}
-/* VoucherForm.css */
+/* Styling for error messages */
 .error-message {
     color: red;
     font-size: 0.9em;
     margin-top: 5px;
 }
-

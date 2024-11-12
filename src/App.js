@@ -10,6 +10,9 @@ import ShopRegistration from './components/pages/user/ShopRegistration';
 import DangKy from "./components/compoments/Addtaikhoan";
 import Profile from "./components/pages/Profile/index";
 import Login from "./components/pages/Login";
+import VoucherForm from './components/pages/voucherbill/VoucherForm';
+import VoucherList from './components/pages/voucherbill/VoucherList'; // Import VoucherList
+
 
 function App() {
   return (
@@ -21,6 +24,10 @@ function App() {
         <Route path="/" element={<CategoryManagement />} />
         <Route path="/shop-management" element={<ShopManagement />} />
         <Route path="/shop-register" element={<ShopRegistration />} />
+
+        <Route path="/voucher" element={<VoucherForm/>} />
+        <Route path="/voucher-list" element={<VoucherList />} /> 
+
 
         <Route path="login" element={<Login />} />
         <Route path="profile" element={<Profile />} />

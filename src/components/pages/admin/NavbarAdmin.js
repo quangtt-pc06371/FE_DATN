@@ -18,6 +18,9 @@ const NavbarAdmin = () => {
           <LinkContainer to="/shop-management">
             <Nav.Link>Quản lý shop</Nav.Link>
           </LinkContainer>
+          <LinkContainer to="voucher">
+            <Nav.Link>Quản lý voucher</Nav.Link>
+          </LinkContainer>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
