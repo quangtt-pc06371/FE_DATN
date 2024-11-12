@@ -5,6 +5,7 @@ import axios from "axios";
 import { useParams } from 'react-router-dom';
 
 export default function ChiTietSanPham() {
+    
     const [data, setData] = useState({
         tenSanPham: '',
         moTa: '',
@@ -14,7 +15,17 @@ export default function ChiTietSanPham() {
     const [skusList, setSkusList] = useState([]);
     const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
     const { id } = useParams();
+    const [soLuong, setSoLuong] = useState(1);
+    const [selectedImage, setSelectedImage] = useState('');
+    const [giaTriDaChon, setGiaTriDaChon] = useState({});
 
+    const tangSoLuong = () => {
+        setSoLuong(prev => prev + 1);
+    };
+
+    const giamSoLuong = () => {
+        setSoLuong(prev => (prev > 1 ? prev - 1 : 1));
+    };
 
     async function getSanPhamKhuyenMai() {
         const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
@@ -34,6 +45,7 @@ export default function ChiTietSanPham() {
 
         setSkusList(
             response.data.skus.map((sku) => ({
+                idSku: sku.idSku,
                 giaSanPham: sku.giaSanPham,
                 soLuong: sku.soLuong,
                 atributes: sku.tuyChonThuocTinhSkus.map((tuyChon) => ({
@@ -43,18 +55,58 @@ export default function ChiTietSanPham() {
                 hinhanhs: sku.hinhanhs.map((image) => image.tenAnh) // Lấy tất cả ảnh từ hinhanhs
             }))
         );
+        if (response.data.skus.length > 0 && response.data.skus[0].hinhanhs.length > 0) {
+            setSelectedImage(response.data.skus[0].hinhanhs[0].tenAnh); // Chọn ảnh đầu tiên của SKU đầu tiên
+        }
 
 
     }
-    console.log(skusList)
+    const getSku = () => {
+        return skusList.find(sku => {
+            return sku.atributes.every(attr =>
+                giaTriDaChon[attr.tieuDe] === attr.noiDungTieuDe
+            );
+        });
+    };
+
+    async function handleAddGioHang() {
+        const sku = getSku();
+        
+        if (!sku) {
+            alert('Vui lòng chọn đầy đủ các tùy chọn thuộc tính trước khi thêm vào giỏ hàng.');
+            return;
+        }
+        console.log(sku)
+        const dataToSent = {
+            soLuong: soLuong,
+            shop: { idShop: parseInt(data.shop.idShop) },
+            sku: { idSku: sku.idSku },
+            taiKhoan: { id: 1 }
+
+        }
+        console.log(dataToSent)
+        try {
+            const addData = await axios.post('http://localhost:8080/api/giohang', dataToSent);
+            alert('Thêm vào giỏ hàng thành công!', addData.data);
+        } catch (error) {
+            alert('Có lỗi xảy ra khi thêm vào giỏ hàng.');
+            console.error(error);
+        }
+
+
+
+    }
+
+    // console.log(skusList)
     useEffect(() => {
         if (id) {
             getDataDisplayId();
         }
         getSanPhamKhuyenMai();
     }, []);
+    const skuGet = getSku();
 
-    const giaGoc = skusList[0]?.giaSanPham || 0;
+    const giaGoc = skuGet ? skuGet.giaSanPham : skusList[0]?.giaSanPham || 0;
 
     const khuyenMaiData = sanPhamKhuyenMaiForm.find(
         (sanPhamKM) => sanPhamKM.sanPham.idSanPham === Number(id)
@@ -73,46 +125,59 @@ export default function ChiTietSanPham() {
 
         khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
     }
-    // Tính tổng số lượng của sản phẩm
-    const tongSoLuong = skusList.reduce((total, sku) => total + sku.soLuong, 0);
-
-    const firstSku = skusList?.[0];
-    const firstImage = firstSku?.hinhanhs?.[0];
+   
     
+    const tongSoLuong = skuGet ? skuGet.soLuong : skusList[0]?.soLuong;
+
+    
+
+
+    
+
+    const handleGiaTri = (tieuDe, noiDungTieuDe) => {
+        setGiaTriDaChon(thuocTinhDaChon => ({
+            ...thuocTinhDaChon,
+            [tieuDe]: noiDungTieuDe
+        }));
+    };
+    console.log(giaTriDaChon)
+
+    const handleThumbnailClick = (image) => {
+        setSelectedImage(image); // Cập nhật ảnh lớn khi người dùng click vào thumbnail
+    };
+   
     return (
         <div className="container mt-5 ">
             <div className="row my-3 m-5 border p-3 mb-5 shadow-sm">
                 <div className="col-md-4">
                     <div className="card" style={{ width: '18rem' }}>
-                        {firstImage ? (
-                            <div className='card-header'>
-                                <img
-                                    src={firstImage}
-                                    className="card-img-top"
-                                    alt="Watch"
-                                />
-                            </div>
-                        ) : (
-                            <div className="img-placeholder">No Image Available</div>
-                        )}
+                        <div className='card-header'>
+                            <img
+                                src={selectedImage}  // Hiển thị hình ảnh lớn khi click vào thumbnail
+                                className="card-img-top"
+                                alt="Product"
+                                style={{ width: '100%' }}  // Tự động điều chỉnh kích thước cho phù hợp
+                            />
+                        </div>
                         <div className="card-body">
-                            <div className="d-flex justify-content-between mt-3">
-                                {skusList.map(sku => (
-
-                                    sku.hinhanhs.map(hinhAnh => (
+                            {/* overflowX: 'auto': Cho phép cuộn ngang khi nội dung vượt quá chiều rộng container */}
+                            {/* whiteSpace: 'nowrap': Đảm bảo rằng các ảnh sẽ không xuống dòng mà nằm ngang trên một dòng duy nhất */}
+                            <div className="d-flex justify-content-start mt-3 " style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                                {skusList.map((sku) => (
+                                    sku.hinhanhs.map((hinhAnh, index) => (
                                         <img
-                                            src={hinhAnh}
-                                            alt="Thumbnail 1"
-                                            className="img-thumbnail"
-                                            width="80px"
-                                            height="80px"
+                                            key={index}
+                                            src={hinhAnh}  // URL của ảnh thumbnail
+                                            alt={`Thumbnail ${index + 1}`}
+                                            className="img-thumbnail me-2 hinh-anh-chi-tiet"
+                                            style={{ width: '80px', height: '80px', display: 'inline-block' }}
+                                            onClick={() => handleThumbnailClick(hinhAnh)} // Cập nhật ảnh lớn khi click vào thumbnail
                                         />
                                     ))
-
-
                                 ))}
                             </div>
                         </div>
+
 
 
                         <div className="card-footer text-muted">
@@ -151,30 +216,40 @@ export default function ChiTietSanPham() {
 
                     {skusList.length > 0 ? (
                         <>
-                            {/* Hiển thị từng nhóm thuộc tính */}
-                            {skusList[0].atributes.map((attribute, attrIndex) => (
-                                <div key={attrIndex}>
-                                    <h5>{attribute.tieuDe}</h5>
-                                    <div className="d-flex mb-3">
-                                        {(() => {
-                                            const displayedNoiDung = new Set(); // Set để lưu các giá trị đã hiển thị
-                                            return skusList.map((sku) =>
-                                                sku.atributes.map((attr, index) => (
-                                                    attr.tieuDe === attribute.tieuDe && !displayedNoiDung.has(attr.noiDungTieuDe) && (
-                                                        displayedNoiDung.add(attr.noiDungTieuDe), // Thêm giá trị vào Set sau khi hiển thị
+
+                            {skusList[0].atributes.map((attribute, attrIndex) => {
+                                const displayedNoiDung = new Set(); // Tập hợp để lưu các giá trị đã hiển thị
+
+                                return (
+                                    <div key={attrIndex}>
+                                        <h5>{attribute.tieuDe}</h5>
+                                        <div className="d-flex mb-3">
+                                            {skusList.flatMap((sku) =>
+                                                sku.atributes.filter((attr) =>
+                                                    attr.tieuDe === attribute.tieuDe &&
+                                                    !displayedNoiDung.has(attr.noiDungTieuDe)
+
+                                                ).map((attr, index) => {
+                                                    displayedNoiDung.add(attr.noiDungTieuDe); // Thêm giá trị vào Set để tránh lặp lại
+                                                    return (
                                                         <button
-                                                            className="btn btn-outline-dark me-2"
                                                             key={index}
+                                                            className={`btn me-2 ${giaTriDaChon[attribute.tieuDe] === attr.noiDungTieuDe
+                                                                ? 'btn-primary'
+                                                                : 'border btn-light'
+                                                                }`}
+                                                            onClick={() => handleGiaTri(attribute.tieuDe, attr.noiDungTieuDe)}
                                                         >
                                                             {attr.noiDungTieuDe}
                                                         </button>
-                                                    )
-                                                ))
-                                            );
-                                        })()}
+                                                    );
+                                                })
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
+
                         </>
                     ) : (
                         <p>Chưa có tổ hợp nào được tạo.</p>
@@ -182,11 +257,20 @@ export default function ChiTietSanPham() {
 
                     <h5>Số lượng</h5>
                     <div className="input-group mb-3">
-                        <button className="btn btn-secondary" type="button">-</button>
-                        <input type="number" className="text-center" min="1" defaultValue="1" />
-                        <button className="btn btn-secondary" type="button">+</button>
+                        <div className="input-group mb-3">
+                            <button className="btn btn-secondary" type="button" onClick={giamSoLuong}>-</button>
+                            <input
+                                type="number"
+                                className="text-center"
+                                min="1"
+                                value={soLuong}
+                                onChange={(e) => setSoLuong(parseInt(e.target.value))}
+                            />
+                            <button className="btn btn-secondary" type="button" onClick={tangSoLuong}>+</button>
+                        </div>
+
                     </div>
-                    <button className="btn btn-danger me-2">Thêm Vào Giỏ Hàng</button>
+                    <button className="btn btn-danger me-2" onClick={handleAddGioHang}>Thêm Vào Giỏ Hàng</button>
                     <button className="btn btn-primary">Mua Ngay</button>
                 </div>
             </div>
