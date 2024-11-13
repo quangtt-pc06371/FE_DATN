@@ -159,6 +159,9 @@ const HeaderAdmin = () => {
               <LinkContainer to="/registergg">
                 <Nav.Link>Đăng ký Google</Nav.Link>
               </LinkContainer>
+              <LinkContainer to="/addres">
+                <Nav.Link>dia chỉ</Nav.Link>
+              </LinkContainer>
             </Nav>
           </Navbar.Collapse>
         </Container>
