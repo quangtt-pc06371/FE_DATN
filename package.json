@@ -22,6 +22,7 @@
     "react-router-bootstrap": "^0.26.3",
     "react-router-dom": "^6.26.1",
     "react-scripts": "5.0.1",
+    "react-select": "^5.8.3",
     "react-toastify": "^10.0.6",
     "sweetalert2": "^11.14.3",
     "web-vitals": "^2.1.4"
