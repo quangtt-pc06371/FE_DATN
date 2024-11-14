@@ -169,9 +169,9 @@ const ShopApproval = () => {
                     <td>
                       {shop.shopImage ? (
                         <img
-                          src={`http://localhost:8080/api/shops/images/${shop.shopImage}`}
+                          src={shop.shopImage}
                           alt={shop.shopName}
-                          style={{ width: '50px', height: '50px' }}
+                          style={{ width: '50px' }}
                         />
                       ) : (
                         <span>No Image</span>
