@@ -28,6 +28,7 @@ const ShopRegistration = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
   
+    // Kiểm tra các trường
     const newErrors = {};
     if (!shopName) newErrors.shopName = "Vui lòng nhập tên cửa hàng.";
     if (!shopDescription) newErrors.shopDescription = "Vui lòng nhập mô tả cho cửa hàng.";
@@ -36,46 +37,39 @@ const ShopRegistration = () => {
   
     if (Object.keys(newErrors).length > 0) return;
   
+    // Tạo FormData để gửi
     const formData = new FormData();
     formData.append("shopName", shopName);
     formData.append("shopDescription", shopDescription);
-    if (shopImage) {
-      formData.append("shopImage", shopImage);
-    }
+    if (shopImage) formData.append("shopImage", shopImage);
   
     const token = cookies.token;
     if (!token) {
       Swal.fire({
-        icon: 'warning',
-        title: 'Chưa đăng nhập',
-        text: 'Vui lòng đăng nhập để tiếp tục.',
-        showCancelButton: true,
-        confirmButtonText: 'Đăng nhập',
-        cancelButtonText: 'Hủy',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate("/login");
-        }
-      });
+        icon: "warning",
+        title: "Chưa đăng nhập",
+        text: "Vui lòng đăng nhập để tiếp tục.",
+        confirmButtonText: "Đăng nhập",
+      }).then(() => navigate("/login"));
       return;
     }
   
     try {
       const response = await axios.post("http://localhost:8080/api/shops/register", formData, {
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
       });
-      
+  
       if (response.status === 200 && response.data) {
         Swal.fire({
-          icon: 'success',
-          title: 'Đăng ký thành công',
-          text: 'Cửa hàng đã được đăng ký, vui lòng chờ xét duyệt!',
+          icon: "success",
+          title: "Đăng ký thành công",
+          text: "Cửa hàng đã được đăng ký. Vui lòng chờ xét duyệt!",
         });
-
-        // Reset form fields after successful registration
+  
+        // Reset form
         setShopName("");
         setShopDescription("");
         setShopImage(null);
@@ -83,13 +77,14 @@ const ShopRegistration = () => {
         setErrors({});
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.error || error.message || "Đã có lỗi xảy ra. Vui lòng thử lại.";
+      const errorMessage = error.response?.data?.error || "Đã xảy ra lỗi. Vui lòng thử lại.";
       Swal.fire({
-        icon: 'error',
-        title: 'Lỗi',
-        text: errorMessage === "Người dùng đã có cửa hàng"
-              ? 'Bạn đã đăng ký một cửa hàng trước đó. Vui lòng kiểm tra lại.'
-              : errorMessage,
+        icon: "error",
+        title: "Lỗi",
+        text:
+          errorMessage === "Bạn đã đăng ký cửa hàng trước đó"
+            ? "Bạn đã đăng ký một cửa hàng. Vui lòng kiểm tra lại."
+            : errorMessage,
       });
     }
   };

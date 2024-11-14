@@ -134,9 +134,9 @@ const ShopManagement = () => {
                       <td>{shop.shopName}</td>
                       <td>
                         <img 
-                          src={`http://localhost:8080/api/shops/images/${shop.shopImage}`} 
+                          src={shop.shopImage} 
                           alt={shop.shopName} 
-                          style={{ width: '91.5px', height: 'auto' }} 
+                          style={{ width: '50px'}} 
                         />
                       </td>
                       <td>{shop.shopDescription}</td>

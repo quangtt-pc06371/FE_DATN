@@ -10,6 +10,7 @@ const ShopUser = () => {
   const [editMode, setEditMode] = useState(false);
   const [updatedShop, setUpdatedShop] = useState({});
   const [shopImage, setShopImage] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -31,6 +32,7 @@ const ShopUser = () => {
         setShop(fetchedShop);
         setUpdatedShop(fetchedShop);
         setIsApproved(fetchedShop.isApproved);
+        setImagePreviewUrl(fetchedShop.shopImage); // Hiển thị ảnh hiện tại
         setLoading(false);
       })
       .catch((error) => {
@@ -44,60 +46,68 @@ const ShopUser = () => {
       });
   }, [navigate]);
 
-  // URL ảnh cửa hàng
-  const imageUrl = shop?.shopImage
-    ? `http://localhost:8080/api/shops/images/${shop.shopImage}`
-    : "https://via.placeholder.com/150";
-
   // Xử lý khi chỉnh sửa thông tin cửa hàng
   const handleEditShopInfo = () => {
     setEditMode(true);
   };
 
-  // Lưu thay đổi thông tin cửa hàng
-  // Lưu thay đổi thông tin cửa hàng
-const handleSaveChanges = async (e) => {
-  e.preventDefault(); // Ngừng hành động mặc định của form
-  const token = Cookies.get("token");
-  const formData = new FormData();
-
-  // Tạo đối tượng shop
-  const shopData = {
-    shopName: updatedShop.shopName,
-    shopDescription: updatedShop.shopDescription,
+  // Hủy chỉnh sửa và trở về thông tin gốc
+  const handleCancelEdit = () => {
+    setEditMode(false);
+    setUpdatedShop(shop); // Khôi phục lại dữ liệu gốc
+    setImagePreviewUrl(shop.shopImage); // Đặt lại ảnh gốc
+    setShopImage(null); // Xóa ảnh đã chọn
   };
 
-  // Thêm đối tượng shop vào formData dưới dạng JSON
-  formData.append("shop", JSON.stringify(shopData));
+  // Lưu thay đổi thông tin cửa hàng
+  const handleSaveChanges = async (e) => {
+    e.preventDefault();
+    
+    // Hiển thị xác nhận trước khi lưu
+    const result = await Swal.fire({
+      title: "Xác nhận lưu thay đổi",
+      text: "Bạn có chắc muốn lưu các thay đổi không?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Xác nhận",
+      cancelButtonText: "Hủy",
+    });
 
-  // Nếu có ảnh, thêm vào formData
-  if (shopImage) {
-    formData.append("shopImageFile", shopImage);
-  }
-
-  try {
-    const response = await axios.put(
-      `http://localhost:8080/api/shops/user/${shop.id}`,  // Sử dụng shop id đã lấy được
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",  // Đảm bảo kiểu nội dung đúng
-          Authorization: `Bearer ${token}`,  // Đưa token vào header
-        },
+    if (result.isConfirmed) {
+      const token = Cookies.get("token");
+      const formData = new FormData();
+    
+      // Thêm JSON dưới dạng chuỗi
+      const shopData = {
+        shopName: updatedShop.shopName,
+        shopDescription: updatedShop.shopDescription,
+      };
+      formData.append("shop", JSON.stringify(shopData));
+    
+      // Thêm file ảnh nếu có
+      if (shopImage) {
+        formData.append("shopImageFile", shopImage);
       }
-    );
-    setShop(response.data);  // Cập nhật lại dữ liệu shop
-    setEditMode(false);  // Tắt chế độ chỉnh sửa
-    Swal.fire("Thành công", "Cập nhật thông tin cửa hàng thành công", "success");
-  } catch (error) {
-    console.error("Lỗi khi cập nhật cửa hàng:", error);
-    if (error.response) {
-      Swal.fire("Lỗi", error.response.data.message || "Cập nhật thông tin cửa hàng thất bại", "error");
-    } else {
-      Swal.fire("Lỗi", "Có lỗi xảy ra khi cập nhật cửa hàng", "error");
+    
+      try {
+        const response = await axios.put(
+          `http://localhost:8080/api/shops/user/${shop.id}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setShop(response.data);
+        setEditMode(false);
+        Swal.fire("Thành công", "Cập nhật thông tin cửa hàng thành công", "success");
+      } catch (error) {
+        console.error("Lỗi khi cập nhật cửa hàng:", error);
+        Swal.fire("Lỗi", "Có lỗi xảy ra khi cập nhật cửa hàng", "error");
+      }
     }
-  }
-};
+  };
 
   // Xử lý thay đổi input
   const handleInputChange = (e) => {
@@ -110,7 +120,9 @@ const handleSaveChanges = async (e) => {
 
   // Xử lý thay đổi ảnh cửa hàng
   const handleImageChange = (e) => {
-    setShopImage(e.target.files[0]);
+    const file = e.target.files[0];
+    setShopImage(file);
+    setImagePreviewUrl(URL.createObjectURL(file)); // Cập nhật ảnh xem trước
   };
 
   return (
@@ -132,7 +144,7 @@ const handleSaveChanges = async (e) => {
                     height: "150px",
                     borderRadius: "50%",
                     backgroundColor: "#f0f0f0",
-                    backgroundImage: `url(${imageUrl})`,
+                    backgroundImage: `url(${imagePreviewUrl})`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     margin: "0 auto",
@@ -166,7 +178,7 @@ const handleSaveChanges = async (e) => {
                     <button onClick={handleSaveChanges} className="btn btn-success">
                       Lưu
                     </button>
-                    <button onClick={() => setEditMode(false)} className="btn btn-secondary ms-2">
+                    <button onClick={handleCancelEdit} className="btn btn-secondary ms-2">
                       Hủy
                     </button>
                   </div>
@@ -183,7 +195,7 @@ const handleSaveChanges = async (e) => {
             </div>
           ) : (
             <div className="alert alert-warning text-center">
-              Bạn chưa có cửa hàng hoặc cửa hàng của bạn chưa được xet duyệt.
+              Bạn chưa có cửa hàng hoặc cửa hàng của bạn chưa được xét duyệt.
             </div>
           )}
         </>
