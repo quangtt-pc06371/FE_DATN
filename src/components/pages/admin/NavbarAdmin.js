@@ -1,18 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-<<<<<<< HEAD
-
-const NavbarAdmin = () => {
-  return (
-    <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="#">Admin</Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="me-auto">
-          <LinkContainer to="/category-management">
-            <Nav.Link>Quản lý danh mục</Nav.Link>
-=======
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import { Outlet, useNavigate } from "react-router-dom";
@@ -141,7 +129,6 @@ const HeaderAdmin = () => {
         <Container>
           <LinkContainer to="/">
             <Navbar.Brand>Admin Panel</Navbar.Brand>
->>>>>>> toan
           </LinkContainer>
           <Navbar.Toggle aria-controls="navbar-nav" />
           <Navbar.Collapse id="navbar-nav">
