@@ -28,6 +28,25 @@
   color: #61dafb;
 }
 
+.danh-muc-item {
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Thêm hiệu ứng chuyển động */
+  background-color: white;
+}
+
+.danh-muc-item:hover {
+  background-color: #b5c7df; 
+}
+
+.danh-muc-item:active {
+  transform: scale(0.98); /* Tạo hiệu ứng co lại khi nhấn */
+  background-color: #a3b2d8; /* Màu nền khi nhấn */
+}
+.hinh-anh-chi-tiet:active{
+  transform: scale(0.98); /* Tạo hiệu ứng co lại khi nhấn */
+  background-color: #a3b2d8; /* Màu nền khi nhấn */
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
