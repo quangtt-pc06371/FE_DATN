@@ -5,17 +5,19 @@ import axios from 'axios';
 const DanhSachSanPham = () => {
   const [data, setData] = useState([]);
 
+
   async function hienThi() {
     const response = await axios.get('http://localhost:8080/api/sanpham');
     setData(response.data);
   }
 
   async function handleDelete(id) {
-    const apiKhuyenMai = 'http://localhost:8080/api/sanpham';
-    await axios.delete(apiKhuyenMai + '/' + id);
+    const apiKhuyenMai = 'http://localhost:8080/api/sanpham/updatetrangthai';
+    await axios.put(apiKhuyenMai + '/' + id);
+    alert("Sản phẩm đã được Xóa");
     hienThi();
-    alert("Xóa thành công");
   }
+
 
   useEffect(() => {
     hienThi();
@@ -43,39 +45,40 @@ const DanhSachSanPham = () => {
             </thead>
             <tbody>
               {data.map(sanPham => (
-                <tr key={sanPham.idSanPham}>
-                  <td>{sanPham.idSanPham}</td>
-                  <td>{sanPham.tenSanPham}</td>
-                  <td>{sanPham.moTa}</td>
-                  <td>{sanPham.shop.shopName}</td>
-                  <td>{sanPham.danhMuc.tenDanhMuc}</td>
-                  <td>
-
-                    Số lượng phiên bản: {sanPham.skus.length}
-                    {sanPham.skus.length > 0 && (
-                      <ul className="list-unstyled">
-                        <li>
-                          <ul>
-                            <li>Giá: {sanPham.skus[0].giaSanPham} VNĐ</li>
-                            <li>Số lượng: {sanPham.skus[0].soLuong}</li>
-                            {sanPham.skus[0].tuyChonThuocTinhSkus.map(tcSkus => (
-                              <li key={tcSkus.idtuyChonThuocTinhSku}>
-                                {tcSkus.tuyChonThuocTinh.thuocTinh.ten}:  {tcSkus.tuyChonThuocTinh.giaTri}
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                      </ul>
-                    )}
-                  </td>
-                  <td>
-                    <a href={`/sanpham/${sanPham.idSanPham}`} className="btn btn-warning me-2">Sửa</a>
-                    <button onClick={() => handleDelete(sanPham.idSanPham)} className="btn btn-danger">Xóa</button>
-                  </td>
-                </tr>
+                // Kiểm tra nếu sản phẩm có trong hiddenProducts thì không hiển thị
+                sanPham.trangThai === false ? null : (
+                  <tr key={sanPham.idSanPham}>
+                    <td>{sanPham.idSanPham}</td>
+                    <td>{sanPham.tenSanPham}</td>
+                    <td>{sanPham.moTa}</td>
+                    <td>{sanPham.shop.shopName}</td>
+                    <td>{sanPham.danhMuc.tenDanhMuc}</td>
+                    <td>
+                      Số lượng phiên bản: {sanPham.skus.length}
+                      {sanPham.skus.length > 0 && (
+                        <ul className="list-unstyled">
+                          <li>
+                            <ul>
+                              <li>Giá: {sanPham.skus[0].giaSanPham} VNĐ</li>
+                              <li>Số lượng: {sanPham.skus[0].soLuong}</li>
+                              {sanPham.skus[0].tuyChonThuocTinhSkus.map(tcSkus => (
+                                <li key={tcSkus.idtuyChonThuocTinhSku}>
+                                  {tcSkus.tuyChonThuocTinh.thuocTinh.ten}: {tcSkus.tuyChonThuocTinh.giaTri}
+                                </li>
+                              ))}
+                            </ul>
+                          </li>
+                        </ul>
+                      )}
+                    </td>
+                    <td>
+                      <a href={`/sanpham/${sanPham.idSanPham}`} className="btn btn-warning me-2">Sửa</a>
+                      <button onClick={() => handleDelete(sanPham.idSanPham)} className="btn btn-danger">Xóa</button>
+                    </td>
+                  </tr>
+                )
               ))}
             </tbody>
-
           </table>
         </div>
       </div>
@@ -84,5 +87,3 @@ const DanhSachSanPham = () => {
 };
 
 export default DanhSachSanPham;
-
-

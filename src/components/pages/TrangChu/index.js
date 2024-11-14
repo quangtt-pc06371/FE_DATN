@@ -20,7 +20,7 @@ const TrangChu = () => {
 
     return (
         <>
-            {/* <header>
+            <header>
                 <nav className="navbar" style={{ backgroundColor: 'rgb(67,195,234)' }}>
                     <div className="container-fluid">
                         <span className="navbar-text text-white fs-5 d-flex align-items-center ms-5">
@@ -65,8 +65,7 @@ const TrangChu = () => {
                 <nav className="navbar">
                     <div className="container-fluid">
                         <a className="navbar-brand ms-5" href="/sanpham">
-                            <img src="/img/t.png" alt="" style={{ width: '150px', height: '120px' }} />
-                        </a>
+                            <img src="/img/t.png" alt="" style={{ width: '150px', height: '120px' }} /></a>
                         <span className="navbar-text text-dark fs-5 d-flex align-items-center">
                             <span className="rounded-circle border border-2 border-dark d-flex justify-content-center align-items-center" style={{ width: '40px', height: '40px' }}>
                                 <i className="fa fa-home"></i>
@@ -107,9 +106,7 @@ const TrangChu = () => {
                                 </li>
                                 <li className="nav-item mx-3">
                                     <a className="nav-link text-white fs-5 fw-bold" href="/lienhe">Liên Hệ</a>
-                                </li>
-
-                                {/* <li className="nav-item mx-3">
+                                </li> {/* <li className="nav-item mx-3">
                                     <a className="nav-link text-white fs-5 fw-bold" href="/listhoadon">Hóa đơn</a>
                                 </li>
                                 <li className="nav-item mx-3">
@@ -137,11 +134,11 @@ const TrangChu = () => {
                     </div>
                 </nav>
 
-            </header> */}
+            </header>
 
 
-{/* 
-            {content} */}
+
+            {/* {content} */}
             <Outlet />
 
 
@@ -161,8 +158,7 @@ const TrangChu = () => {
                         <div className="col-sm-3 mb-4">
                             <h4>Chính Sách</h4>
                             <div className="opacity-50">
-                                <h5 className="mb-2" style={{ fontSize: '15px' }}>Chính Sách Vận Chuyển</h5>
-                                <h5 className="mb-2" style={{ fontSize: '15px' }}>Luôn Bảo Mật</h5>
+                                <h5 className="mb-2" style={{ fontSize: '15px' }}>Chính Sách Vận Chuyển</h5> <h5 className="mb-2" style={{ fontSize: '15px' }}>Luôn Bảo Mật</h5>
                                 <h5 className="mb-2" style={{ fontSize: '15px' }}>Theo Đơn Hàng</h5>
                                 <h5 className="mb-2" style={{ fontSize: '15px' }}>Tuyển Dụng</h5>
                             </div>

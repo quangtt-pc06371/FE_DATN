@@ -8,13 +8,9 @@ import {
   createBrowserRouter,
   createRoutesFromElements
 } from 'react-router-dom'
-import QuanlySanPham from './components/pages/Quanlysanpham'
-import DanhSachSanPham from './components/pages/Danhsachsanpham';
-import QuanLySanPhamKhuyenMai from './components/pages/Quanlysanphamkhuyenmai';
-import DanhSachSanPhamKM from './components/pages/Danhsachchuongtrinhkm';
-import TrangChu from './components/pages/TrangChu'
-import SanPham from './components/pages/Sanpham';
-import ChiTietSanPham from './components/pages/Chitietsanpham';
+
+
+
 import NavbarAdmin from './components/pages/admin/NavbarAdmin';
 import CategoryManagement from './components/pages/admin/CategoryManagement';
 import ShopApproval from './components/pages/admin/ShopApproval';
@@ -26,13 +22,20 @@ import ShopUser from './components/pages/user/ShopUser';
 import Register from "./components/pages/Register";
 import Profile from "./components/pages/Profile/index";
 import Login from "./components/pages/Login";
+import TrangChu from "./components/pages/TrangChu";
+import SanPham from './components/pages/Sanpham';
+import ChiTietSanPham from './components/pages/Chitietsanpham';
+import QuanLykhuyenMai from './components/pages/Quanlykhuyenmai';
+import DanhSachkhuyenMai from './components/pages/Danhsachkhuyenmai';
+import QuanlySanPham from './components/pages/Quanlysanpham';
+import DanhSachSanPham from './components/pages/Danhsachsanpham';
+import DanhSachSanPhamKM from './components/pages/Danhsachchuongtrinhkm';
+import QuanLySanPhamKhuyenMai from './components/pages/Quanlysanphamkhuyenmai';
+
 
 import Updateuser2 from './components/compoments/updatetaikhoan';
 import Listtk from './components/compoments/Listtaikhoan';
 import Registergg from "./components/pages/logingoogle";
-
-
-
  import Index from "./components/pages/TrangChu";
 
 
