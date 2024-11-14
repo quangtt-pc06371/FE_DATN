@@ -44,18 +44,18 @@ const Updataikhoan = () => {
         let valid = true;
         const errorcopy = { cmnd: '', hoTen: '', sdt: '' };
 
-        if (!hoTen.trim()) {
-            errorcopy.hoTen = 'Không được để trống';
-            valid = false;
-        }
-        if (!sdt.trim()) {
-            errorcopy.sdt = 'Không được để trống';
-            valid = false;
-        }
-        if (!cmnd.trim()) {
-            errorcopy.cmnd = 'Không được để trống';
-            valid = false;
-        }
+        // if (!hoTen.trim()) {
+        //     errorcopy.hoTen = 'Không được để trống';
+        //     valid = false;
+        // }
+        // if (!sdt.trim()) {
+        //     errorcopy.sdt = 'Không được để trống';
+        //     valid = false;
+        // }
+        // if (!cmnd.trim()) {
+        //     errorcopy.cmnd = 'Không được để trống';
+        //     valid = false;
+        // }
 
         seterror(errorcopy);
         return valid;
