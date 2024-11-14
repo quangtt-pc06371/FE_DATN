@@ -3,10 +3,26 @@ import { getAllVouchers, deleteVoucher } from '../../services/voucherService';
 
 function VoucherList({ onEdit }) {
     const [vouchers, setVouchers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState(''); // Thêm trạng thái cho thanh tìm kiếm
+    const [filteredVouchers, setFilteredVouchers] = useState([]);
 
     useEffect(() => {
         fetchVouchers();
     }, []);
+
+    useEffect(() => {
+        // Lọc danh sách voucher dựa trên từ khóa tìm kiếm
+        setFilteredVouchers(
+            vouchers.filter((voucher) =>
+                voucher.id.toString().includes(searchTerm) ||
+                voucher.giamGia.toString().includes(searchTerm) ||
+                voucher.soLuong.toString().includes(searchTerm) ||
+                voucher.ngaybatdau.includes(searchTerm) ||
+                voucher.ngayHetHan.includes(searchTerm) ||
+                voucher.user.toString().includes(searchTerm)
+            )
+        );
+    }, [searchTerm, vouchers]);
 
     const fetchVouchers = async () => {
         // Dữ liệu mẫu (sử dụng khi chưa có API)
@@ -37,6 +53,18 @@ function VoucherList({ onEdit }) {
     return (
         <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
             <h2 className="text-center my-4 fw-bold text-primary">DANH SÁCH VOUCHER</h2>
+            
+            {/* Thanh tìm kiếm */}
+            <div style={{ marginBottom: '20px' }}>
+                <input
+                    type="text"
+                    placeholder="Tìm kiếm voucher..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ padding: '8px', width: '100%', borderRadius: '4px', border: '1px solid #ddd' }}
+                />
+            </div>
+
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr>
@@ -50,8 +78,8 @@ function VoucherList({ onEdit }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {vouchers.length > 0 ? (
-                        vouchers.map((voucher) => (
+                    {filteredVouchers.length > 0 ? (
+                        filteredVouchers.map((voucher) => (
                             <tr key={voucher.id}>
                                 <td style={{ border: '1px solid #ddd', padding: '6px', textAlign: 'center' }}>{voucher.id}</td>
                                 <td style={{ border: '1px solid #ddd', padding: '6px', textAlign: 'center' }}>{voucher.giamGia}</td>
@@ -77,7 +105,7 @@ function VoucherList({ onEdit }) {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="7" style={{ textAlign: 'center', padding: '10px' }}>Loading....</td>
+                            <td colSpan="7" style={{ textAlign: 'center', padding: '10px' }}>Không tìm thấy voucher nào</td>
                         </tr>
                     )}
                 </tbody>

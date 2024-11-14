@@ -89,9 +89,9 @@ function VoucherForm({ voucherToEdit, onSave }) {
                     </div>
                     <input
                         type="text"
-                        name="donhang"
-                        placeholder="Đơn hàng"
-                        value={voucher.donhang}
+                        name="user"
+                        placeholder="ID khách hàng"
+                        value={voucher.user}
                         onChange={handleChange}
                     />
                 </fieldset>
