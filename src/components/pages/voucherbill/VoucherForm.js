@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addVoucher, updateVoucher } from '../../services/voucherService';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './VoucherForm.css';
 
 function VoucherForm({ voucherToEdit, onSave }) {
@@ -35,15 +37,20 @@ function VoucherForm({ voucherToEdit, onSave }) {
 
         setError(''); // Xóa lỗi nếu hợp lệ
 
-        // Thêm hoặc cập nhật voucher
-        if (voucherToEdit) {
-            await updateVoucher(voucherToEdit.id, voucher);
-        } else {
-            await addVoucher(voucher);
-        }
+        try {
+            if (voucherToEdit) {
+                await updateVoucher(voucherToEdit.id, voucher);
+                toast.success('Cập nhật voucher thành công!');
+            } else {
+                await addVoucher(voucher);
+                toast.success('Thêm voucher thành công!');
+            }
 
-        onSave();
-        setVoucher({ giamGia: '', soLuong: '', ngaybatdau: '', ngayHetHan: '', user: '' });
+            onSave();
+            setVoucher({ giamGia: '', soLuong: '', ngaybatdau: '', ngayHetHan: '', user: '' });
+        } catch (error) {
+            toast.error('Có lỗi xảy ra khi xử lý voucher!');
+        }
     };
 
     return (
@@ -107,6 +114,17 @@ function VoucherForm({ voucherToEdit, onSave }) {
                     </button>
                 </div>
             </form>
+
+            {/* Toast container */}
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                closeOnClick
+                pauseOnHover
+                draggable
+                theme="light"
+            />
         </div>
     );
 }

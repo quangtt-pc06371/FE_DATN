@@ -123,3 +123,17 @@ th {
     font-size: 0.9em;
     margin-top: 5px;
 }
+.success-message {
+    color: green;
+    font-weight: bold;
+}
+
+.failure-message {
+    color: red;
+    font-weight: bold;
+}
+
+.error-message {
+    color: orange;
+    font-size: 14px;
+}
