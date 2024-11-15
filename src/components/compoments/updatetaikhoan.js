@@ -44,18 +44,18 @@ const Updataikhoan = () => {
         let valid = true;
         const errorcopy = { cmnd: '', hoTen: '', sdt: '' };
 
-        if (!hoTen.trim()) {
-            errorcopy.hoTen = 'Không được để trống';
-            valid = false;
-        }
-        if (!sdt.trim()) {
-            errorcopy.sdt = 'Không được để trống';
-            valid = false;
-        }
-        if (!cmnd.trim()) {
-            errorcopy.cmnd = 'Không được để trống';
-            valid = false;
-        }
+        // if (!hoTen.trim()) {
+        //     errorcopy.hoTen = 'Không được để trống';
+        //     valid = false;
+        // }
+        // if (!sdt.trim()) {
+        //     errorcopy.sdt = 'Không được để trống';
+        //     valid = false;
+        // }
+        // if (!cmnd.trim()) {
+        //     errorcopy.cmnd = 'Không được để trống';
+        //     valid = false;
+        // }
 
         seterror(errorcopy);
         return valid;
@@ -112,7 +112,7 @@ const Updataikhoan = () => {
         }
     };
 
-    const imagePreviewUrl = file ? URL.createObjectURL(file) : '';
+    const imagePreviewUrl = file ? URL.createObjectURL(file) : 'https://static.vecteezy.com/system/resources/previews/000/420/681/original/picture-icon-vector-illustration.jpg';
 
     return (
         <div>
@@ -178,14 +178,28 @@ const Updataikhoan = () => {
 
                         <div className="col-5 ms-3 mt-3 d-flex flex-column align-items-center">
     {imagePreviewUrl && (
-        <img
-            src={imagePreviewUrl}
-            alt="User Avatar"
-            className="profile-avatar bg-3"
-            style={{ width: '70%', height: '270px', borderRadius: '50%', objectFit: 'cover' }} // Điều chỉnh kích thước và hình dáng
-        />
+       <img
+       src={imagePreviewUrl }
+        
+       alt="User Avatar"
+       className="profile-avatar bg-3"
+       style={{
+           width: '40%',
+           height: '180px',
+           borderRadius: '50%',
+           objectFit: 'cover',
+           border: '2px solid #ccc' // Thêm viền để nổi bật ảnh hơn
+       }}
+   />
     )}
-    <label className="mt-2">Ảnh đại diện:</label>
+    <label className="mt-2">
+  {/* Ảnh đại diện: */}
+  {/* <img
+    src="https://static.vecteezy.com/system/resources/previews/000/420/681/original/picture-icon-vector-illustration.jpg"
+    // alt="Ảnh đại diện"
+    style={{ width: "50px", height: "50px" }}
+  /> */}
+</label>
     <input type="file" onChange={handleFileChange} className="mt-1" />
 </div>
 

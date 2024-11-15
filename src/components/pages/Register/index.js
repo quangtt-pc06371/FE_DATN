@@ -33,9 +33,9 @@ const Addtaikhoan = () => {
     if (!email) newErrors.email = "Email là bắt buộc";
     if (!matKhau) newErrors.matKhau = "Mật khẩu là bắt buộc";
     if (!sdt) newErrors.sdt = "Số điện thoại là bắt buộc";
-    if (!diachi) newErrors.diachi = "Địa chỉ là bắt buộc";
-    if (!cmnd) newErrors.cmnd = "CMND là bắt buộc";
-    if (!file) newErrors.file = "Vui lòng chọn ảnh đại diện";
+    // if (!diachi) newErrors.diachi = "Địa chỉ là bắt buộc";
+    // if (!cmnd) newErrors.cmnd = "CMND là bắt buộc";
+    // if (!file) newErrors.file = "Vui lòng chọn ảnh đại diện";
 
     // Nếu có lỗi, cập nhật state và không gửi form
     if (Object.keys(newErrors).length > 0) {

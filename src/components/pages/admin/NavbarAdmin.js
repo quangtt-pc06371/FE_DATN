@@ -53,7 +53,7 @@ const HeaderAdmin = () => {
       <nav className="navbar">
         <div className="container-fluid">
           <a className="navbar-brand ms-5" href="/sanpham">
-            <img src="/img/t.png" alt="" style={{ width: '150px', height: '120px' }} />
+            <img src="/z6031447719157_599da22d960ebff0ff9d68fd6ed25c41.jpg" alt="" style={{ width: '240px', height: '110px' }} />
           </a>
           <span className="navbar-text text-dark fs-5 d-flex align-items-center">
             <span className="rounded-circle border border-2 border-dark d-flex justify-content-center align-items-center" style={{ width: '40px', height: '40px' }}>
