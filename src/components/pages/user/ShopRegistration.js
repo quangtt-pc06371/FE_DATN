@@ -61,23 +61,33 @@ const ShopRegistration = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-  
+      setShopName("");
+      setShopDescription("");
+      setShopImage(null);
+      setPreviewUrl("");
+      setErrors({});
       if (response.status === 200 && response.data) {
         Swal.fire({
           icon: "success",
           title: "Đăng ký thành công",
           text: "Cửa hàng đã được đăng ký. Vui lòng chờ xét duyệt!",
         });
+        
+        
+      
   
-        // Reset form
+       
         setShopName("");
         setShopDescription("");
         setShopImage(null);
         setPreviewUrl("");
         setErrors({});
       }
+     
+
     } catch (error) {
       const errorMessage = error.response?.data?.error || "Đã xảy ra lỗi. Vui lòng thử lại.";
+console.log(error)
       Swal.fire({
         icon: "error",
         title: "Lỗi",
