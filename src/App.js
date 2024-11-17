@@ -17,6 +17,7 @@ import Login from "./components/pages/Login";
  import Updateuser2 from './components/compoments/updatetaikhoan';
  import Listtk from './components/compoments/Listtaikhoan';
  import Registergg from "./components/pages/logingoogle";
+ import Store from "./components/pages/Cuahang";
  import Address from "./components/pages/Diachi";
  import Index from "./components/pages/TrangChu";
 //  import {YourComponent} from './components/pages/Refe';
@@ -99,7 +100,7 @@ function App() {
 
         {/* <Route path="app" element={<Dangnhap/>} /> */}
         <Route path="login" element={<Login />} />
-       
+        <Route path="store" element={<Store />} />
         <Route path="listtaikhoan" element={<Listtk />} />
         <Route path="updateuser" element={<Updateuser2 />} />
         <Route path="profile" element={<Profile/>} />
