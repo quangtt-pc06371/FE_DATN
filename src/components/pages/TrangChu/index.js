@@ -53,12 +53,12 @@ const TrangChu = () => {
                                         </a>
                                     </li>
                                     <li>
-                                        <a className="dropdown-item" href="/dangky">
-                                            <i className="fa-solid fa-key"></i> Tạo Tài KHoản
+                                        <a className="dropdown-item" href="/profile">
+                                            <i className="fa-solid fa-key"></i> thông tin cá nhân
                                         </a>
                                     </li>
                                     <li>
-                                        <a className="dropdown-item" href="/dangky">
+                                        <a className="dropdown-item" href="/updateuser">
                                             <i className="fa-solid fa-key"></i> Tạo Tài KHoản
                                         </a>
                                     </li>
