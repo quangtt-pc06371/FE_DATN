@@ -48,6 +48,26 @@ const TrangChu = () => {
                                         </a>
                                     </li>
                                     <li>
+                                        <a className="dropdown-item" href="/register">
+                                            <i className="fa-solid fa-key"></i> Tạo Tài KHoản
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a className="dropdown-item" href="/dangky">
+                                            <i className="fa-solid fa-key"></i> Tạo Tài KHoản
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a className="dropdown-item" href="/dangky">
+                                            <i className="fa-solid fa-key"></i> Tạo Tài KHoản
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a className="dropdown-item" href="/dangky">
+                                            <i className="fa-solid fa-key"></i> Tạo Tài KHoản
+                                        </a>
+                                    </li>
+                                    <li>
                                         <a className="dropdown-item" href="/dangky">
                                             <i className="fa-solid fa-key"></i> Tạo Tài KHoản
                                         </a>

@@ -19,7 +19,7 @@ import ShopManagement from './components/pages/admin/ShopManagement';
 import ShopRegistration from './components/pages/user/ShopRegistration';
 import ShopUser from './components/pages/user/ShopUser';
 
-import Register from "./components/pages/Register";
+
 import Profile from "./components/pages/Profile/index";
 import Login from "./components/pages/Login";
 import TrangChu from "./components/pages/TrangChu";
@@ -32,7 +32,7 @@ import DanhSachSanPham from './components/pages/Danhsachsanpham';
 import DanhSachSanPhamKM from './components/pages/Danhsachchuongtrinhkm';
 import QuanLySanPhamKhuyenMai from './components/pages/Quanlysanphamkhuyenmai';
 
-
+import Register from "./components/pages/Register";
 import Updateuser2 from './components/compoments/updatetaikhoan';
 import Listtk from './components/compoments/Listtaikhoan';
 import Registergg from "./components/pages/logingoogle";
