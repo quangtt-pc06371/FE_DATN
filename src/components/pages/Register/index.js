@@ -50,20 +50,21 @@ const Addtaikhoan = () => {
     };
 
     try {
-      const token = cookies?.token;
-      if (!token) {
-        alert('Token không tồn tại, vui lòng đăng nhập lại.');
-        return;
-      }
+      // const token = cookies?.token;
+      // if (!token) {
+      //   alert('Token không tồn tại, vui lòng đăng nhập lại.');
+      //   return;
+      // }
       console.log(taiKhoan)
       if (file == null) {
         try {
           const taiKhoanResponse = await axios.post(
             `http://localhost:8080/api/taikhoan/user`,
             taiKhoan,
-            {
-              headers: { Authorization: `${token}` }
-            })
+            // {
+            //   headers: { Authorization: `${token}` }
+            // }
+          )
           console.log(taiKhoanResponse)
           alert("Tài khoản được tạo thành công!");
           if (taiKhoanResponse.status === 200) {
@@ -79,9 +80,9 @@ const Addtaikhoan = () => {
         const taiKhoanResponse = await axios.post(
           `http://localhost:8080/api/taikhoan/user`,
           taiKhoan,
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
+          // {
+          //   headers: { Authorization: `Bearer ${token}` }
+          // }
         );
 
         if (taiKhoanResponse.status === 201) {
@@ -92,10 +93,10 @@ const Addtaikhoan = () => {
             `http://localhost:8080/api/taikhoan/upload/${maTK}`,
             formData,
             {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'multipart/form-data',
-              }
+              // headers: {
+              //   Authorization: `Bearer ${token}`,
+              //   'Content-Type': 'multipart/form-data',
+              // }
             }
           );
 
