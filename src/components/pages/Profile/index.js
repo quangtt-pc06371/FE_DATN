@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useCookies } from "react-cookie";
+import { useNavigate } from 'react-router-dom';
 import './css.css';
 import { getProfile, loginApi } from "../../../config/Auth";
 
@@ -9,7 +10,7 @@ const Profile = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [cookies] = useCookies(['user']);
-  
+  const navigate = useNavigate();
   useEffect(() => {
     // Hàm để lấy dữ liệu profile từ API
     const fetchProfile = async () => {
@@ -79,7 +80,7 @@ const Profile = () => {
          className="profile-avatar"
        />
        <h3 className="profile-name"> {profile.hoten}</h3>
-       <button className="edit-profile-button">Chỉnh sửa hồ sơ</button>
+       <button className="edit-profile-button"onClick={() => navigate('/updateuser')}>Chỉnh sửa hồ sơ</button>
 
        <ul className="profile-menu">
          <li className="menu-item active">Hồ sơ của tôi</li>

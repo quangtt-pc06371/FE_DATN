@@ -65,7 +65,7 @@ const Addtaikhoan = () => {
               headers: { Authorization: `${token}` }
             })
           console.log(taiKhoanResponse)
-         
+          alert("Tài khoản được tạo thành công!");
           if (taiKhoanResponse.status === 200) {
             alert("Tài khoản được tạo thành công!");
           }

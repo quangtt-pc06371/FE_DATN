@@ -59,7 +59,7 @@ const TrangChu = () => {
                                     </li>
                                     <li>
                                         <a className="dropdown-item" href="/updateuser">
-                                            <i className="fa-solid fa-key"></i> Tạo Tài KHoản
+                                            <i className="fa-solid fa-key"></i> cập nhật tài khoản
                                         </a>
                                     </li>
                                     <li>
