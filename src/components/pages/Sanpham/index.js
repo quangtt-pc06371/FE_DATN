@@ -14,15 +14,29 @@ const SanPham = () => {
     const [danhMucDaChon, setDanhMucDaChon] = useState('');
     const noiDungTimKiem = location.state?.noiDungTimKiem || '';
 
-
+try {
+    
+} catch (error) {
+    
+}
     async function getSanPhamKhuyenMai() {
-        const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
-        setSanPhamKhuyenMaiForm(response.data);
+        try {
+            const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+            setSanPhamKhuyenMaiForm(response.data);
+        } catch (error) {
+            
+        }
+       
     }
 
     async function getDanhMuc() {
-        const response = await axios.get('http://localhost:8080/api/danhmuc');
-        setDanhMucForm(response.data);
+        try {
+            const response = await axios.get('http://localhost:8080/api/danhmuc');
+            setDanhMucForm(response.data);
+        } catch (error) {
+            console.log(error)
+        }
+       
     }
 
     async function hienThiSanPhamTheoDanhMuc(idDanhMuc, tenDanhMuc) {
@@ -34,11 +48,16 @@ const SanPham = () => {
     }
 
     async function hienThiSanPham() {
-        const url = `http://localhost:8080/api/sanpham`;
-        const response = await axios.get(url);
-        setData(response.data);
-        setDataOne(response.data)
-        setDanhMucDaChon('')
+        try {
+            const url = `http://localhost:8080/api/sanpham`;
+            const response = await axios.get(url);
+            setData(response.data);
+            setDataOne(response.data)
+            setDanhMucDaChon('')
+        } catch (error) {
+            console.log(error)
+        }
+       
     }
 
     async function hienThiSanPhamTheoTen() {
