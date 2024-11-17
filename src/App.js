@@ -76,6 +76,9 @@ export default function App() {
 
           <Route path='/sanphamkhuyenmai' element={<QuanLySanPhamKhuyenMai />} />
           <Route path='/sanphamkhuyenmai/:idSanPhamKhuyenMai' element={<QuanLySanPhamKhuyenMai />} />
+          <Route path="/quanlykhuyenmai" element={<QuanLykhuyenMai />} />
+          <Route path='/quanlykhuyenmai/:idKhuyenMai' element={<QuanLykhuyenMai />} />
+          <Route path='/danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
         </Route>
 
 
