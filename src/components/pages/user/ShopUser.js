@@ -26,7 +26,7 @@ const ShopUser = () => {
     axios
       .get("http://localhost:8080/api/shops/user", {
         headers: { Authorization: `Bearer ${token}` },
-      })
+      }) 
       .then((response) => {
         const fetchedShop = response.data;
         setShop(fetchedShop);
@@ -93,7 +93,7 @@ const ShopUser = () => {
           formData,
           {
             headers: {
-              Authorization: ` ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
