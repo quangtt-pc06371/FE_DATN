@@ -23,5 +23,15 @@ const getProfile = async () => {
 
   return res;
 };
+const postDucoment = async (data) => {
+  console.log(data)
+  const res = await request({
+    method: "POST",
+    path: "/api/sanpham",
+    data: data,
+  });
 
-export { loginApi, getProfile };
+  return res;
+};
+
+export { loginApi, getProfile,postDucoment };

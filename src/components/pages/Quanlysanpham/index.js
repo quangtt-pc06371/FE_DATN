@@ -6,6 +6,7 @@ import axios from 'axios';
 import { set } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { id } from 'date-fns/locale';
+import { postDucoment } from "../../../config/Auth";
 const QuanlySanPham = () => {
 
   const [formData, setFormData] = useState({
@@ -406,7 +407,8 @@ const QuanlySanPham = () => {
       moTa: formData.moTa,
       trangThai: true,
       shop: {
-        id: parseInt(formData.shop.id),
+        // id: parseInt(formData.shop.id),
+        id: 16,
       },
       danhMuc: {
         idDanhMuc: parseInt(formData.danhMuc.idDanhMuc),
@@ -434,6 +436,9 @@ const QuanlySanPham = () => {
     console.log('Dữ liệu gửi đi:', newData);
 
     try {
+      // const addData = await postDucoment(newData
+        
+      // )
       const addData = await axios.post('http://localhost:8080/api/sanpham', newData);
       const addedSkuIds = addData.data?.skus.map(sku => sku.idSku); // Lấy toàn bộ idSku
       console.log("Danh sách ID của các SKU:", addedSkuIds);

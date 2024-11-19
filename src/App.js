@@ -46,46 +46,58 @@ import { startTokenRefreshInterval } from "./components/pages/Refresh";
 export default function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route>
-        <Route path="/" element={<TrangChu />}>
-          <Route path="/category-management" element={<CategoryManagement />} />
-          <Route path="/shop-approval" element={<ShopApproval />} />
-          <Route path="/category" element={<CategoryManagement />} />
-          <Route path="/shop-management" element={<ShopManagement />} />
+      // <Route >
+      //   <Route  path="/" element={<TrangChu />}>
+      //     <Route path="/category-management" element={<CategoryManagement />} />
+      //     <Route path="/shop-approval" element={<ShopApproval />} />
+      //     <Route path="/category" element={<CategoryManagement />} />
+      //     <Route path="/shop-management" element={<ShopManagement />} />
+      //     <Route path="/shop-register" element={<ShopRegistration />} />
+      //     {/* <Route path='/' element={<SanPham />} /> */}
+      //     <Route path='/admin' element={<Admin />} />
+      //     <Route path='/chitietsanpham/:id' element={<ChiTietSanPham />} />         
+      //     <Route path="login" element={<Login />} />
+      //     <Route path="listtaikhoan" element={<Listtk />} />
+      //     <Route path="updateuser" element={<Updateuser2 />} />        
+      //     <Route path="register" element={<Register />} />
+      //     <Route path="registergg" element={<Registergg />} />
+      //     <Route path='/quanlysanpham' element={<QuanlySanPham />} />
+      //     <Route path='/sanpham/:idSanPham' element={<QuanlySanPham />} />
+      //     <Route path='/danhsachsanpham' element={<DanhSachSanPham />} />
+      //     <Route path='/danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
+      //     <Route path='/sanphamkhuyenmai' element={<QuanLySanPhamKhuyenMai />} />
+      //     <Route path='/sanphamkhuyenmai/:idSanPhamKhuyenMai' element={<QuanLySanPhamKhuyenMai />} />
+      //     <Route path="/quanlykhuyenmai" element={<QuanLykhuyenMai />} />
+      //     <Route path='/quanlykhuyenmai/:idKhuyenMai' element={<QuanLykhuyenMai />} />
+      //     <Route path='/danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
+      //     {/* <Route path="/profile" element={<Profile />}>
+      //      <Route path="/shop-user" element={<ShopUser />} /> 
+      //   </Route> */}
+        
+      //   </Route>
+        // <Route path="/profile" element={<Profile />}>
+        //    <Route path="/shop-user" element={<ShopUser />} /> 
+        // </Route>
 
-          <Route path="/shop-register" element={<ShopRegistration />} />
-
-          <Route path="/shop-user" element={<ShopUser />} />
-
-          <Route path='/' element={<SanPham />} />
-          <Route path='/admin' element={<Admin />} />
-          <Route path='/chitietsanpham/:id' element={<ChiTietSanPham />} />
-
-          {/* <Route path="app" element={<Dangnhap/>} /> */}
-          <Route path="login" element={<Login />} />
-
-          <Route path="listtaikhoan" element={<Listtk />} />
-          <Route path="updateuser" element={<Updateuser2 />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="register" element={<Register />} />
-          <Route path="registergg" element={<Registergg />} />
-
-          <Route path='/quanlysanpham' element={<QuanlySanPham />} />
-          <Route path='/sanpham/:idSanPham' element={<QuanlySanPham />} />
-          <Route path='/danhsachsanpham' element={<DanhSachSanPham />} />
-          <Route path='/danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
-
-          <Route path='/sanphamkhuyenmai' element={<QuanLySanPhamKhuyenMai />} />
-          <Route path='/sanphamkhuyenmai/:idSanPhamKhuyenMai' element={<QuanLySanPhamKhuyenMai />} />
-          <Route path="/quanlykhuyenmai" element={<QuanLykhuyenMai />} />
-          <Route path='/quanlykhuyenmai/:idKhuyenMai' element={<QuanLykhuyenMai />} />
-          <Route path='/danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
-        </Route>
-
-
-
-
+      // </Route>
+       <Route >
+       {/* Route công khai */}
+       <Route path="/" element={<TrangChu />}>
+       <Route index element={<SanPham />} />
+       <Route path="chitietsanpham/:id" element={<ChiTietSanPham />} />
+       <Route path="login" element={<Login />} />
+       <Route path="register" element={<Register />} />
+       <Route path='/quanlysanpham' element={<QuanlySanPham />} />
+       </Route>
+       {/* Route cho user */}
+        <Route path="profile" element={<Profile />}>
+             <Route path="updateuser" element={<Updateuser2 />} />
+            <Route path="shop-user" element={<ShopUser />} />
+            <Route path="shop-register" element={<ShopRegistration />} />
       </Route>
+
+      
+     </Route>
     )
   );
 
