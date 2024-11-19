@@ -80,7 +80,7 @@ const TrangChu = () => {
                 </nav>
                 <nav className="navbar">
                     <div className="container-fluid">
-                        <a className="navbar-brand ms-5" href="/sanpham">
+                        <a className="navbar-brand ms-5" href="/">
                             <img src="/img/t.png" alt="" style={{ width: '150px', height: '120px' }} /></a>
                         <span className="navbar-text text-dark fs-5 d-flex align-items-center">
                             <span className="rounded-circle border border-2 border-dark d-flex justify-content-center align-items-center" style={{ width: '40px', height: '40px' }}>

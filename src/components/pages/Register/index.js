@@ -18,7 +18,7 @@ const Addtaikhoan = () => {
   // const [error, setError] = useState('');
   const [errors, setErrors] = useState({});
 
-  const handleFileChange = (event) => {
+  const  handleFileChange = (event) => {
     setFile(event.target.files[0]);
   };
 

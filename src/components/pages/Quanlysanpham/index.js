@@ -11,7 +11,7 @@ const QuanlySanPham = () => {
   const [formData, setFormData] = useState({
     tenSanPham: '',
     moTa: '',
-    shop: { idShop: parseInt('') },
+    shop: { id: parseInt('') },
     danhMuc: { idDanhMuc: parseInt('') }
   }
   )
@@ -96,7 +96,7 @@ const QuanlySanPham = () => {
     if (name === "shop") {
       setFormData({
         ...formData,
-        shop: { idShop: parseInt(value) }
+        shop: { id: parseInt(value) }
       });
     } else if (name === "danhMuc") {
       setFormData({
@@ -233,7 +233,7 @@ const QuanlySanPham = () => {
     setFormData({
       tenSanPham: response.data.tenSanPham,
       moTa: response.data.moTa,
-      shop: { idShop: response.data.shop.idShop },
+      shop: { idShop: response.data.shop.id },
       danhMuc: { idDanhMuc: response.data.danhMuc.idDanhMuc }
     })
 
@@ -273,7 +273,7 @@ const QuanlySanPham = () => {
     setFormData({
       tenSanPham: '',
       moTa: '',
-      shop: { idShop: '' },
+      shop: { id: '' },
       danhMuc: { idDanhMuc: '' },
     })
     setInputs([{
@@ -371,7 +371,7 @@ const QuanlySanPham = () => {
 
   console.log(skusList)
   async function handleAddSanPham() {
-    if (!formData.tenSanPham.trim() || !formData.moTa || !formData.shop.idShop || !formData.danhMuc.idDanhMuc) {
+    if (!formData.tenSanPham.trim() || !formData.moTa || !formData.shop.id || !formData.danhMuc.idDanhMuc) {
       alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
       return;
     }
@@ -406,7 +406,7 @@ const QuanlySanPham = () => {
       moTa: formData.moTa,
       trangThai: true,
       shop: {
-        idShop: parseInt(formData.shop.idShop),
+        id: parseInt(formData.shop.id),
       },
       danhMuc: {
         idDanhMuc: parseInt(formData.danhMuc.idDanhMuc),
@@ -480,7 +480,7 @@ const QuanlySanPham = () => {
       moTa: formData.moTa,
 
       shop: {
-        idShop: parseInt(formData.shop.idShop),
+        id: parseInt(formData.shop.id),
       },
       danhMuc: {
         idDanhMuc: parseInt(formData.danhMuc.idDanhMuc),
@@ -563,12 +563,12 @@ const QuanlySanPham = () => {
                 <select
                   className="form-control"
                   name="shop"
-                  value={formData.shop.idShop}
+                  value={formData.shop.id}
                   onChange={handleChange}
                 >
                   <option value="">Chọn Shop</option>
                   {shopForm.map((s) => (
-                    <option key={s.idShop} value={s.idShop}>{s.shopName}</option>
+                    <option key={s.id} value={s.id}>{s.shopName}</option>
                   ))}
                 </select>
               </div>

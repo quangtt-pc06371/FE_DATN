@@ -3,15 +3,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
-
+import Cookies from "js-cookie";
 export default function ChiTietSanPham() {
-    
+
     const [data, setData] = useState({
         tenSanPham: '',
         moTa: '',
-        shop: { idShop: '' },
-        danhMuc: { idDanhMuc: '' }
+        shop: {},
+        danhMuc: {}
     });
+    console.log(data)
     const [skusList, setSkusList] = useState([]);
     const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
     const { id } = useParams();
@@ -39,8 +40,8 @@ export default function ChiTietSanPham() {
         setData({
             tenSanPham: response.data.tenSanPham,
             moTa: response.data.moTa,
-            shop: { idShop: response.data.shop.idShop },
-            danhMuc: { idDanhMuc: response.data.danhMuc.idDanhMuc }
+            shop: response.data.shop,
+            danhMuc: response.data.danhMuc
         });
 
         setSkusList(
@@ -69,33 +70,48 @@ export default function ChiTietSanPham() {
         });
     };
 
+
+
     async function handleAddGioHang() {
         const sku = getSku();
-        
+        const token = Cookies.get('token');
+        console.log(token)
+
         if (!sku) {
             alert('Vui lòng chọn đầy đủ các tùy chọn thuộc tính trước khi thêm vào giỏ hàng.');
             return;
         }
-        console.log(sku)
-        const dataToSent = {
-            soLuong: soLuong,
-            shop: { idShop: parseInt(data.shop.idShop) },
-            sku: { idSku: sku.idSku },
-            taiKhoan: { id: 1 }
 
+        console.log(sku);
+
+        if (!token) {
+            alert('Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.');
+            return;
         }
-        console.log(dataToSent)
+
+        const dataToSent = {
+            soLuongMua: soLuong,
+            giaMua: soLuong * sku.giaSanPham,
+            trangThai: true,
+            skuEntity: { idSku: sku.idSku }
+        };
+
+        console.log(dataToSent);
+
         try {
-            const addData = await axios.post('http://localhost:8080/api/giohang', dataToSent);
+
+            const addData = await axios.post('http://localhost:8080/api/chitietgiohang', dataToSent, {
+                headers: {
+                    'Authorization': token
+                }
+            });
             alert('Thêm vào giỏ hàng thành công!', addData.data);
         } catch (error) {
             alert('Có lỗi xảy ra khi thêm vào giỏ hàng.');
             console.error(error);
         }
-
-
-
     }
+
 
     // console.log(skusList)
     useEffect(() => {
@@ -125,14 +141,14 @@ export default function ChiTietSanPham() {
 
         khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
     }
-   
-    
+
+
     const tongSoLuong = skuGet ? skuGet.soLuong : skusList[0]?.soLuong;
 
-    
 
 
-    
+
+
 
     const handleGiaTri = (tieuDe, noiDungTieuDe) => {
         setGiaTriDaChon(thuocTinhDaChon => ({
@@ -145,10 +161,10 @@ export default function ChiTietSanPham() {
     const handleThumbnailClick = (image) => {
         setSelectedImage(image); // Cập nhật ảnh lớn khi người dùng click vào thumbnail
     };
-   
+
     return (
         <div className="container mt-5 ">
-            <div className="row my-3 m-5 border p-3 mb-5 shadow-sm">
+            <div className="row my-3 m-5 border p-3 mb-5 shadow-sm rounded-3">
                 <div className="col-md-4">
                     <div className="card" style={{ width: '18rem' }}>
                         <div className='card-header'>
@@ -176,6 +192,7 @@ export default function ChiTietSanPham() {
                                     ))
                                 ))}
                             </div>
+
                         </div>
 
 
@@ -183,7 +200,26 @@ export default function ChiTietSanPham() {
                         <div className="card-footer text-muted">
                             <small>Xem thêm ưu điểm & lưu ý của sản phẩm</small>
                         </div>
+
+
                     </div>
+
+                    <div className="mt-3 card shadow-sm p-3 d-flex flex-row align-items-center gap-3" style={{ width: '18rem' }}>
+                        <img
+                            src={data.shop.shopImage}
+                            alt={data.shop.shopImage}
+                            className="rounded-circle border"
+                            style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+                        />
+                        <div>
+                            <h5 className="mb-2 fw-bold">{data.shop.shopName}</h5>
+                            <a className="btn btn-outline-primary btn-sm" href={`/shop/${data.shop.id}`}>
+                                Xem Shop
+                            </a>
+                        </div>
+                    </div>
+
+
                 </div>
                 <div className="col-md-8">
                     <h2>🔥 NEW ARRIVAL 🔥</h2>
@@ -274,6 +310,8 @@ export default function ChiTietSanPham() {
                     <button className="btn btn-primary">Mua Ngay</button>
                 </div>
             </div>
+            
+            
         </div>
     );
 }

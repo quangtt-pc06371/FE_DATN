@@ -32,7 +32,7 @@ import QuanlySanPham from './components/pages/Quanlysanpham';
 import DanhSachSanPham from './components/pages/Danhsachsanpham';
 import DanhSachSanPhamKM from './components/pages/Danhsachchuongtrinhkm';
 import QuanLySanPhamKhuyenMai from './components/pages/Quanlysanphamkhuyenmai';
-
+import Admin from "./components/pages/admin/NavbarAdmin";
 import Register from "./components/pages/Register";
 import Updateuser2 from './components/compoments/updatetaikhoan';
 import Listtk from './components/compoments/Listtaikhoan';
@@ -56,11 +56,14 @@ export default function App() {
 
           <Route path="/shop-register" element={<ShopRegistration />} />
 
+
           <Route path="/shop-user" element={<ShopUser />} />
           <Route path="/shop/:shopId" element={<ShopDetail />} />
 
 
+
           <Route path='/' element={<SanPham />} />
+          <Route path='/admin' element={<Admin />} />
           <Route path='/chitietsanpham/:id' element={<ChiTietSanPham />} />
 
           {/* <Route path="app" element={<Dangnhap/>} /> */}
@@ -79,6 +82,9 @@ export default function App() {
 
           <Route path='/sanphamkhuyenmai' element={<QuanLySanPhamKhuyenMai />} />
           <Route path='/sanphamkhuyenmai/:idSanPhamKhuyenMai' element={<QuanLySanPhamKhuyenMai />} />
+          <Route path="/quanlykhuyenmai" element={<QuanLykhuyenMai />} />
+          <Route path='/quanlykhuyenmai/:idKhuyenMai' element={<QuanLykhuyenMai />} />
+          <Route path='/danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
         </Route>
 
 

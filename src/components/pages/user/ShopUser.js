@@ -26,18 +26,18 @@ const ShopUser = () => {
     axios
       .get("http://localhost:8080/api/shops/user", {
         headers: { Authorization: `Bearer ${token}` },
-      })
+      }) 
       .then((response) => {
         const fetchedShop = response.data;
         setShop(fetchedShop);
         setUpdatedShop(fetchedShop);
         setIsApproved(fetchedShop.isApproved);
-        setImagePreviewUrl(fetchedShop.shopImage); // Hiển thị ảnh hiện tại
+        setImagePreviewUrl(fetchedShop.shopImage);
         setLoading(false);
       })
       .catch((error) => {
         console.error("Lỗi khi lấy thông tin cửa hàng:", error);
-        setLoading(false);
+        setLoading(false); 
         if (error.response && error.response.status === 403) {
           Swal.fire("Lỗi", "Bạn chưa có cửa hàng", "error");
         } else {
@@ -87,9 +87,7 @@ const ShopUser = () => {
       // Thêm file ảnh nếu có
       if (shopImage) {
         formData.append("shopImageFile", shopImage);
-      }
-    
-      try {
+      }try {
         const response = await axios.put(
           `http://localhost:8080/api/shops/user/${shop.id}`,
           formData,
@@ -172,8 +170,7 @@ const ShopUser = () => {
                       <input
                         type="file"
                         className="form-control"
-                        onChange={handleImageChange}
-                      />
+                        onChange={handleImageChange} />
                     </div>
                     <button onClick={handleSaveChanges} className="btn btn-success">
                       Lưu
@@ -204,4 +201,4 @@ const ShopUser = () => {
   );
 };
 
-export default ShopUser;
+export default ShopUser

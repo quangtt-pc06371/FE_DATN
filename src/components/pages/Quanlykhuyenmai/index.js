@@ -7,13 +7,12 @@ import { format } from "date-fns";
 const QuanLyKhuyenMai = () => {
     const [formData, setFormData] = useState({
         tenKhuyenMai: '',
-        soLuongKhuyenMai: '',
         giaTriKhuyenMai: '',
         ngayBatDau: '',
         ngayKetThuc: '',
         active: true,
         ghiChu: '',
-        shop: { idShop: '' }
+        shop: { id: '' }
     }
     );
     const [shopForm, setShopForm] = useState([]);
@@ -48,13 +47,13 @@ const QuanLyKhuyenMai = () => {
     async function handleAdd() {
         const dataToSent = {
             tenKhuyenMai: formData.tenKhuyenMai,
-            soLuongKhuyenMai: formData.soLuongKhuyenMai,
+         
             giaTriKhuyenMai: formData.giaTriKhuyenMai,
             ngayBatDau: formData.ngayBatDau,
             ngayKetThuc: formData.ngayKetThuc,
             active: true,
             ghiChu: formData.ghiChu,
-            shop: { idShop: parseInt(formData.shop) }
+            shop: { id: parseInt(formData.shop) }
         }
         const addData = await axios.post('http://localhost:8080/api/khuyenmai', dataToSent);
         alert('Thêm thành công', addData.data);
@@ -62,18 +61,18 @@ const QuanLyKhuyenMai = () => {
 
 
     }
-
+console.log(shopForm)
     async function handleUpdate() {
         const dataToUpdate = {
             tenKhuyenMai: formData.tenKhuyenMai,
-            soLuongKhuyenMai: formData.soLuongKhuyenMai,
             giaTriKhuyenMai: formData.giaTriKhuyenMai,
             ngayBatDau: formData.ngayBatDau,
             ngayKetThuc: formData.ngayKetThuc,
             active: true,
             ghiChu: formData.ghiChu,
-            shop: { idShop: parseInt(formData.shop) }
+            shop: { id: parseInt(formData.shop.id) }
         }
+        console.log(dataToUpdate)
         const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai';
         await axios.put(apiKhuyenMai + '/' + idKhuyenMai, dataToUpdate);
         alert('Sửa thành công');
@@ -88,7 +87,7 @@ const QuanLyKhuyenMai = () => {
             ngayBatDau: '',
             ngayKetThuc: '',
             ghiChu: '',
-            shop: { idShop: '' }
+            shop: { id: '' }
         })
     }
     function getFormatDate(dateString) {
@@ -108,9 +107,9 @@ const QuanLyKhuyenMai = () => {
                     <div className="col-md-8 offset-md-2">
                         <div className="card shadow-sm">
                             <div className="card-header d-flex justify-content-between align-items-center">
-                                <h5 className="card-title mb-0">Quản lý Khuyến Mãi</h5>
+                                <h2 className="card-title mb-0 text-primary">Quản lý Khuyến Mãi</h2>
                                 <a
-                                    className="btn btn-danger"
+                                    className="btn btn-primary"
                                     href="/danhsachkhuyenmai"
                                 >
                                     Danh Sách Khuyến Mãi
@@ -128,17 +127,7 @@ const QuanLyKhuyenMai = () => {
                                         onChange={handleChange}
                                     />
                                 </div>
-                                <div className="mb-3">
-                                    <label htmlFor="soLuong" className="form-label">Số Lượng Khuyến Mãi:</label>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        placeholder="Nhập số lượng"
-                                        name="soLuongKhuyenMai"
-                                        value={formData.soLuongKhuyenMai}
-                                        onChange={handleChange}
-                                    />
-                                </div>
+                          
                                 <div className="mb-3">
                                     <label htmlFor="giaTriKhuyenMai" className="form-label">Giá Trị Khuyến Mãi (Giảm giá %):</label>
                                     <input
@@ -187,12 +176,12 @@ const QuanLyKhuyenMai = () => {
                                     <select
                                         className="form-control"
                                         name="shop"
-                                        value={formData.shop.idShop}
+                                        value={formData.shop.id}
                                         onChange={handleChange}
                                     >
                                         <option value="">Chọn Shop</option>
                                         {shopForm.map((s) => (
-                                            <option key={s.idShop} value={s.idShop}>{s.shopName}</option>
+                                            <option key={s.id} value={s.id}>{s.shopName}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -201,14 +190,14 @@ const QuanLyKhuyenMai = () => {
                                         <>
                                             <button
                                                 type="button"
-                                                className="btn btn-primary me-3"
+                                                className="btn btn-primary me-3 form-control"
                                                 onClick={() => handleAdd()}
                                             >
                                                 Lưu
                                             </button>
                                             <button
                                                 type="button"
-                                                className="btn btn-secondary"
+                                                className="btn btn-secondary form-control mt-2"
                                                 onClick={handleResetData}
                                             >
                                                 Hủy
@@ -218,14 +207,14 @@ const QuanLyKhuyenMai = () => {
                                         <>
                                             <button
                                                 type="button"
-                                                className="btn btn-primary me-3"
+                                                className="btn btn-primary me-3 form-control"
                                                 onClick={handleUpdate}
                                             >
                                                 Cập nhật
                                             </button>
                                             <button
                                                 type="button"
-                                                className="btn btn-secondary"
+                                                className="btn btn-secondary form-control mt-2"
                                                 onClick={handleResetData}
                                             >
                                                 Hủy

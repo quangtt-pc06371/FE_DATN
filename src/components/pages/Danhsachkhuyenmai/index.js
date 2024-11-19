@@ -20,11 +20,11 @@ export default function DanhSachkhuyenMai() {
     }
 
     async function handleDelete(id) {
-        const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai';
-        await axios.delete(apiKhuyenMai + '/' + id);
+        const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai/updatetrangthai';
+        await axios.put(apiKhuyenMai + '/' + id);
+        alert("Khuyến mãi đã được Xóa");
         hienThi();
-        alert("Xóa thành công")
-    }
+      }
 
     useEffect(() => {
         hienThi();
@@ -35,7 +35,7 @@ export default function DanhSachkhuyenMai() {
             <div className="card shadow" style={{ maxWidth: '900px', width: '100%' }}>
                 <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
                     <h2 className="mb-0">Danh Sách Khuyến Mãi</h2>
-                    <a href="/khuyenmai/them" className="btn btn-success">Thêm Khuyến Mãi</a>
+                    <a href="/quanlykhuyenmai" className="btn btn-success">Thêm Khuyến Mãi</a>
                 </div>
                 <div className="card-body">
                     <table className="table table-hover">
@@ -43,7 +43,6 @@ export default function DanhSachkhuyenMai() {
                             <tr>
                                 <th>ID</th>
                                 <th>Tên Khuyến Mãi</th>
-                                <th>Số Lượng</th>
                                 <th>Giá Trị (%)</th>
                                 <th>Ngày Bắt Đầu</th>
                                 <th>Ngày Kết Thúc</th>
@@ -55,10 +54,10 @@ export default function DanhSachkhuyenMai() {
                         </thead>
                         <tbody>
                             {data.map(khuyenMai => (
-                                <tr key={khuyenMai.idKhuyenMai}>
+                                khuyenMai.active === false ? null : (
+                                    <tr key={khuyenMai.idKhuyenMai}>
                                     <td>{khuyenMai.idKhuyenMai}</td>
                                     <td>{khuyenMai.tenKhuyenMai}</td>
-                                    <td>{khuyenMai.soLuongKhuyenMai}</td>
                                     <td>{khuyenMai.giaTriKhuyenMai}%</td>
                                     <td>{getFormatDate(khuyenMai.ngayBatDau)}</td>
                                     <td>{getFormatDate(khuyenMai.ngayKetThuc)}</td>
@@ -70,6 +69,7 @@ export default function DanhSachkhuyenMai() {
                                         <button className="btn btn-danger" onClick={() => handleDelete(khuyenMai.idKhuyenMai)}>Xóa</button>
                                     </td>
                                 </tr>
+                                )
                             ))}
                         </tbody>
                     </table>

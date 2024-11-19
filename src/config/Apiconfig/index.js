@@ -12,6 +12,7 @@ const request = async ({
 }) => {
   try {
     // const cookie = new Cookies();
+    
     const token = Cookies.get('token'); 
     // console.log(token);
     const res = await axios({
