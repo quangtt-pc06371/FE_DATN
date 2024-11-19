@@ -55,7 +55,7 @@ export default function App() {
 
           <Route path="/shop-register" element={<ShopRegistration />} />
 
-          <Route path="/shop-user" element={<ShopUser />} />
+          <Route path="/shopuser" element={<ShopUser />} />
 
           <Route path='/' element={<SanPham />} />
           <Route path='/admin' element={<Admin />} />
