@@ -18,6 +18,7 @@ import ShopManagement from './components/pages/admin/ShopManagement';
 
 import ShopRegistration from './components/pages/user/ShopRegistration';
 import ShopUser from './components/pages/user/ShopUser';
+import ShopDetail from './components/pages/user/ShopDetail/ShopDetail';
 
 
 import Profile from "./components/pages/Profile/index";
@@ -56,6 +57,8 @@ export default function App() {
           <Route path="/shop-register" element={<ShopRegistration />} />
 
           <Route path="/shop-user" element={<ShopUser />} />
+          <Route path="/shop/:shopId" element={<ShopDetail />} />
+
 
           <Route path='/' element={<SanPham />} />
           <Route path='/chitietsanpham/:id' element={<ChiTietSanPham />} />
