@@ -3,9 +3,9 @@ import axios from 'axios';
 import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router-dom";
 import './css.css';
-import { getProfile, loginApi } from "../../../config/Auth";
+import { getProfile, loginApi } from "../../config//Auth";
 
-const Profile = () => {
+const User = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -73,28 +73,30 @@ const Profile = () => {
   //     </div>
   //   </div>
      <div className="profile-container">
-     {/* <div className="profile-sidebar">
+     <div className="profile-sidebar">
        <img
          src={profile.anh}
          alt="User Avatar"
          className="profile-avatar"
        />
        <h3 className="profile-name"> {profile.hoten}</h3>
-       <button className="edit-profile-button"onClick={() => navigate('/updateuser')}>Chỉnh sửa hồ sơ</button>
+       <button className="edit-profile-button"onClick={() => navigate('/user/updateuser')}>Chỉnh sửa hồ sơ</button>
 
        <ul className="profile-menu">
-         <li className="menu-item active">Hồ sơ của tôi</li>
+       {/* <a href="/user/profile"><li className="menu-item">Đăng ký shop</li></a> */}
+       <a href="/user/profile"> <li className="menu-item"> thông tin cá nhân</li></a>
          <li className="menu-item">Đơn hàng</li>
          <li className="menu-item">Địa chỉ</li>
          <li className="menu-item">Mã giảm giá</li>
-         <a href="/shop-user"><li className="menu-item">Đăng ký shop</li></a>
+         <a href="/user/shop-user"><li className="menu-item"> shop</li></a>
+         <a href="/user/shop-register"><li className="menu-item">Đăng ký shop</li></a>
 
        </ul>
-     </div> */}
+     </div>
 
      <div className="profile-content">
-     {/* <Outlet /> */}
-       <h2>Thông tin cá nhân</h2>
+     <Outlet />
+       {/* <h2>Thông tin cá nhân</h2>
        <div className="profile-info">
          <div className="info-row">
            <label>Tên:</label>
@@ -116,7 +118,7 @@ const Profile = () => {
            <label>căn cước công dân:</label>
            <span> {profile.cmnd}</span>
          </div>
-       </div>
+       </div> */}
      </div>
 
    </div>
@@ -124,4 +126,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default  User

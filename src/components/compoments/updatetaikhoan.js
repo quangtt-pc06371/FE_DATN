@@ -75,7 +75,8 @@ const Updataikhoan = () => {
                     await axios.put(`http://localhost:8080/api/taikhoan/update`, taikhoan, {
                         headers: { Authorization: ` ${token}` },
                     });
-                    navigate('/listtaikhoan');
+                    // navigate('/listtaikhoan');
+                    alert(" sửa thành công")
                 } catch (error) {
                     console.error(error);
                 }
@@ -102,7 +103,8 @@ const Updataikhoan = () => {
                           }
                       
                     );
-                    navigate('/listtaikhoan');
+                    // navigate('/listtaikhoan');
+                    alert(" sửa thành công")
                 } catch (error) {
                     console.error(error);
                 }

@@ -20,8 +20,10 @@ import ShopRegistration from './components/pages/user/ShopRegistration';
 import ShopUser from './components/pages/user/ShopUser';
 
 
+import User from "./components/userpage";
 import Profile from "./components/pages/Profile/index";
 import Login from "./components/pages/Login";
+import Logout from "./components/pages/logout";
 import TrangChu from "./components/pages/TrangChu";
 import SanPham from './components/pages/Sanpham';
 import ChiTietSanPham from './components/pages/Chitietsanpham';
@@ -80,21 +82,24 @@ export default function App() {
         // </Route>
 
       // </Route>
-       <Route >
-       {/* Route công khai */}
+      <Route>
+     
        <Route path="/" element={<TrangChu />}>
        <Route index element={<SanPham />} />
        <Route path="chitietsanpham/:id" element={<ChiTietSanPham />} />
        <Route path="login" element={<Login />} />
        <Route path="register" element={<Register />} />
-       <Route path='/quanlysanpham' element={<QuanlySanPham />} />
-       </Route>
-       {/* Route cho user */}
-        <Route path="profile" element={<Profile />}>
+       <Route path='quanlysanpham' element={<QuanlySanPham />} />
+       <Route path="Logout" element={<Logout />} />
+       <Route path="user/" element={<User />}>
              <Route path="updateuser" element={<Updateuser2 />} />
+             <Route path="profile" element={<Profile />} />
             <Route path="shop-user" element={<ShopUser />} />
             <Route path="shop-register" element={<ShopRegistration />} />
       </Route>
+       </Route>
+      
+       
 
       
      </Route>

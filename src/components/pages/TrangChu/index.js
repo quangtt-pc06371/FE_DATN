@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate ,NavLink} from "react-router-dom";
+import { useCookies } from "react-cookie";
+import Cookies from "js-cookie";
 import { Carousel } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';  // Import Bootstrap JS
@@ -7,17 +9,36 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from "axios";
 
 const TrangChu = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const [noiDungTimKiem, setNoidungTimKiem] = useState('');
     const navigate = useNavigate();
-
+    const [, , removeCookie] = useCookies(['token','refreshToken'])
+    console.log(typeof removeCookie);
+   
 
     const handleSearch = (e) => {
         e.preventDefault();
         navigate('/', { state: { noiDungTimKiem } });
     };
 
+    
+   
+    const handleRemoveCookie = () => {
+        removeCookie('token', { path: 'http://localhost:3000/' });
+    removeCookie('refreshToken', { path:'http://localhost:3000/' });
+        alert("Đăng xuất thành công");
+        navigate('/');
+    };
+ 
 
+useEffect(() => {
+
+
+    const token = Cookies.get('token'); 
+   
+    setIsLoggedIn(!!token);
+}, [ Cookies.get('token')]);
     return (
         <>
             <header>
@@ -41,35 +62,38 @@ const TrangChu = () => {
                             </button>
                             <ul className="dropdown-menu">
 
-                                <>
-                                    <li>
-                                        <a className="dropdown-item" href="/login">
-                                            <i className="fa-regular fa-face-smile-beam "></i> Đăng Nhập
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="/register">
-                                            <i className="fa-solid fa-key"></i> Tạo Tài KHoản
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="/profile">
-                                            <i className="fa-solid fa-key"></i> thông tin cá nhân
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="/updateuser">
-                                            <i className="fa-solid fa-key"></i> cập nhật tài khoản
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="/shop-register">
-                                            <i className="fa-solid fa-key"></i> đăng kí shop
-                                        </a>
-                                    </li>
-                                   
-                                </>
-
+                            {!isLoggedIn ? (
+            <>
+                <li>
+                    <NavLink className="dropdown-item" to="/login">
+                        <i className="fa-regular fa-face-smile-beam "></i> Đăng Nhập
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink className="dropdown-item" to="/register">
+                        <i className="fa-solid fa-key"></i> Tạo Tài Khoản
+                    </NavLink>
+                </li>
+            </>
+        ) : (
+            <>
+                <li>
+                    <NavLink className="dropdown-item" to="/user/profile">
+                        <i className="fa-solid fa-user"></i> Thông Tin Cá Nhân
+                    </NavLink>
+                </li>
+              
+                <li>
+                    <button
+                        className="btn btn-secondary dropdown-item"
+                        type="button"
+                        onClick={handleRemoveCookie}
+                    >
+                        <i className="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+                    </button>
+                </li>
+            </>
+        )}
 
 
 
