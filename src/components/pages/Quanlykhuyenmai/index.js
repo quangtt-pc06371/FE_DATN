@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
+import Cookies from "js-cookie";
 const QuanLyKhuyenMai = () => {
     const [formData, setFormData] = useState({
         tenKhuyenMai: '',
@@ -43,7 +44,7 @@ const QuanLyKhuyenMai = () => {
     function handleChange(e) {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
-
+    const token = Cookies.get('token');
     async function handleAdd() {
         const dataToSent = {
             tenKhuyenMai: formData.tenKhuyenMai,
@@ -53,9 +54,13 @@ const QuanLyKhuyenMai = () => {
             ngayKetThuc: formData.ngayKetThuc,
             active: true,
             ghiChu: formData.ghiChu,
-            shop: { id: parseInt(formData.shop) }
+        
         }
-        const addData = await axios.post('http://localhost:8080/api/khuyenmai', dataToSent);
+        const addData = await axios.post('http://localhost:8080/api/khuyenmai', dataToSent, {
+            headers: {
+                'Authorization': token
+            }
+        });
         alert('Thêm thành công', addData.data);
         handleResetData();
 
@@ -171,20 +176,7 @@ console.log(shopForm)
                                         onChange={handleChange}
                                     ></textarea>
                                 </div>
-                                <div className="mb-3">
-                                    <label htmlFor="">Shop khuyến mãi:</label>
-                                    <select
-                                        className="form-control"
-                                        name="shop"
-                                        value={formData.shop.id}
-                                        onChange={handleChange}
-                                    >
-                                        <option value="">Chọn Shop</option>
-                                        {shopForm.map((s) => (
-                                            <option key={s.id} value={s.id}>{s.shopName}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                               
                                 <div>
                                     {edit ? (
                                         <>

@@ -12,6 +12,7 @@ export default function ChiTietSanPham() {
         shop: {},
         danhMuc: {}
     });
+    
     console.log(data)
     const [skusList, setSkusList] = useState([]);
     const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
@@ -163,7 +164,8 @@ export default function ChiTietSanPham() {
     };
 
     return (
-        <div className="container mt-5 ">
+        <main >
+<div className="container mt-5 " >
             <div className="row my-3 m-5 border p-3 mb-5 shadow-sm rounded-3">
                 <div className="col-md-4">
                     <div className="card" style={{ width: '18rem' }}>
@@ -213,7 +215,7 @@ export default function ChiTietSanPham() {
                         />
                         <div>
                             <h5 className="mb-2 fw-bold">{data.shop.shopName}</h5>
-                            <a className="btn btn-outline-primary btn-sm" href={`/shop/${data.shop.id}`}>
+                            <a className="btn btn-outline-primary btn-sm" href={`/shopsanpham/${data.shop.id}`}>
                                 Xem Shop
                             </a>
                         </div>
@@ -313,5 +315,7 @@ export default function ChiTietSanPham() {
             
             
         </div>
+        </main>
+        
     );
 }
