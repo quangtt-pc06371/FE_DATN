@@ -61,7 +61,7 @@ export default function ShopSanPham() {
             const apiShop = 'http://localhost:8080/api/sanpham/shop';
             const response = await axios.get(apiShop + '/' + idShopSanPham + '/danhmuc/' + idDanhMuc);
             setData(response.data);
-            setDataOne(response.data)
+            
             setDanhMucDaChon(tenDanhMuc);
         } catch (error) {
             console.log(error)
@@ -121,8 +121,8 @@ export default function ShopSanPham() {
 
     console.log(data)
     // Tính tổng số lượng SKU trong tất cả các sản phẩm
-    const tongSanPham = data.flatMap(sanpham => sanpham.skus)
-    .reduce((tong, sku) => tong + sku.soLuong, 0)
+    const tongSanPham = dataOne.length
+    
     console.log(tongSanPham)
 
 
@@ -133,13 +133,13 @@ export default function ShopSanPham() {
         <div className="container mt-5">
             <div className="card p-3 d-flex flex-row align-items-center">
                 <img
-                    src={shopSanPham.shopImage || "https://via.placeholder.com/80"}
-                    alt={shopSanPham.shopName || "Shop Image"}
+                    src={shopSanPham.shopImage }
+                    alt={shopSanPham.shopName }
                     className="rounded-circle border"
-                    style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+                    style={{ width: '200px', height: '200px', objectFit: 'cover' }}
                 />
                 <div className="ms-3">
-                    <h5 className="mb-2 fw-bold">{shopSanPham.shopName}</h5>
+                    <h1 className="mb-2 fw-bold">{shopSanPham.shopName}</h1>
                     <p className="text-muted">{shopSanPham.shopDescription}</p>
                     <h4>Sản Phẩm: {tongSanPham}</h4>
                 </div>
@@ -227,7 +227,7 @@ export default function ShopSanPham() {
                                 khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
                             }
                             const firstSku = sanPham.skus?.[0];
-                            const firstImage = firstSku?.hinhanhs?.[0];
+                            const firstImage = firstSku?.hinhanh;
                             return (
                                 sanPham.trangThai === false ? null : (
                                     <div key={sanPham.idSanPham} className="col-md-3 mb-3">

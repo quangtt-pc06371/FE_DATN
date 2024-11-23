@@ -13,12 +13,7 @@ const SanPham = () => {
     const [sapXep, setSapXep] = useState('');
     const [danhMucDaChon, setDanhMucDaChon] = useState('');
     const noiDungTimKiem = location.state?.noiDungTimKiem || '';
-
-try {
-    
-} catch (error) {
-    
-}
+ console.log(data)
     async function getSanPhamKhuyenMai() {
         try {
             const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
@@ -221,7 +216,7 @@ console.log(danhMucDaChon)
                                     khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
                                 }
                                 const firstSku = sanPham.skus?.[0];
-                                const firstImage = firstSku?.hinhanhs?.[0];
+                                const firstImage = firstSku?.hinhanh;
                                 return (
                                      sanPham.trangThai === false ? null : (
                                     <div key={sanPham.idSanPham} className="col-md-3 mb-3">

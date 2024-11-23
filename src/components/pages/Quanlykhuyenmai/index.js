@@ -46,27 +46,52 @@ const QuanLyKhuyenMai = () => {
     }
     const token = Cookies.get('token');
     async function handleAdd() {
-        const dataToSent = {
-            tenKhuyenMai: formData.tenKhuyenMai,
-         
-            giaTriKhuyenMai: formData.giaTriKhuyenMai,
-            ngayBatDau: formData.ngayBatDau,
-            ngayKetThuc: formData.ngayKetThuc,
-            active: true,
-            ghiChu: formData.ghiChu,
-        
+        // Kiểm tra bỏ trống các trường
+        if (
+            !formData.tenKhuyenMai.trim() ||
+            !formData.giaTriKhuyenMai ||
+            !formData.ngayBatDau ||
+            !formData.ngayKetThuc ||
+            !formData.ghiChu.trim()
+        ) {
+            alert('Vui lòng điền đầy đủ thông tin khuyến mãi.');
+            return;
         }
-        const addData = await axios.post('http://localhost:8080/api/khuyenmai', dataToSent, {
-            headers: {
-                'Authorization': token
-            }
-        });
-        alert('Thêm thành công', addData.data);
-        handleResetData();
-
-
+    
+        // Kiểm tra ngày bắt đầu và ngày kết thúc
+        const ngayBatDau = new Date(formData.ngayBatDau);
+        const ngayKetThuc = new Date(formData.ngayKetThuc);
+    
+        if (ngayBatDau > ngayKetThuc) {
+            alert('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
+            return;
+        }
+    
+        try {
+            const dataToSent = {
+                tenKhuyenMai: formData.tenKhuyenMai,
+                giaTriKhuyenMai: formData.giaTriKhuyenMai,
+                ngayBatDau: formData.ngayBatDau,
+                ngayKetThuc: formData.ngayKetThuc,
+                active: true,
+                ghiChu: formData.ghiChu,
+            };
+    
+            const addData = await axios.post('http://localhost:8080/api/khuyenmai', dataToSent, {
+                headers: {
+                    'Authorization': token,
+                },
+            });
+    
+            alert('Thêm thành công', addData.data);
+            handleResetData();
+        } catch (error) {
+            console.error('Lỗi khi thêm khuyến mãi:', error);
+            alert('Có lỗi xảy ra khi thêm khuyến mãi.');
+        }
     }
-console.log(shopForm)
+    
+    console.log(shopForm)
     async function handleUpdate() {
         const dataToUpdate = {
             tenKhuyenMai: formData.tenKhuyenMai,
@@ -132,7 +157,7 @@ console.log(shopForm)
                                         onChange={handleChange}
                                     />
                                 </div>
-                          
+
                                 <div className="mb-3">
                                     <label htmlFor="giaTriKhuyenMai" className="form-label">Giá Trị Khuyến Mãi (Giảm giá %):</label>
                                     <input
@@ -176,7 +201,7 @@ console.log(shopForm)
                                         onChange={handleChange}
                                     ></textarea>
                                 </div>
-                               
+
                                 <div>
                                     {edit ? (
                                         <>
