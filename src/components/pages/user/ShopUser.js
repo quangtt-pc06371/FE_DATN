@@ -126,70 +126,87 @@ const ShopUser = () => {
   return (
     <div className="container mt-5">
       <h2 className="text-center my-4 fw-bold text-primary">QUẢN LÝ CỬA HÀNG</h2>
-
+  
       {loading ? (
         <div className="text-center">Đang tải thông tin cửa hàng...</div>
       ) : (
         <>
-          {isApproved ? (
-            <div className="card mb-4">
-              <div className="card-header text-center">Thông Tin Cửa Hàng</div>
-              <div className="card-body text-center">
-                <div
-                  className="image-preview mb-3"
-                  style={{
-                    width: "150px",
-                    height: "150px",
-                    borderRadius: "50%",
-                    backgroundColor: "#f0f0f0",
-                    backgroundImage: `url(${imagePreviewUrl})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    margin: "0 auto",
-                  }}
-                />
-                {editMode ? (
-                  <div>
-                    <input
-                      type="text"
-                      name="shopName"
-                      value={updatedShop.shopName || ""}
-                      onChange={handleInputChange}
-                      className="form-control mb-2"
-                      placeholder="Tên cửa hàng"
-                    />
-                    <textarea
-                      name="shopDescription"
-                      value={updatedShop.shopDescription || ""}
-                      onChange={handleInputChange}
-                      className="form-control mb-2"
-                      placeholder="Mô tả cửa hàng"
-                    />
-                    <div className="mb-2">
-                      <label className="form-label">Ảnh cửa hàng</label>
+          {shop ? (
+            <>
+              {shop.isActive ? (
+                <div className="alert alert-success text-center">
+                  Cửa hàng của bạn đang <strong>HOẠT ĐỘNG</strong> và hiển thị với khách hàng.
+                  <br />
+                  Bạn có thể chỉnh sửa thông tin hoặc quản lý hoạt động của cửa hàng tại đây.
+                </div>
+              ) : (
+                <div className="alert alert-danger text-center">
+                  Cửa hàng của bạn đang bị <strong>ẨN</strong> và không hiển thị với khách hàng. 
+                  <br />
+                  Vui lòng liên hệ quản trị viên hoặc chỉnh sửa thông tin để yêu cầu kích hoạt lại.
+                </div>
+              )}
+  
+              <div className="card mb-4">
+                <div className="card-header text-center">Thông Tin Cửa Hàng</div>
+                <div className="card-body text-center">
+                  <div
+                    className="image-preview mb-3"
+                    style={{
+                      width: "150px",
+                      height: "150px",
+                      borderRadius: "50%",
+                      backgroundColor: "#f0f0f0",
+                      backgroundImage: `url(${imagePreviewUrl})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      margin: "0 auto",
+                    }}
+                  />
+                  {editMode ? (
+                    <div>
                       <input
-                        type="file"
-                        className="form-control"
-                        onChange={handleImageChange} />
+                        type="text"
+                        name="shopName"
+                        value={updatedShop.shopName || ""}
+                        onChange={handleInputChange}
+                        className="form-control mb-2"
+                        placeholder="Tên cửa hàng"
+                      />
+                      <textarea
+                        name="shopDescription"
+                        value={updatedShop.shopDescription || ""}
+                        onChange={handleInputChange}
+                        className="form-control mb-2"
+                        placeholder="Mô tả cửa hàng"
+                      />
+                      <div className="mb-2">
+                        <label className="form-label">Ảnh cửa hàng</label>
+                        <input
+                          type="file"
+                          className="form-control"
+                          onChange={handleImageChange}
+                        />
+                      </div>
+                      <button onClick={handleSaveChanges} className="btn btn-success">
+                        Lưu
+                      </button>
+                      <button onClick={handleCancelEdit} className="btn btn-secondary ms-2">
+                        Hủy
+                      </button>
                     </div>
-                    <button onClick={handleSaveChanges} className="btn btn-success">
-                      Lưu
-                    </button>
-                    <button onClick={handleCancelEdit} className="btn btn-secondary ms-2">
-                      Hủy
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <h5>{shop?.shopName}</h5>
-                    <p>{shop?.shopDescription}</p>
-                    <button onClick={handleEditShopInfo} className="btn btn-warning">
-                      Chỉnh Sửa
-                    </button>
-                  </>
-                )}
+                  ) : (
+                    <>
+                      <h5>{shop?.shopName}</h5>
+                      <p>{shop?.shopDescription}</p>
+                      <button onClick={handleEditShopInfo} className="btn btn-warning">
+                        Chỉnh Sửa
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
+            </>
           ) : (
             <div className="alert alert-warning text-center">
               Bạn chưa có cửa hàng hoặc cửa hàng của bạn chưa được xét duyệt.
@@ -199,6 +216,7 @@ const ShopUser = () => {
       )}
     </div>
   );
+  
 };
 
 export default ShopUser
