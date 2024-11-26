@@ -1,10 +1,12 @@
 import { auth, GoogleAuthProvider, signInWithPopup } from "../../../config/firebase";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 const signInWithGoogle = async () => {
     // const [cookies, setCookie] = useCookies(["user"]);
   const provider = new GoogleAuthProvider();
-  
+ 
   try {
     const result = await signInWithPopup(auth, provider);
     const idToken = await result.user.getIdToken();
@@ -16,11 +18,13 @@ const signInWithGoogle = async () => {
       { headers: { "Content-Type": "application/json" } }
     );
     const { token, refreshToken } = response.data;
+    
     Cookies.set('token',token); 
    Cookies.set('refreshToken',refreshToken); 
     console.log(idToken);
     // In ra kết quả từ server
     console.log("Response from backend: ", response.data);
+
   } catch (error) {
     console.error("Lỗi đăng nhập:", error);
   }
