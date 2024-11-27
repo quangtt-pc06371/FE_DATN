@@ -14,8 +14,38 @@ const ShopUser = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  console.log(shop)
+  const [data, setData] = useState([]);
+
+  console.log(data)
+
+  async function hienThiSanPham() {
+    try {
+      const apiShop = 'http://localhost:8080/api/sanpham/shop';
+      const response = await axios.get(apiShop + '/' + shop.id);
+      setData(response.data);
+
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+  async function handleDelete(id) {
+    const apiKhuyenMai = 'http://localhost:8080/api/sanpham/updatetrangthai';
+    await axios.put(apiKhuyenMai + '/' + id);
+    alert("Sản phẩm đã được Xóa");
+    hienThiSanPham();
+  }
+
+  useEffect(() => {
+    if (shop && shop.id) {
+      hienThiSanPham();
+    }
+  }, [shop]);
+
   // Tải thông tin cửa hàng
   useEffect(() => {
+
     const token = Cookies.get("token");
     if (!token) {
       Swal.fire("Thông báo", "Bạn cần đăng nhập để truy cập trang này", "warning");
@@ -26,7 +56,7 @@ const ShopUser = () => {
     axios
       .get("http://localhost:8080/api/shops/user", {
         headers: { Authorization: `Bearer ${token}` },
-      }) 
+      })
       .then((response) => {
         const fetchedShop = response.data;
         setShop(fetchedShop);
@@ -37,14 +67,18 @@ const ShopUser = () => {
       })
       .catch((error) => {
         console.error("Lỗi khi lấy thông tin cửa hàng:", error);
-        setLoading(false); 
+        setLoading(false);
         if (error.response && error.response.status === 403) {
           Swal.fire("Lỗi", "Bạn chưa có cửa hàng", "error");
         } else {
           Swal.fire("Lỗi", "Không thể lấy thông tin cửa hàng", "error");
         }
       });
+    
   }, [navigate]);
+
+
+
 
   // Xử lý khi chỉnh sửa thông tin cửa hàng
   const handleEditShopInfo = () => {
@@ -62,7 +96,7 @@ const ShopUser = () => {
   // Lưu thay đổi thông tin cửa hàng
   const handleSaveChanges = async (e) => {
     e.preventDefault();
-    
+
     // Hiển thị xác nhận trước khi lưu
     const result = await Swal.fire({
       title: "Xác nhận lưu thay đổi",
@@ -76,18 +110,18 @@ const ShopUser = () => {
     if (result.isConfirmed) {
       const token = Cookies.get("token");
       const formData = new FormData();
-    
+
       // Thêm JSON dưới dạng chuỗi
       const shopData = {
         shopName: updatedShop.shopName,
         shopDescription: updatedShop.shopDescription,
       };
       formData.append("shop", JSON.stringify(shopData));
-    
+
       // Thêm file ảnh nếu có
       if (shopImage) {
         formData.append("shopImageFile", shopImage);
-      }try {
+      } try {
         const response = await axios.put(
           `http://localhost:8080/api/shops/user/${shop.id}`,
           formData,
@@ -126,7 +160,7 @@ const ShopUser = () => {
   return (
     <div className="container mt-5">
       <h2 className="text-center my-4 fw-bold text-primary">QUẢN LÝ CỬA HÀNG</h2>
-  
+
       {loading ? (
         <div className="text-center">Đang tải thông tin cửa hàng...</div>
       ) : (
@@ -141,12 +175,12 @@ const ShopUser = () => {
                 </div>
               ) : (
                 <div className="alert alert-danger text-center">
-                  Cửa hàng của bạn đang bị <strong>ẨN</strong> và không hiển thị với khách hàng. 
+                  Cửa hàng của bạn đang bị <strong>ẨN</strong> và không hiển thị với khách hàng.
                   <br />
                   Vui lòng liên hệ quản trị viên hoặc chỉnh sửa thông tin để yêu cầu kích hoạt lại.
                 </div>
               )}
-  
+
               <div className="card mb-4">
                 <div className="card-header text-center">Thông Tin Cửa Hàng</div>
                 <div className="card-body text-center">
@@ -206,6 +240,64 @@ const ShopUser = () => {
                   )}
                 </div>
               </div>
+
+              <div className="card shadow-sm w-100 mb-3">
+                <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
+                  <h2>Danh Sách Sản Phẩm</h2>
+                  <a href='/quanlysanpham' className="btn btn-success">Thêm Sản Phẩm</a>
+                </div>
+                <div className="card-body">
+                  <table className="table table-hover">
+                    <thead className="table-dark">
+                      <tr>
+                        <th>ID</th>
+                        <th>Tên Sản Phẩm</th>
+                        <th>Mô Tả</th>
+                        <th>Shop</th>
+                        <th>Danh Mục</th>
+                        <th>Danh Sách Phiên Bản</th>
+                        <th>Hành Động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.map(sanPham => (
+                        // Kiểm tra nếu sản phẩm có trong hiddenProducts thì không hiển thị
+                        sanPham.trangThai === false ? null : (
+                          <tr key={sanPham.idSanPham}>
+                            <td>{sanPham.idSanPham}</td>
+                            <td>{sanPham.tenSanPham}</td>
+                            <td>{sanPham.moTa}</td>
+                            <td>{sanPham.shop.shopName}</td>
+                            <td>{sanPham.danhMuc.tenDanhMuc}</td>
+                            <td>
+                              Số lượng phiên bản: {sanPham.skus.length}
+                              {sanPham.skus.length > 0 && (
+                                <ul className="list-unstyled">
+                                  <li>
+                                    <ul>
+                                      <li>Giá: {sanPham.skus[0].giaSanPham} VNĐ</li>
+                                      <li>Số lượng: {sanPham.skus[0].soLuong}</li>
+                                      {sanPham.skus[0].tuyChonThuocTinhSkus.map(tcSkus => (
+                                        <li key={tcSkus.idtuyChonThuocTinhSku}>
+                                          {tcSkus.tuyChonThuocTinh.thuocTinh.ten}: {tcSkus.tuyChonThuocTinh.giaTri}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </li>
+                                </ul>
+                              )}
+                            </td>
+                            <td>
+                              <a href={`/sanpham/${sanPham.idSanPham}`} className="btn btn-warning me-2">Sửa</a>
+                              <button onClick={() => handleDelete(sanPham.idSanPham)} className="btn btn-danger">Xóa</button>
+                            </td>
+                          </tr>
+                        )
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </>
           ) : (
             <div className="alert alert-warning text-center">
@@ -214,9 +306,10 @@ const ShopUser = () => {
           )}
         </>
       )}
+
     </div>
   );
-  
+
 };
 
 export default ShopUser

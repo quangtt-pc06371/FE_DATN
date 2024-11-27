@@ -6,15 +6,22 @@ import axios from 'axios';
 import { set } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { id } from 'date-fns/locale';
+import { postDucoment } from "../../../config/Auth";
+import Cookies from "js-cookie";
 const QuanlySanPham = () => {
 
   const [formData, setFormData] = useState({
     tenSanPham: '',
     moTa: '',
+    weight: '', // Cân nặng (mặc định là chuỗi rỗng)
+    length: '', // Chiều dài
+    width: '', // Chiều rộng
+    height: '', // Chiều cao
     shop: { id: parseInt('') },
     danhMuc: { idDanhMuc: parseInt('') }
   }
   )
+  console.log(formData)
 
   const [shopForm, setShopForm] = useState([]);
 
@@ -82,12 +89,12 @@ const QuanlySanPham = () => {
   function handleChangeSku(event, index) {
     const { name, value } = event.target;
     const updatedSkus = [...skusList];
-    //  console.log(skusList);
+
     // Cập nhật giá trị cho trường name
     updatedSkus[index][name] = value;
     // console.log(skusList);
     setSkusList(updatedSkus);
-
+    console.log(skusList);
   }
 
   function handleChange(e) {
@@ -118,29 +125,22 @@ const QuanlySanPham = () => {
   //   setSkusList(updatedSkus);
   // };
   const handleFileChange = (event, index) => {
-    const files = Array.from(event.target.files);
-
-    setSkusList((prevSkusList) => {
-      return prevSkusList.map((sku, i) => {
+    const file = event.target.files[0]; // Chỉ lấy file đầu tiên
+    console.log(file)
+    setSkusList((prevSkusList) =>
+      prevSkusList.map((sku, i) => {
         if (i === index) {
-          let updatedHinhanhs;
-
-          // Nếu hinhanhs trống, khởi tạo mảng mới với các file được chọn
-          if (sku.hinhanhs.length === 0) {
-            updatedHinhanhs = files.map((file) => ({ file }));
-          } else {
-            updatedHinhanhs = sku.hinhanhs.map((hinhanh, j) => ({
-              ...hinhanh,
-              file: files[j] || hinhanh.file, // Cập nhật file nếu có, giữ lại file cũ nếu không có file mới
-            }));
-          }
-
-          return { ...sku, hinhanhs: updatedHinhanhs };
+          return {
+            ...sku,
+            hinhanh: { file }, // Lưu một ảnh duy nhất
+          };
         }
         return sku;
-      });
-    });
+      })
+    );
   };
+
+
 
 
 
@@ -193,9 +193,9 @@ const QuanlySanPham = () => {
 
     const newSkus = allCombinations.map(combination => ({
       atributes: combination,
-      soLuong: 0,
-      giaSanPham: 0,
-      hinhanhs: []
+      soLuong: '',
+      giaSanPham: '',
+      hinhanh: null,
     }));
 
     setSkusList([...skusList, ...newSkus]);
@@ -233,6 +233,10 @@ const QuanlySanPham = () => {
     setFormData({
       tenSanPham: response.data.tenSanPham,
       moTa: response.data.moTa,
+      weight: response.data.weight,
+      length: response.data.length,
+      width: response.data.width,
+      height: response.data.height,
       shop: { idShop: response.data.shop.id },
       danhMuc: { idDanhMuc: response.data.danhMuc.idDanhMuc }
     })
@@ -246,10 +250,12 @@ const QuanlySanPham = () => {
           tieuDe: tuyChon.tuyChonThuocTinh.thuocTinh.ten,
           noiDungTieuDe: tuyChon.tuyChonThuocTinh.giaTri,
         })),
-        hinhanhs: sku.hinhanhs.map((image) => ({
-          idHinhAnh: image.idHinhAnh,
-          tenAnh: image.tenAnh,
-        })),
+        hinhanh: sku.hinhanh // Lấy một hình ảnh duy nhất
+          ? {
+            idHinhAnh: sku.hinhanh.idHinhAnh,
+            tenAnh: sku.hinhanh.tenAnh,
+          }
+          : null,
       }))
     );
 
@@ -273,6 +279,10 @@ const QuanlySanPham = () => {
     setFormData({
       tenSanPham: '',
       moTa: '',
+      weight: '', 
+      length: '', 
+      width: '',  
+      height: '',  
       shop: { id: '' },
       danhMuc: { idDanhMuc: '' },
     })
@@ -287,33 +297,25 @@ const QuanlySanPham = () => {
   }
 
   console.log(skusList)
+
   const handleUploadAnh = async (skuIds) => {
     try {
       for (let i = 0; i < skuIds.length; i++) {
         const idSku = skuIds[i];
-        const sku = skusList[i]; // Lấy thông tin SKU tương ứng từ skusList
-        console.log(sku)
-        console.log(idSku)
+        const sku = skusList[i];
 
-        if (sku.hinhanhs && sku.hinhanhs.length > 0) {
-          console.log('Hinhanhs: ', sku.hinhanhs);
+        if (sku.hinhanh && sku.hinhanh.file) {
           const formData = new FormData();
+          formData.append('file', sku.hinhanh.file);
 
-
-          sku.hinhanhs.forEach((hinhAnh) => {
-            formData.append('file', hinhAnh.file);
-          });
-
-          console.log(`Uploading images for SKU ID: ${idSku}`);
-
-
+          console.log(`Uploading image for SKU ID: ${idSku}`);
           await axios.post(`http://localhost:8080/api/sanpham/upload/${idSku}`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
           });
         } else {
-          console.log('Không có ảnh để tải lên');
+          console.log(`Không có ảnh để tải lên cho SKU ID: ${idSku}`);
         }
       }
       alert('Upload ảnh thành công');
@@ -322,6 +324,7 @@ const QuanlySanPham = () => {
       alert('Có lỗi xảy ra khi upload ảnh');
     }
   };
+
 
 
 
@@ -330,32 +333,25 @@ const QuanlySanPham = () => {
     try {
       for (let i = 0; i < skusList.length; i++) {
         const skuData = skusList[i]; // Lấy thông tin SKU hiện tại từ skusList
-        console.log(skuData);
-        // Kiểm tra nếu có ảnh trong `hinhanhs`
-        if (skuData.hinhanhs && skuData.hinhanhs.length > 0) {
-          for (let j = 0; j < skuData.hinhanhs.length; j++) {
-            const image = skuData.hinhanhs[j]; // Ảnh hiện tại từ danh sách ảnh của SKU
-            console.log(image);
+        console.log(skuData.hinhanh);
 
+        // Kiểm tra nếu SKU có ảnh và file đã được chọn
+        if (skuData.hinhanh && skuData.hinhanh.file) {
+          const formData = new FormData();
+          formData.append('file', skuData.hinhanh.file);
 
-            if (image.file) {
-              const formData = new FormData();
-              formData.append('file', image.file);
+          console.log(`Uploading image for SKU ID: ${skuData.idSku}`);
 
-              console.log(`Uploading image for SKU ID: ${skuData.idSku}, Image ID: ${image.idHinhAnh}`);
-
-
-              await axios.put(
-                `http://localhost:8080/api/sanpham/update/${skuData.idSku}/${image.idHinhAnh}`,
-                formData,
-                {
-                  headers: {
-                    'Content-Type': 'multipart/form-data',
-                  },
-                }
-              );
+          // Gọi API để upload ảnh
+          await axios.put(
+            `http://localhost:8080/api/sanpham/update/${skuData.idSku}`,
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
             }
-          }
+          );
         }
       }
       alert('Upload ảnh thành công');
@@ -366,15 +362,20 @@ const QuanlySanPham = () => {
   };
 
 
-
-
-
-  console.log(skusList)
   async function handleAddSanPham() {
-    if (!formData.tenSanPham.trim() || !formData.moTa || !formData.shop.id || !formData.danhMuc.idDanhMuc) {
+    if (
+      !formData.tenSanPham.trim() ||
+      !formData.moTa ||
+      !formData.danhMuc.idDanhMuc ||
+      !formData.weight ||
+      !formData.length ||
+      !formData.width ||
+      !formData.height
+    ) {
       alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
       return;
     }
+
     for (const sku of skusList) {
       if (parseFloat(sku.giaSanPham) < 1000) {
         alert("Giá sản phẩm phải lớn hơn 1000 !");
@@ -392,7 +393,7 @@ const QuanlySanPham = () => {
         alert("Số lượng sản phẩm không được để trống !");
         return;
       }
-      if (sku.hinhanhs.length === 0) {
+      if (!sku.hinhanh) {
         alert("Hình ảnh sản phẩm không được để trống !");
         return;
       }
@@ -401,16 +402,20 @@ const QuanlySanPham = () => {
       alert("Chưa có danh sách biến thể sản phẩm!");
       return;
     }
+    const token = Cookies.get('token');
     const newData = {
       tenSanPham: formData.tenSanPham,
       moTa: formData.moTa,
+      weight: formData.weight, 
+      length: formData.length, 
+      width: formData.width,   
+      height: formData.height,
       trangThai: true,
-      shop: {
-        id: parseInt(formData.shop.id),
-      },
+
       danhMuc: {
         idDanhMuc: parseInt(formData.danhMuc.idDanhMuc),
       },
+
       skus: skusList.map((sku) => ({
 
         giaSanPham: sku.giaSanPham,
@@ -426,7 +431,7 @@ const QuanlySanPham = () => {
             },
           },
         })),
-        hinhanhs: sku.hinhanh || [],
+        hinhanh: null
       })),
     };
 
@@ -434,7 +439,15 @@ const QuanlySanPham = () => {
     console.log('Dữ liệu gửi đi:', newData);
 
     try {
-      const addData = await axios.post('http://localhost:8080/api/sanpham', newData);
+      // const addData = await postDucoment({newData
+
+      // })
+      // console.log(addData)
+      const addData = await axios.post('http://localhost:8080/api/sanpham', newData, {
+        headers: {
+          'Authorization': token
+        }
+      });
       const addedSkuIds = addData.data?.skus.map(sku => sku.idSku); // Lấy toàn bộ idSku
       console.log("Danh sách ID của các SKU:", addedSkuIds);
       await handleUploadAnh(addedSkuIds); // Truyền danh sách ID SKU vào hàm handleUpload      
@@ -449,10 +462,19 @@ const QuanlySanPham = () => {
   }
 
   async function handleUpdateSanPham() {
-    if (!formData.tenSanPham.trim() || !formData.moTa || !formData.shop.idShop || !formData.danhMuc.idDanhMuc) {
+    if (
+      !formData.tenSanPham.trim() ||
+      !formData.moTa ||
+      !formData.danhMuc.idDanhMuc ||
+      !formData.weight ||
+      !formData.length ||
+      !formData.width ||
+      !formData.height
+    ) {
       alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
       return;
     }
+
     for (const sku of skusList) {
       if (parseFloat(sku.giaSanPham) < 1000) {
         alert("Giá sản phẩm phải lớn hơn 1000 !");
@@ -470,7 +492,7 @@ const QuanlySanPham = () => {
         alert("Số lượng sản phẩm không được để trống !");
         return;
       }
-      if (sku.hinhanhs.length === 0) {
+      if (!sku.hinhanh) {
         alert("Hình ảnh sản phẩm không được để trống !");
         return;
       }
@@ -478,9 +500,12 @@ const QuanlySanPham = () => {
     const newData = {
       tenSanPham: formData.tenSanPham,
       moTa: formData.moTa,
-
+      weight: formData.weight, 
+      length: formData.length, 
+      width: formData.width,   
+      height: formData.height,
       shop: {
-        id: parseInt(formData.shop.id),
+        id: parseInt(formData.shop.idShop),
       },
       danhMuc: {
         idDanhMuc: parseInt(formData.danhMuc.idDanhMuc),
@@ -500,7 +525,7 @@ const QuanlySanPham = () => {
             },
           },
         })),
-        hinhanhs: sku.hinhanh || [],
+
       })),
     };
 
@@ -528,8 +553,9 @@ const QuanlySanPham = () => {
         <div className="card border shadow-sm my-5" style={{ maxWidth: '800px', width: '100%' }}>
           <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
             <h2>Thêm Sản Phẩm</h2>
-            <a href='/danhsachsanpham' type="button" className="btn btn-primary ms-auto">
-              Danh Sách Sản Phẩm
+         
+            <a href='/shopuser' type="button" className="btn btn-primary ms-auto">
+              Trở Về Quản Lý Shop
             </a>
           </div>
           <div className="card-body">
@@ -558,20 +584,60 @@ const QuanlySanPham = () => {
                   onChange={handleChange}
                 ></textarea>
               </div>
-              <div className="mb-3 fw-bold">
-                <label htmlFor="">Shop khuyến mãi:</label>
-                <select
+
+              <div className="mb-4">
+                <label htmlFor="weight" className="form-label fw-bold">Cân nặng</label>
+                <input
+                  type="number"
+                  id="weight"
                   className="form-control"
-                  name="shop"
-                  value={formData.shop.id}
+                  placeholder="Nhập cân nặng"
+                  name="weight"
+                  value={formData.weight}
                   onChange={handleChange}
-                >
-                  <option value="">Chọn Shop</option>
-                  {shopForm.map((s) => (
-                    <option key={s.id} value={s.id}>{s.shopName}</option>
-                  ))}
-                </select>
+                />
               </div>
+
+              <div className="mb-4">
+                <label htmlFor="length" className="form-label fw-bold">Chiều dài</label>
+                <input
+                  type="number"
+                  id="length"
+                  className="form-control"
+                  placeholder="Nhập chiều dài "
+                  name="length"
+                  value={formData.length}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="width" className="form-label fw-bold">Chiều rộng</label>
+                <input
+                  type="number"
+                  id="width"
+                  className="form-control"
+                  placeholder="Nhập chiều rộng "
+                  name="width"
+                  value={formData.width}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="height" className="form-label fw-bold">Chiều cao</label>
+                <input
+                  type="number"
+                  id="height"
+                  className="form-control"
+                  placeholder="Nhập chiều cao "
+                  name="height"
+                  value={formData.height}
+                  onChange={handleChange}
+                />
+              </div>
+
+
               <div className="mb-4 fw-bold">
                 <label htmlFor="">Danh Mục:</label>
                 <select
@@ -760,21 +826,22 @@ const QuanlySanPham = () => {
                           </td>
                           <td>
                             <label htmlFor={`file-${index}`} className="form-label small">Thêm ảnh cho SKU</label>
-                            {sku.hinhanhs.map((hinhAnh, imgIndex) => (
+                            {sku.hinhanh ? (
                               <img
-                                key={imgIndex}
-                                src={hinhAnh.tenAnh}
+                                src={sku.hinhanh.tenAnh} // Đường dẫn URL từ trường "tenAnh"
                                 alt={`Thumbnail ${index + 1}`}
                                 className="img-thumbnail me-2"
                                 width="80px"
                                 height="80px"
                               />
-                            ))}
+                            ) : (
+                              <span>Không có hình ảnh</span> // Thông báo khi không có ảnh
+                            )}
                             <input
                               type="file"
                               id={`file-${index}`}
                               className="form-control form-control-sm mt-2"
-                              multiple
+
                               onChange={(e) => handleFileChange(e, index)}
                             />
                           </td>
