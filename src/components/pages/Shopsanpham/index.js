@@ -12,6 +12,8 @@ export default function ShopSanPham() {
     const [sapXep, setSapXep] = useState('');
     const [dataOne, setDataOne] = useState([]);
     const [danhMucDaChon, setDanhMucDaChon] = useState('');
+
+    console.log(shopSanPham)
     async function getShopSanPhamId() {
         try {
             const apiShop = 'http://localhost:8080/api/shop';
@@ -130,6 +132,7 @@ export default function ShopSanPham() {
 
 
     return (
+        shopSanPham.isActive   && (
         <div className="container mt-5">
             <div className="card p-3 d-flex flex-row align-items-center">
                 <img
@@ -271,5 +274,6 @@ export default function ShopSanPham() {
                 </div>
             </div>
         </div>
+        )
     );
 }

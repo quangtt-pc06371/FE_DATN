@@ -13,19 +13,26 @@ const QuanLyKhuyenMai = () => {
         ngayKetThuc: '',
         active: true,
         ghiChu: '',
-        shop: { id: '' }
-    }
-    );
+        shop: { id: '' },
+    });
+    
     const [shopForm, setShopForm] = useState([]);
     const { idKhuyenMai } = useParams();
     const [edit, setEdit] = useState(true);
 
-
-
-    async function layShop() {
-        const response = await axios.get('http://localhost:8080/api/shop');
-        setShopForm(response.data);
+    function getDefaultNgayBatDau() {
+        const now = new Date();
+        return format(now, "yyyy-MM-dd'T'HH:mm");
     }
+    
+    function getDefaultNgayKetThuc() {
+        const now = new Date();
+        now.setHours(15, 1, 0, 0); // Thiết lập giờ 23:59
+        return format(now, "yyyy-MM-dd'T'HH:mm");
+    }
+    
+
+
     async function getDataDisplayId() {
 
         const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai';
@@ -38,7 +45,7 @@ const QuanLyKhuyenMai = () => {
             getDataDisplayId();
             setEdit(false);
         }
-        layShop();
+
     }, [idKhuyenMai]);
 
     function handleChange(e) {
@@ -57,32 +64,32 @@ const QuanLyKhuyenMai = () => {
             alert('Vui lòng điền đầy đủ thông tin khuyến mãi.');
             return;
         }
-    
+
         // Kiểm tra ngày bắt đầu và ngày kết thúc
         const ngayBatDau = new Date(formData.ngayBatDau);
         const ngayKetThuc = new Date(formData.ngayKetThuc);
-    
+
         if (ngayBatDau > ngayKetThuc) {
             alert('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
             return;
         }
-    
+
         try {
             const dataToSent = {
                 tenKhuyenMai: formData.tenKhuyenMai,
                 giaTriKhuyenMai: formData.giaTriKhuyenMai,
-                ngayBatDau: formData.ngayBatDau,
-                ngayKetThuc: formData.ngayKetThuc,
+                ngayBatDau: getDefaultNgayBatDau(formData.ngayBatDau),
+                ngayKetThuc: getDefaultNgayKetThuc(formData.ngayKetThuc),
                 active: true,
                 ghiChu: formData.ghiChu,
             };
-    
+
             const addData = await axios.post('http://localhost:8080/api/khuyenmai', dataToSent, {
                 headers: {
                     'Authorization': token,
                 },
             });
-    
+
             alert('Thêm thành công', addData.data);
             handleResetData();
         } catch (error) {
@@ -90,7 +97,7 @@ const QuanLyKhuyenMai = () => {
             alert('Có lỗi xảy ra khi thêm khuyến mãi.');
         }
     }
-    
+
     console.log(shopForm)
     async function handleUpdate() {
         const dataToUpdate = {
@@ -117,7 +124,7 @@ const QuanLyKhuyenMai = () => {
             ngayBatDau: '',
             ngayKetThuc: '',
             ghiChu: '',
-            shop: { id: '' }
+
         })
     }
     function getFormatDate(dateString) {
@@ -140,9 +147,9 @@ const QuanLyKhuyenMai = () => {
                                 <h2 className="card-title mb-0 text-primary">Quản lý Khuyến Mãi</h2>
                                 <a
                                     className="btn btn-primary"
-                                    href="/danhsachkhuyenmai"
+                                    href="/shop-user"
                                 >
-                                    Danh Sách Khuyến Mãi
+                                    Trở Về Trang Shop
                                 </a>
                             </div>
                             <div className="card-body">
@@ -170,7 +177,7 @@ const QuanLyKhuyenMai = () => {
                                         onChange={handleChange}
                                     />
                                 </div>
-                                <div className="mb-3">
+                                {/* <div className="mb-3">
                                     <label htmlFor="ngayBatDau" className="form-label">Ngày Bắt Đầu:</label>
                                     <input
                                         type="date"
@@ -189,7 +196,29 @@ const QuanLyKhuyenMai = () => {
                                         value={getFormatDate(formData.ngayKetThuc)}
                                         onChange={handleChange}
                                     />
+                                </div> */}
+
+                                <div className="mb-3">
+                                    <label htmlFor="ngayBatDau" className="form-label">Ngày và Giờ Bắt Đầu:</label>
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        name="ngayBatDau"
+                                        value={formData.ngayBatDau}
+                                        onChange={handleChange}
+                                    />
                                 </div>
+                                <div className="mb-3">
+                                    <label htmlFor="ngayKetThuc" className="form-label">Ngày và Giờ Kết Thúc:</label>
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        name="ngayKetThuc"
+                                        value={formData.ngayKetThuc}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+
                                 <div className="mb-3">
                                     <label htmlFor="ghiChu" className="form-label">Ghi Chú:</label>
                                     <textarea

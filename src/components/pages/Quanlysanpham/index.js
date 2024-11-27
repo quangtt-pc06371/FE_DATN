@@ -14,14 +14,12 @@ const QuanlySanPham = () => {
     tenSanPham: '',
     moTa: '',
     weight: '', // Cân nặng (mặc định là chuỗi rỗng)
-    length: '', // Chiều dài
-    width: '', // Chiều rộng
-    height: '', // Chiều cao
+
     shop: { id: parseInt('') },
     danhMuc: { idDanhMuc: parseInt('') }
   }
   )
-  console.log(formData)
+
 
   const [shopForm, setShopForm] = useState([]);
 
@@ -40,6 +38,7 @@ const QuanlySanPham = () => {
   const [giaSanPham, setGiaSanPham] = useState(0);
   const [soLuong, setSoLuong] = useState(0);
   const [edit, setEdit] = useState(true);
+  const [hienThiHinhAnhList, setHienThiHinhAnhList] = useState([]);
 
 
   function handleAddInput() {
@@ -126,6 +125,16 @@ const QuanlySanPham = () => {
   // };
   const handleFileChange = (event, index) => {
     const file = event.target.files[0]; // Chỉ lấy file đầu tiên
+    if (file) {
+      const imageUrl = URL.createObjectURL(file); // Tạo URL tạm thời
+
+      // Cập nhật hình ảnh tạm thời vào list
+      setHienThiHinhAnhList((prevList) => {
+        const updatedList = [...prevList];
+        updatedList[index] = imageUrl; // Gán URL hình ảnh vào vị trí SKU
+        return updatedList;
+      });
+    }
     console.log(file)
     setSkusList((prevSkusList) =>
       prevSkusList.map((sku, i) => {
@@ -139,7 +148,7 @@ const QuanlySanPham = () => {
       })
     );
   };
-
+  console.log(hienThiHinhAnhList)
 
 
 
@@ -234,9 +243,7 @@ const QuanlySanPham = () => {
       tenSanPham: response.data.tenSanPham,
       moTa: response.data.moTa,
       weight: response.data.weight,
-      length: response.data.length,
-      width: response.data.width,
-      height: response.data.height,
+
       shop: { idShop: response.data.shop.id },
       danhMuc: { idDanhMuc: response.data.danhMuc.idDanhMuc }
     })
@@ -279,10 +286,8 @@ const QuanlySanPham = () => {
     setFormData({
       tenSanPham: '',
       moTa: '',
-      weight: '', 
-      length: '', 
-      width: '',  
-      height: '',  
+      weight: '',
+
       shop: { id: '' },
       danhMuc: { idDanhMuc: '' },
     })
@@ -296,7 +301,7 @@ const QuanlySanPham = () => {
     setEdit(true);
   }
 
-  console.log(skusList)
+
 
   const handleUploadAnh = async (skuIds) => {
     try {
@@ -367,10 +372,7 @@ const QuanlySanPham = () => {
       !formData.tenSanPham.trim() ||
       !formData.moTa ||
       !formData.danhMuc.idDanhMuc ||
-      !formData.weight ||
-      !formData.length ||
-      !formData.width ||
-      !formData.height
+      !formData.weight
     ) {
       alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
       return;
@@ -406,10 +408,8 @@ const QuanlySanPham = () => {
     const newData = {
       tenSanPham: formData.tenSanPham,
       moTa: formData.moTa,
-      weight: formData.weight, 
-      length: formData.length, 
-      width: formData.width,   
-      height: formData.height,
+      weight: formData.weight,
+
       trangThai: true,
 
       danhMuc: {
@@ -466,10 +466,7 @@ const QuanlySanPham = () => {
       !formData.tenSanPham.trim() ||
       !formData.moTa ||
       !formData.danhMuc.idDanhMuc ||
-      !formData.weight ||
-      !formData.length ||
-      !formData.width ||
-      !formData.height
+      !formData.weight
     ) {
       alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
       return;
@@ -500,10 +497,7 @@ const QuanlySanPham = () => {
     const newData = {
       tenSanPham: formData.tenSanPham,
       moTa: formData.moTa,
-      weight: formData.weight, 
-      length: formData.length, 
-      width: formData.width,   
-      height: formData.height,
+      weight: formData.weight,
       shop: {
         id: parseInt(formData.shop.idShop),
       },
@@ -553,8 +547,8 @@ const QuanlySanPham = () => {
         <div className="card border shadow-sm my-5" style={{ maxWidth: '800px', width: '100%' }}>
           <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
             <h2>Thêm Sản Phẩm</h2>
-         
-            <a href='/shopuser' type="button" className="btn btn-primary ms-auto">
+
+            <a href='/shop-user' type="button" className="btn btn-primary ms-auto">
               Trở Về Quản Lý Shop
             </a>
           </div>
@@ -594,45 +588,6 @@ const QuanlySanPham = () => {
                   placeholder="Nhập cân nặng"
                   name="weight"
                   value={formData.weight}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="mb-4">
-                <label htmlFor="length" className="form-label fw-bold">Chiều dài</label>
-                <input
-                  type="number"
-                  id="length"
-                  className="form-control"
-                  placeholder="Nhập chiều dài "
-                  name="length"
-                  value={formData.length}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="mb-4">
-                <label htmlFor="width" className="form-label fw-bold">Chiều rộng</label>
-                <input
-                  type="number"
-                  id="width"
-                  className="form-control"
-                  placeholder="Nhập chiều rộng "
-                  name="width"
-                  value={formData.width}
-                  onChange={handleChange}
-                />
-              </div>
-
-              <div className="mb-4">
-                <label htmlFor="height" className="form-label fw-bold">Chiều cao</label>
-                <input
-                  type="number"
-                  id="height"
-                  className="form-control"
-                  placeholder="Nhập chiều cao "
-                  name="height"
-                  value={formData.height}
                   onChange={handleChange}
                 />
               </div>
@@ -826,16 +781,24 @@ const QuanlySanPham = () => {
                           </td>
                           <td>
                             <label htmlFor={`file-${index}`} className="form-label small">Thêm ảnh cho SKU</label>
-                            {sku.hinhanh ? (
+                            {sku?.hinhanh?.tenAnh && (
                               <img
-                                src={sku.hinhanh.tenAnh} // Đường dẫn URL từ trường "tenAnh"
+                                src={sku.hinhanh.tenAnh}
                                 alt={`Thumbnail ${index + 1}`}
                                 className="img-thumbnail me-2"
                                 width="80px"
                                 height="80px"
                               />
-                            ) : (
-                              <span>Không có hình ảnh</span> // Thông báo khi không có ảnh
+                            )}
+
+                            {hienThiHinhAnhList[index] && (
+                              <img
+                                src={hienThiHinhAnhList[index]}
+                                alt={`Thumbnail ${index + 1}`}
+                                className="img-thumbnail me-2"
+                                width="80px"
+                                height="80px"
+                              />
                             )}
                             <input
                               type="file"

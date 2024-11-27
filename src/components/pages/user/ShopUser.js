@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-
+import { format } from "date-fns";
 const ShopUser = () => {
   const [shop, setShop] = useState(null);
   const [isApproved, setIsApproved] = useState(false);
@@ -16,8 +16,30 @@ const ShopUser = () => {
 
   console.log(shop)
   const [data, setData] = useState([]);
-
+  const [dataKhuyenMai, setDataKhuyenMai] = useState([]);
+  const [dataSanPhamKhuyenMai, setDataSanPhamKhuyenMai] = useState([]);
   console.log(data)
+
+
+
+
+
+  async function hienThiSanPhamKhuyenMai() {
+    const apiShop = 'http://localhost:8080/api/sanphamkhuyenmai/shop';
+    const response = await axios.get(apiShop + '/' + shop.id);
+    setDataSanPhamKhuyenMai(response.data);
+  }
+
+  async function hienThiKhuyenMai() {
+    try {
+      const apiShop = 'http://localhost:8080/api/khuyenmai/shop';
+      const response = await axios.get(apiShop + '/' + shop.id);
+      setDataKhuyenMai(response.data);
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async function hienThiSanPham() {
     try {
@@ -30,16 +52,40 @@ const ShopUser = () => {
     }
 
   }
-  async function handleDelete(id) {
-    const apiKhuyenMai = 'http://localhost:8080/api/sanpham/updatetrangthai';
-    await axios.put(apiKhuyenMai + '/' + id);
+  async function handleDeleteSanPham(id) {
+    const apiSanPham = 'http://localhost:8080/api/sanpham/updatetrangthai';
+    await axios.put(apiSanPham + '/' + id);
     alert("Sản phẩm đã được Xóa");
     hienThiSanPham();
+  }
+
+  async function handleDeleteKhuyenMaiHetHan(id) {
+    const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai/updatetrangthai';
+    await axios.put(apiKhuyenMai + '/' + id);
+  }
+  async function handleDeleteSanPhamKhuyenMaiHetHan(id) {
+    const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai';
+    await axios.put(apiSanPhamKhuyenMai + '/' + id);
+  }
+
+  async function handleDeleteKhuyenMai(id) {
+    const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai/updatetrangthai';
+    await axios.put(apiKhuyenMai + '/' + id);
+    alert("Khuyến mãi đã được Xóa");
+    hienThiKhuyenMai();
+  }
+  async function handleDeleteSanPhamKhuyenMai(id) {
+    const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai';
+    await axios.put(apiSanPhamKhuyenMai + '/' + id);
+    alert("Sản phẩm khuyến mãi đã được Xóa");
+    hienThiSanPhamKhuyenMai();
   }
 
   useEffect(() => {
     if (shop && shop.id) {
       hienThiSanPham();
+      hienThiKhuyenMai();
+      hienThiSanPhamKhuyenMai();
     }
   }, [shop]);
 
@@ -74,7 +120,7 @@ const ShopUser = () => {
           Swal.fire("Lỗi", "Không thể lấy thông tin cửa hàng", "error");
         }
       });
-    
+
   }, [navigate]);
 
 
@@ -156,7 +202,16 @@ const ShopUser = () => {
     setShopImage(file);
     setImagePreviewUrl(URL.createObjectURL(file)); // Cập nhật ảnh xem trước
   };
+  function getFormatDate(dateString) {
+    if (!dateString) return ""; // Kiểm tra nếu không có giá trị
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return ""; // Kiểm tra nếu không phải là ngày hợp lệ
+    return format(date, 'yyyy-MM-dd');
+  }
 
+
+
+  console.log(dataSanPhamKhuyenMai)
   return (
     <div className="container mt-5">
       <h2 className="text-center my-4 fw-bold text-primary">QUẢN LÝ CỬA HÀNG</h2>
@@ -241,7 +296,7 @@ const ShopUser = () => {
                 </div>
               </div>
 
-              <div className="card shadow-sm w-100 mb-3">
+              <div className="card shadow-sm w-100 mb-5">
                 <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
                   <h2>Danh Sách Sản Phẩm</h2>
                   <a href='/quanlysanpham' className="btn btn-success">Thêm Sản Phẩm</a>
@@ -250,7 +305,7 @@ const ShopUser = () => {
                   <table className="table table-hover">
                     <thead className="table-dark">
                       <tr>
-                        <th>ID</th>
+                        <th>STT</th>
                         <th>Tên Sản Phẩm</th>
                         <th>Mô Tả</th>
                         <th>Shop</th>
@@ -260,18 +315,18 @@ const ShopUser = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.map(sanPham => (
+                      {data.map((sanPham, index) => (
                         // Kiểm tra nếu sản phẩm có trong hiddenProducts thì không hiển thị
                         sanPham.trangThai === false ? null : (
                           <tr key={sanPham.idSanPham}>
-                            <td>{sanPham.idSanPham}</td>
+                            <td>{index + 1}</td>
                             <td>{sanPham.tenSanPham}</td>
                             <td>{sanPham.moTa}</td>
                             <td>{sanPham.shop.shopName}</td>
                             <td>{sanPham.danhMuc.tenDanhMuc}</td>
                             <td>
                               Số lượng phiên bản: {sanPham.skus.length}
-                              {sanPham.skus.length > 0 && (
+                              {/* {sanPham.skus.length > 0 && (
                                 <ul className="list-unstyled">
                                   <li>
                                     <ul>
@@ -285,17 +340,144 @@ const ShopUser = () => {
                                     </ul>
                                   </li>
                                 </ul>
-                              )}
+                              )} */}
                             </td>
                             <td>
                               <a href={`/sanpham/${sanPham.idSanPham}`} className="btn btn-warning me-2">Sửa</a>
-                              <button onClick={() => handleDelete(sanPham.idSanPham)} className="btn btn-danger">Xóa</button>
+                              <button onClick={() => handleDeleteSanPham(sanPham.idSanPham)} className="btn btn-danger">Xóa</button>
                             </td>
                           </tr>
                         )
                       ))}
                     </tbody>
                   </table>
+                </div>
+              </div>
+
+              <div className="card shadow w-100 mb-5">
+                <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
+                  <h2 className="mb-0">Danh Sách Khuyến Mãi</h2>
+                  <a href="/quanlykhuyenmai" className="btn btn-success">Thêm Khuyến Mãi</a>
+                </div>
+                <div className="card-body">
+                  <table className="table table-hover">
+                    <thead className="table-dark">
+                      <tr>
+                        <th>STT</th>
+                        <th>Tên Khuyến Mãi</th>
+                        <th>Giá Trị (%)</th>
+                        <th>Ngày Bắt Đầu</th>
+                        <th>Ngày Kết Thúc</th>
+                        <th>Ghi Chú</th>
+                        <th>Shop</th>
+                        <th>Hạn Sử Dụng</th>
+                        <th className="text-center">Hành Động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dataKhuyenMai.map((khuyenMai, index) => {
+                        const now = new Date();
+                        // Chuyển đổi ngày bắt đầu và kết thúc của khuyến mãi thành đối tượng Date
+                        const startDate = new Date(khuyenMai.ngayBatDau);
+                        const endDate = new Date(khuyenMai.ngayKetThuc);
+
+                        // Kiểm tra nếu khuyến mãi còn hạn hay hết hạn
+                        const khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
+
+
+                        if(!khuyenMaiConHieuLuc){
+                          handleDeleteKhuyenMaiHetHan(khuyenMai.idKhuyenMai)
+                        }
+
+                        return (
+                          khuyenMai.active === false ? null : (
+                            <tr key={khuyenMai.idKhuyenMai}>
+                              <td>{index + 1}</td>
+                              <td>{khuyenMai.tenKhuyenMai}</td>
+                              <td>{khuyenMai.giaTriKhuyenMai}%</td>
+                              <td>{getFormatDate(khuyenMai.ngayBatDau)}</td>
+                              <td>{getFormatDate(khuyenMai.ngayKetThuc)}</td>
+                              <td>{khuyenMai.ghiChu}</td>
+                              <td>{khuyenMai.shop.shopName}</td>
+                              <td>{khuyenMai.active ? "Còn hạn" : "Hết hạn"}</td> 
+                              <td className="text-center">
+                                <a className="btn btn-warning me-2" href={`/quanlykhuyenmai/${khuyenMai.idKhuyenMai}`}>Sửa</a>
+                                <button className="btn btn-danger" onClick={() => handleDeleteKhuyenMai(khuyenMai.idKhuyenMai)}>Xóa</button>
+                              </td>
+                            </tr>
+                          )
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div className="card shadow w-100 mb-3">
+                <div className="card-header  bg-body-secondary d-flex justify-content-between align-items-center" >
+                  <h2>Danh Sách Chương Trình Khuyến Mãi</h2>
+                  <a className="btn btn-success mt-3" href='/sanphamkhuyenmai'>Thêm Chương Trình Khuyến Mãi Mới</a>
+                </div>
+                <div className="card-body">
+                  <table className="table table-hover">
+                    <thead className="table-dark">
+                      <tr>
+                        <th>ID</th>
+                        <th>Sản Phẩm</th>
+                        <th>Giá Gốc</th>
+                        <th>Khuyến Mãi</th>
+                        <th>Giá Sau Khuyến Mãi</th>
+                        <th>Ngày Bắt Đầu</th>
+                        <th>Ngày Kết Thúc</th>
+                        <th>Hành Động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dataSanPhamKhuyenMai.map(sanPhamKhuyenMai => {
+                        const now = new Date();
+                        console.log(now)
+                        const startDate = new Date(sanPhamKhuyenMai.khuyenMai.ngayBatDau);
+                        const endDate = new Date(sanPhamKhuyenMai.khuyenMai.ngayKetThuc);
+
+                        const giaGoc = sanPhamKhuyenMai.sanPham.skus[0]?.giaSanPham || 0;
+                        const khuyenMai = sanPhamKhuyenMai.khuyenMai.giaTriKhuyenMai || 0;
+                        const giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMai / 100));
+                        const khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
+                        console.log(dataSanPhamKhuyenMai)
+                        if (!khuyenMaiConHieuLuc) {
+                          // Gọi các hàm xóa trạng thái khi khuyến mãi hết hiệu lực
+
+                          handleDeleteSanPhamKhuyenMaiHetHan(sanPhamKhuyenMai.idSanPhamKM);
+
+                        }
+                        return (
+                          sanPhamKhuyenMai.trangThai === false ? null : (
+                            <tr key={sanPhamKhuyenMai.idSanPhamKM}>
+                              <td>{sanPhamKhuyenMai.idSanPhamKM}</td>
+                              <td>{sanPhamKhuyenMai.sanPham.tenSanPham}</td>
+                              <td>{giaGoc.toFixed(2)} VNĐ</td>
+                              <td>{sanPhamKhuyenMai.khuyenMai.tenKhuyenMai} ({khuyenMai}%)</td>
+                              <td>
+                                {khuyenMaiConHieuLuc ? (
+                                  <span className="text-danger fw-bold">{giaSauKhuyenMai.toFixed(2)} VNĐ</span>
+                                ) : (
+                                  <span>{giaGoc.toFixed(2)} VNĐ</span>
+                                )}
+                              </td>
+                              <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayBatDau)}</td>
+                              <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayKetThuc)}</td>
+                              <td className="text-center">
+
+                                <button className="btn btn-danger" onClick={() => handleDeleteSanPhamKhuyenMai(sanPhamKhuyenMai.idSanPhamKM)}>Xóa</button>
+                              </td>
+                            </tr>
+                          )
+
+                        );
+                      })}
+                    </tbody>
+                  </table>
+
                 </div>
               </div>
             </>
