@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
 import Cookies from "js-cookie";
+import Swal from "sweetalert2";
 export default function ChiTietSanPham() {
 
     const [data, setData] = useState({
@@ -119,14 +120,14 @@ export default function ChiTietSanPham() {
 
 
         if (!sku) {
-            alert('Vui lòng chọn đầy đủ các tùy chọn thuộc tính trước khi thêm vào giỏ hàng.');
+            Swal.fire('Vui lòng chọn đầy đủ các tùy chọn thuộc tính trước khi thêm vào giỏ hàng.');
             return;
         }
 
 
 
         if (!token) {
-            alert('Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.');
+            Swal.fire('Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.');
             return;
         }
 
@@ -146,9 +147,9 @@ export default function ChiTietSanPham() {
                     'Authorization': token
                 }
             });
-            alert('Thêm vào giỏ hàng thành công!', addData.data);
+            Swal.fire('Thêm vào giỏ hàng thành công !');
         } catch (error) {
-            alert('Có lỗi xảy ra khi thêm vào giỏ hàng.');
+            Swal.fire('Có lỗi xảy ra khi thêm vào giỏ hàng !');
             console.error(error);
         }
     }
