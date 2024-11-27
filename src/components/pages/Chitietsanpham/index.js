@@ -13,7 +13,7 @@ export default function ChiTietSanPham() {
         danhMuc: {}
     });
 
- const [sanPhamShop, setSanPhamShop] = useState([]);
+    const [sanPhamShop, setSanPhamShop] = useState([]);
 
     const [skusList, setSkusList] = useState([]);
     const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
@@ -21,6 +21,25 @@ export default function ChiTietSanPham() {
     const [soLuong, setSoLuong] = useState(1);
     const [selectedImage, setSelectedImage] = useState('');
     const [giaTriDaChon, setGiaTriDaChon] = useState({});
+    const [shopData, setShopData] = useState([]);
+    const token = Cookies.get('token');
+    async function layShop() {
+        try {
+            const response = await axios.get('http://localhost:8080/api/shop/nguoidung', {
+                headers: {
+                    'Authorization': token,
+                },
+            }
+            );
+
+            setShopData(response.data);
+        } catch (error) {
+            alert("Vui Lòng Đăng Nhập")
+        }
+
+
+    }
+    console.log(shopData)
 
     const tangSoLuong = () => {
         setSoLuong(prev => prev + 1);
@@ -34,13 +53,13 @@ export default function ChiTietSanPham() {
         const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
         setSanPhamKhuyenMaiForm(response.data);
     }
-   
+
     async function hienThiSanPham() {
         try {
             const apiShop = 'http://localhost:8080/api/sanpham/shop';
-            const response = await axios.get(apiShop + '/'  + data.shop.id);
+            const response = await axios.get(apiShop + '/' + data.shop.id);
             setSanPhamShop(response.data);
-        
+
         } catch (error) {
             console.log(error)
         }
@@ -67,11 +86,11 @@ export default function ChiTietSanPham() {
                     noiDungTieuDe: tuyChon.tuyChonThuocTinh.giaTri,
                 })),
                 hinhanh: sku.hinhanh // Lấy một hình ảnh duy nhất
-                ? {
-                  idHinhAnh: sku.hinhanh.idHinhAnh,
-                  tenAnh: sku.hinhanh.tenAnh,
-                }
-                : null,
+                    ? {
+                        idHinhAnh: sku.hinhanh.idHinhAnh,
+                        tenAnh: sku.hinhanh.tenAnh,
+                    }
+                    : null,
             }))
         );
         if (
@@ -83,7 +102,7 @@ export default function ChiTietSanPham() {
 
 
     }
-    console.log(selectedImage)
+
     const getSku = () => {
         return skusList.find(sku => {
             return sku.atributes.every(attr =>
@@ -97,14 +116,14 @@ export default function ChiTietSanPham() {
     async function handleAddGioHang() {
         const sku = getSku();
         const token = Cookies.get('token');
-        console.log(token)
+
 
         if (!sku) {
             alert('Vui lòng chọn đầy đủ các tùy chọn thuộc tính trước khi thêm vào giỏ hàng.');
             return;
         }
 
-   
+
 
         if (!token) {
             alert('Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.');
@@ -118,7 +137,7 @@ export default function ChiTietSanPham() {
             skuEntity: { idSku: sku.idSku }
         };
 
-    
+
 
         try {
 
@@ -139,9 +158,9 @@ export default function ChiTietSanPham() {
     useEffect(() => {
         if (id) {
             getDataDisplayId();
-          
+
         }
-       
+        layShop();
         getSanPhamKhuyenMai();
     }, [id]);
     useEffect(() => {
@@ -149,6 +168,8 @@ export default function ChiTietSanPham() {
             hienThiSanPham();
         }
     }, [data.shop?.id]);
+
+
     const skuGet = getSku();
 
     const giaGoc = skuGet ? skuGet.giaSanPham : skusList[0]?.giaSanPham || 0;
@@ -185,7 +206,7 @@ export default function ChiTietSanPham() {
             [tieuDe]: noiDungTieuDe
         }));
     };
-    console.log(giaTriDaChon)
+
 
     const handleThumbnailClick = (image) => {
         setSelectedImage(image); // Cập nhật ảnh lớn khi người dùng click vào thumbnail
@@ -195,7 +216,7 @@ export default function ChiTietSanPham() {
             (sanPhamKhuyenMai) => sanPhamKhuyenMai.sanPham.idSanPham === sanPham.idSanPham
         );
     };
-console.log(skusList)
+
     return (
         <main >
             <div className="container mt-5 " >
@@ -214,17 +235,17 @@ console.log(skusList)
                                 {/* overflowX: 'auto': Cho phép cuộn ngang khi nội dung vượt quá chiều rộng container */}
                                 {/* whiteSpace: 'nowrap': Đảm bảo rằng các ảnh sẽ không xuống dòng mà nằm ngang trên một dòng duy nhất */}
                                 <div className="d-flex justify-content-start mt-3 " style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
-                                    {skusList.map((sku,index) => (
-                                     
-                                            <img
-                                                key={index}
-                                                src={sku.hinhanh.tenAnh}  // URL của ảnh thumbnail
-                                                alt={`Thumbnail ${index + 1}`}
-                                                className="img-thumbnail me-2 hinh-anh-chi-tiet"
-                                                style={{ width: '80px', height: '80px', display: 'inline-block' }}
-                                                onClick={() => handleThumbnailClick(sku.hinhanh.tenAnh)} // Cập nhật ảnh lớn khi click vào thumbnail
-                                            />
-                                
+                                    {skusList.map((sku, index) => (
+
+                                        <img
+                                            key={index}
+                                            src={sku.hinhanh.tenAnh}  // URL của ảnh thumbnail
+                                            alt={`Thumbnail ${index + 1}`}
+                                            className="img-thumbnail me-2 hinh-anh-chi-tiet"
+                                            style={{ width: '80px', height: '80px', display: 'inline-block' }}
+                                            onClick={() => handleThumbnailClick(sku.hinhanh.tenAnh)} // Cập nhật ảnh lớn khi click vào thumbnail
+                                        />
+
                                     ))}
                                 </div>
 
@@ -341,74 +362,78 @@ console.log(skusList)
                             </div>
 
                         </div>
-                        <button className="btn btn-danger me-2" onClick={handleAddGioHang}>Thêm Vào Giỏ Hàng</button>
-                        <button className="btn btn-primary">Mua Ngay</button>
+                        {shopData?.id !== data?.shop?.id && (
+                            <button className="btn btn-danger me-2" onClick={handleAddGioHang}>Thêm Vào Giỏ Hàng</button>
+                        )}
+
+
+
                     </div>
                 </div>
 
                 <div className="row my-3 m-5 border p-3 mb-5 shadow-sm rounded-3">
-                        <h3 className='my-3'>Các Sản Phẩm Khác Của Shop</h3>
-                        {sanPhamShop.map((sanPham) => {
+                    <h3 className='my-3'>Các Sản Phẩm Khác Của Shop</h3>
+                    {sanPhamShop.map((sanPham) => {
 
-                            const khuyenMaiData = findKhuyenMai(sanPham);
-                            const now = new Date();
-                            const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
+                        const khuyenMaiData = findKhuyenMai(sanPham);
+                        const now = new Date();
+                        const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
-                            let giaSauKhuyenMai = 0;
-                            let khuyenMaiConHieuLuc = false;
-
-
-                            if (khuyenMaiData) {
-                                const startDate = new Date(khuyenMaiData.khuyenMai.ngayBatDau);
-                                const endDate = new Date(khuyenMaiData.khuyenMai.ngayKetThuc);
+                        let giaSauKhuyenMai = 0;
+                        let khuyenMaiConHieuLuc = false;
 
 
-                                giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMaiData.khuyenMai.giaTriKhuyenMai / 100));
+                        if (khuyenMaiData) {
+                            const startDate = new Date(khuyenMaiData.khuyenMai.ngayBatDau);
+                            const endDate = new Date(khuyenMaiData.khuyenMai.ngayKetThuc);
 
 
-                                khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
-                            }
-                            const firstSku = sanPham.skus?.[0];
-                            const firstImage = firstSku?.hinhanh;
-                            return (
-                                sanPham.trangThai === false ? null : (
-                                    <div key={sanPham.idSanPham} className="col-md-2 mb-3">
-                                        <a href={`/chitietsanpham/${sanPham.idSanPham}`} className='text-white'>
-                                            <div className="card border rounded-3 shadow-sm">
-                                                <div className="card-img">
-                                                    {firstImage ? (
-                                                        <img
-                                                            src={firstImage.tenAnh}
-                                                            alt={`Product ${sanPham.tenSanPham} - Main Image`}
-                                                            className="img-fluid"
-                                                        />
-                                                    ) : (
-                                                        <div className="img-placeholder">No Image Available</div>
-                                                    )}
-                                                </div>
-                                                <div className="card-body">
-                                                    <p className='card-text'>{sanPham.tenSanPham}</p>
-                                                    <p className="card-text text-danger fw-bold">
-                                                        {khuyenMaiConHieuLuc ? (
-                                                            <>
-                                                                <span className="text-muted" style={{ textDecoration: 'line-through' }}>
-                                                                    {giaGoc} VNĐ
-                                                                </span>
-                                                                <br />
-                                                                {giaSauKhuyenMai.toFixed(2)} VNĐ
-                                                            </>
-                                                        ) : (
-                                                            `${giaGoc.toLocaleString()} VNĐ`
-                                                        )}
-                                                    </p>
-                                                </div>
+                            giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMaiData.khuyenMai.giaTriKhuyenMai / 100));
+
+
+                            khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
+                        }
+                        const firstSku = sanPham.skus?.[0];
+                        const firstImage = firstSku?.hinhanh;
+                        return (
+                            sanPham.trangThai === false ? null : (
+                                <div key={sanPham.idSanPham} className="col-md-2 mb-3">
+                                    <a href={`/chitietsanpham/${sanPham.idSanPham}`} className='text-white'>
+                                        <div className="card border rounded-3 shadow-sm">
+                                            <div className="card-img">
+                                                {firstImage ? (
+                                                    <img
+                                                        src={firstImage.tenAnh}
+                                                        alt={`Product ${sanPham.tenSanPham} - Main Image`}
+                                                        className="img-fluid"
+                                                    />
+                                                ) : (
+                                                    <div className="img-placeholder">No Image Available</div>
+                                                )}
                                             </div>
-                                        </a>
-                                    </div>
-                                )
-                            );
-                        })}
-                    </div>      
+                                            <div className="card-body">
+                                                <p className='card-text'>{sanPham.tenSanPham}</p>
+                                                <p className="card-text text-danger fw-bold">
+                                                    {khuyenMaiConHieuLuc ? (
+                                                        <>
+                                                            <span className="text-muted" style={{ textDecoration: 'line-through' }}>
+                                                                {giaGoc} VNĐ
+                                                            </span>
+                                                            <br />
+                                                            {giaSauKhuyenMai.toFixed(2)} VNĐ
+                                                        </>
+                                                    ) : (
+                                                        `${giaGoc.toLocaleString()} VNĐ`
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            )
+                        );
+                    })}
+                </div>
 
             </div>
         </main>
