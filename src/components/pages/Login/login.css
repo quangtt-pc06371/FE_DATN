@@ -10,18 +10,21 @@
 
 /* login.css */
 
-.login-container {
+/* .login-container {
   background-image: url("https://img.thuthuatphanmem.vn/uploads/2018/11/11/hinh-nen-dep-mau-xanh-nuoc-bien_051045186.jpg");
-    background-size: cover; /* Giúp hình ảnh bao phủ toàn bộ màn hình */
-    background-position: center; /* Căn giữa hình nền */
-    background-repeat: no-repeat; /* Ngăn lặp lại hình nền */
-    /* background: linear-gradient(to right, #1189aa, #5ac5e0); */
-  min-height: 100vh;
+    background-size: cover; */
+     /* Giúp hình ảnh bao phủ toàn bộ màn hình */
+    /* background-position: center;  */
+    /* Căn giữa hình nền */
+    /* background-repeat: no-repeat;  */
+    /* Ngăn lặp lại hình nền */
+    
+  /* min-height: 100vh;
   display: flex;
   max-width:100% ;
   justify-content: center;
   align-items: center;
-}
+} */
 
 
 .login-card {

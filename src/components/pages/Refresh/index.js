@@ -27,7 +27,7 @@ const refreshToken = async () => {
   if (!refreshToken) {
     console.error('Không tìm thấy refresh token');
     alert("vui lòng đăng nhập");
-    window.location.href = '/login';
+    window.location.href = '/buyer/login';
 
     return;
   }

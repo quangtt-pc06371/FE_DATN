@@ -19,7 +19,7 @@ import ShopManagement from './components/pages/admin/ShopManagement';
 import ShopRegistration from './components/pages/user/ShopRegistration';
 import ShopUser from './components/pages/user/ShopUser';
 
-
+import Loginpage from "./components/loginpage";
 import User from "./components/userpage";
 import Profile from "./components/pages/Profile/index";
 import Login from "./components/pages/Login";
@@ -40,6 +40,7 @@ import Listtk from './components/compoments/Listtaikhoan';
 import Registergg from "./components/pages/logingoogle";
 import Index from "./components/pages/TrangChu";
 import ProtectedRoute from "./config/Authenticated/protectedRoute";
+
 import { AuthProvider } from "./config/Authenticated/index";
 
 import { startTokenRefreshInterval } from "./components/pages/Refresh";
@@ -88,26 +89,24 @@ export default function App() {
         <Route path="/" element={<TrangChu />}>
           <Route index element={<SanPham />} />
           <Route path="chitietsanpham/:id" element={<ChiTietSanPham />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
+
+
           <Route path='quanlysanpham' element={<QuanlySanPham />} />
           <Route path="Logout" element={<Logout />} />
 
-
-
-          <Route
-            element=
-            {<ProtectedRoute requiredRole="ROLE_User" />} >
-            <Route path="user"
-              element={<User />}
-            >            
+          <Route path="buyer" element={<Loginpage />} >
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+          </Route>
+          <Route element={<ProtectedRoute requiredRole="ROLE_User" />} >
+            <Route path="user" element={<User />}>
               <Route path="updateuser" element={<Updateuser2 />} />
               <Route path="profile" element={<Profile />} />
               <Route path="shop-user" element={<ShopUser />} />
               <Route path="shop-register" element={<ShopRegistration />} />
             </Route>
           </Route>
-         
+
         </Route>
 
 

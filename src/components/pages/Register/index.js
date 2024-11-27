@@ -118,8 +118,9 @@ const Addtaikhoan = () => {
 
   return (
     <div className="container mt-5">
-      <h2 className="text-center mb-4">Tạo Tài Khoản</h2>
+     
       <form onSubmit={handleSubmit} className="shadow p-4 rounded bg-light">
+      <h2 className="text-center mb-4">Tạo Tài Khoản</h2>
         <div className="mb-3">
           <label className="form-label">Họ tên</label>
           <input type="text" className="form-control" value={hoTen} onChange={(e) => setHoTen(e.target.value)} />

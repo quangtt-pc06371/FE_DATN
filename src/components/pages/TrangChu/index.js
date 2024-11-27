@@ -67,12 +67,12 @@ useEffect(() => {
                             {!isLoggedIn ? (
             <>
                 <li>
-                    <NavLink className="dropdown-item" to="/login">
+                    <NavLink className="dropdown-item" to="/buyer/login">
                         <i className="fa-regular fa-face-smile-beam "></i> Đăng Nhập
                     </NavLink>
                 </li>
                 <li>
-                    <NavLink className="dropdown-item" to="/register">
+                    <NavLink className="dropdown-item" to="/buyer/register">
                         <i className="fa-solid fa-key"></i> Tạo Tài Khoản
                     </NavLink>
                 </li>
