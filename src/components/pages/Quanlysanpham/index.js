@@ -8,6 +8,8 @@ import { useParams } from 'react-router-dom';
 import { id } from 'date-fns/locale';
 import { postDucoment } from "../../../config/Auth";
 import Cookies from "js-cookie";
+import Swal from "sweetalert2";
+
 const QuanlySanPham = () => {
 
   const [formData, setFormData] = useState({
@@ -151,9 +153,6 @@ const QuanlySanPham = () => {
   console.log(hienThiHinhAnhList)
 
 
-
-
-
   function handleDeleteInput(index) {
     const newArray = [...inputs];
     newArray.splice(index, 1);
@@ -176,13 +175,23 @@ const QuanlySanPham = () => {
     for (const ip of inputs) {
 
       if (!ip.tieuDe.trim()) {
-        alert("Vui lòng điền đầy đủ tiêu đề thuộc tính.");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Vui lòng điền đầy đủ tiêu đề thuộc tính.',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
 
       for (const content of ip.noiDung) {
         if (!content.noiDungTieuDe.trim()) {
-          alert("Vui lòng điền đầy đủ giá trị thuộc tính.");
+          Swal.fire({
+            icon: 'warning',
+            title: 'Vui lòng điền đầy đủ giá trị thuộc tính.',
+            showConfirmButton: true,
+            confirmButtonText: 'OK',
+          });
           return;
         }
       }
@@ -323,10 +332,14 @@ const QuanlySanPham = () => {
           console.log(`Không có ảnh để tải lên cho SKU ID: ${idSku}`);
         }
       }
-      alert('Upload ảnh thành công');
+
     } catch (error) {
       console.error('Lỗi khi upload ảnh:', error);
-      alert('Có lỗi xảy ra khi upload ảnh');
+      Swal.fire({
+        icon: 'error',
+        title: 'Có lỗi xảy ra khi upload ảnh',
+      });
+
     }
   };
 
@@ -359,10 +372,15 @@ const QuanlySanPham = () => {
           );
         }
       }
-      alert('Upload ảnh thành công');
+
     } catch (error) {
       console.error('Lỗi khi upload ảnh:', error);
-      alert('Có lỗi xảy ra khi upload ảnh');
+      Swal.fire({
+        icon: 'error',
+        title: 'Có lỗi xảy ra khi upload ảnh',
+
+      });
+
     }
   };
 
@@ -374,36 +392,88 @@ const QuanlySanPham = () => {
       !formData.danhMuc.idDanhMuc ||
       !formData.weight
     ) {
-      alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng điền đầy đủ thông tin sản phẩm',
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      });
+
       return;
     }
+    if (parseFloat(formData.weight) <= 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Cân nặng phải lớn hơn 0!',
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+    
 
     for (const sku of skusList) {
       if (parseFloat(sku.giaSanPham) < 1000) {
-        alert("Giá sản phẩm phải lớn hơn 1000 !");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Giá sản phẩm phải lớn hơn 1000!',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
+      
       if (!sku.giaSanPham) {
-        alert("Giá sản phẩm không được để trống !");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Giá sản phẩm không được để trống!',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
+      
       if (parseInt(sku.soLuong) <= 0) {
-        alert("Số lượng sản phẩm phải lớn hơn 0 !");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Số lượng sản phẩm phải lớn hơn 0!',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
+      
       if (!sku.soLuong) {
-        alert("Số lượng sản phẩm không được để trống !");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Số lượng sản phẩm không được để trống!',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
+      
       if (!sku.hinhanh) {
-        alert("Hình ảnh sản phẩm không được để trống !");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Hình ảnh sản phẩm không được để trống!',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
+      
     }
     if (skusList.length === 0) {
-      alert("Chưa có danh sách biến thể sản phẩm!");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Chưa có danh sách biến thể sản phẩm!',
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      });
       return;
     }
+    
     const token = Cookies.get('token');
     const newData = {
       tenSanPham: formData.tenSanPham,
@@ -452,12 +522,25 @@ const QuanlySanPham = () => {
       console.log("Danh sách ID của các SKU:", addedSkuIds);
       await handleUploadAnh(addedSkuIds); // Truyền danh sách ID SKU vào hàm handleUpload      
       //  console.log(addData.data?.skus[0]?.idSku)
-      alert('Thêm thành công', addData.data);
+      Swal.fire({
+        icon: 'success',
+        title: 'Thêm thành công',
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      });
+      
       handleResetData();
-      console.log(addData.data);
+    
     } catch (error) {
       console.error('Lỗi khi thêm sản phẩm:', error);
-      alert('Có lỗi xảy ra khi thêm sản phẩm');
+      Swal.fire({
+        icon: 'error',
+        title: 'Có lỗi xảy ra khi thêm sản phẩm',
+        text: 'Vui lòng thử lại sau.',
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      });
+      
     }
   }
 
@@ -468,31 +551,76 @@ const QuanlySanPham = () => {
       !formData.danhMuc.idDanhMuc ||
       !formData.weight
     ) {
-      alert("Vui lòng điền đầy đủ thông tin sản phẩm.");
+      Swal.fire({
+        icon: 'warning',
+        title: 'Vui lòng điền đầy đủ thông tin sản phẩm',
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+    if (parseFloat(formData.weight) <= 0) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Cân nặng phải lớn hơn 0!',
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      });
       return;
     }
 
     for (const sku of skusList) {
+
       if (parseFloat(sku.giaSanPham) < 1000) {
-        alert("Giá sản phẩm phải lớn hơn 1000 !");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Giá sản phẩm phải lớn hơn 1000!',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
+      
       if (!sku.giaSanPham) {
-        alert("Giá sản phẩm không được để trống !");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Giá sản phẩm không được để trống!',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
+      
       if (parseInt(sku.soLuong) <= 0) {
-        alert("Số lượng sản phẩm phải lớn hơn 0 !");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Số lượng sản phẩm phải lớn hơn 0!',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
+      
       if (!sku.soLuong) {
-        alert("Số lượng sản phẩm không được để trống !");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Số lượng sản phẩm không được để trống!',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
+      
       if (!sku.hinhanh) {
-        alert("Hình ảnh sản phẩm không được để trống !");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Hình ảnh sản phẩm không được để trống!',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        });
         return;
       }
+
     }
     const newData = {
       tenSanPham: formData.tenSanPham,
@@ -530,12 +658,23 @@ const QuanlySanPham = () => {
       const apiSanPham = 'http://localhost:8080/api/sanpham';
       const response = await axios.put(apiSanPham + '/' + idSanPham, newData);
       await handleUpdateAnh();
-      alert('Sửa thành công', response.data);
+      Swal.fire({
+        icon: 'success',
+        title: 'Sửa thành công',
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      });
       handleResetData();
 
     } catch (error) {
       console.error('Lỗi khi sửa sản phẩm:', error);
-      alert('Có lỗi xảy ra khi sửa sản phẩm');
+      Swal.fire({
+        icon: 'error',
+        title: 'Có lỗi xảy ra khi sửa sản phẩm',
+        text: 'Vui lòng thử lại sau.',
+        showConfirmButton: true,
+        confirmButtonText: 'OK',
+      });
     }
   }
 
@@ -580,12 +719,12 @@ const QuanlySanPham = () => {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="weight" className="form-label fw-bold">Cân nặng</label>
+                <label htmlFor="weight" className="form-label fw-bold">Cân nặng (gam)</label>
                 <input
                   type="number"
                   id="weight"
                   className="form-control"
-                  placeholder="Nhập cân nặng"
+                  placeholder="Nhập cân nặng (gam)"
                   name="weight"
                   value={formData.weight}
                   onChange={handleChange}
@@ -594,9 +733,9 @@ const QuanlySanPham = () => {
 
 
               <div className="mb-4 fw-bold">
-                <label htmlFor="">Danh Mục:</label>
+                <label htmlFor="" className=''>Danh Mục:</label>
                 <select
-                  className="form-control"
+                  className="form-control mt-2"
                   name="danhMuc"
                   value={formData.danhMuc.idDanhMuc}
                   onChange={handleChange}

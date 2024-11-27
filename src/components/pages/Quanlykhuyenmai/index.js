@@ -15,7 +15,7 @@ const QuanLyKhuyenMai = () => {
         ghiChu: '',
         shop: { id: '' },
     });
-    
+    console.log(formData)
     const [shopForm, setShopForm] = useState([]);
     const { idKhuyenMai } = useParams();
     const [edit, setEdit] = useState(true);
@@ -27,7 +27,7 @@ const QuanLyKhuyenMai = () => {
     
     function getDefaultNgayKetThuc() {
         const now = new Date();
-        now.setHours(15, 1, 0, 0); // Thiết lập giờ 23:59
+        now.setHours(23, 59, 0, 0); // Thiết lập giờ 23:59
         return format(now, "yyyy-MM-dd'T'HH:mm");
     }
     
@@ -204,7 +204,7 @@ const QuanLyKhuyenMai = () => {
                                         type="date"
                                         className="form-control"
                                         name="ngayBatDau"
-                                        value={formData.ngayBatDau}
+                                        value={getFormatDate(formData.ngayBatDau)}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -214,7 +214,7 @@ const QuanLyKhuyenMai = () => {
                                         type="date"
                                         className="form-control"
                                         name="ngayKetThuc"
-                                        value={formData.ngayKetThuc}
+                                        value={getFormatDate(formData.ngayKetThuc)}
                                         onChange={handleChange}
                                     />
                                 </div>

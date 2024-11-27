@@ -53,33 +53,113 @@ const ShopUser = () => {
 
   }
   async function handleDeleteSanPham(id) {
-    const apiSanPham = 'http://localhost:8080/api/sanpham/updatetrangthai';
-    await axios.put(apiSanPham + '/' + id);
-    alert("Sản phẩm đã được Xóa");
-    hienThiSanPham();
+    // Hiển thị thông báo xác nhận trước khi xóa
+    const result = await Swal.fire({
+      title: "Bạn có chắc chắn muốn xóa sản phẩm này?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Xóa",
+      cancelButtonText: "Hủy",
+    });
+  
+    // Nếu người dùng xác nhận, thực hiện xóa
+    if (result.isConfirmed) {
+      const apiSanPham = "http://localhost:8080/api/sanpham/updatetrangthai";
+      try {
+        await axios.put(`${apiSanPham}/${id}`);
+        Swal.fire({
+          icon: "success",
+          title: "Xóa sản phẩm thành công",
+        });
+        hienThiSanPham(); // Load lại danh sách sản phẩm sau khi xóa
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Đã xảy ra lỗi",
+          text: "Không thể xóa sản phẩm. Vui lòng thử lại sau.",
+        });
+      }
+    }
   }
+  
 
   async function handleDeleteKhuyenMaiHetHan(id) {
     const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai/updatetrangthai';
     await axios.put(apiKhuyenMai + '/' + id);
+   
   }
   async function handleDeleteSanPhamKhuyenMaiHetHan(id) {
     const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai';
     await axios.put(apiSanPhamKhuyenMai + '/' + id);
+
   }
 
   async function handleDeleteKhuyenMai(id) {
-    const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai/updatetrangthai';
-    await axios.put(apiKhuyenMai + '/' + id);
-    alert("Khuyến mãi đã được Xóa");
-    hienThiKhuyenMai();
+    // Hiển thị thông báo xác nhận trước khi xóa
+    const result = await Swal.fire({
+      title: "Bạn có chắc chắn muốn xóa khuyến mãi này?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Xóa",
+      cancelButtonText: "Hủy",
+    });
+  
+    // Nếu người dùng xác nhận, thực hiện xóa
+    if (result.isConfirmed) {
+      const apiKhuyenMai = "http://localhost:8080/api/khuyenmai/updatetrangthai";
+      try {
+        await axios.put(`${apiKhuyenMai}/${id}`);
+        Swal.fire({
+          icon: "success",
+          title: "Khuyến mãi đã được xóa",
+        });
+        hienThiKhuyenMai(); // Load lại danh sách khuyến mãi sau khi xóa
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Đã xảy ra lỗi",
+          text: "Không thể xóa khuyến mãi. Vui lòng thử lại sau.",
+        });
+      }
+    }
   }
+  
   async function handleDeleteSanPhamKhuyenMai(id) {
-    const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai';
-    await axios.put(apiSanPhamKhuyenMai + '/' + id);
-    alert("Sản phẩm khuyến mãi đã được Xóa");
-    hienThiSanPhamKhuyenMai();
+    // Hiển thị thông báo xác nhận trước khi xóa
+    const result = await Swal.fire({
+      title: "Bạn có chắc chắn muốn xóa sản phẩm khuyến mãi này?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Xóa",
+      cancelButtonText: "Hủy",
+    });
+  
+    // Nếu người dùng xác nhận, thực hiện xóa
+    if (result.isConfirmed) {
+      const apiSanPhamKhuyenMai = "http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai";
+      try {
+        await axios.put(`${apiSanPhamKhuyenMai}/${id}`);
+        Swal.fire({
+          icon: "success",
+          title: "Sản phẩm khuyến mãi đã được xóa",
+        });
+        hienThiSanPhamKhuyenMai(); // Load lại danh sách sản phẩm khuyến mãi sau khi xóa
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Đã xảy ra lỗi",
+          text: "Không thể xóa sản phẩm khuyến mãi. Vui lòng thử lại sau.",
+        });
+      }
+    }
   }
+  
 
   useEffect(() => {
     if (shop && shop.id) {
@@ -446,7 +526,6 @@ const ShopUser = () => {
                         console.log(dataSanPhamKhuyenMai)
                         if (!khuyenMaiConHieuLuc) {
                           // Gọi các hàm xóa trạng thái khi khuyến mãi hết hiệu lực
-
                           handleDeleteSanPhamKhuyenMaiHetHan(sanPhamKhuyenMai.idSanPhamKM);
 
                         }

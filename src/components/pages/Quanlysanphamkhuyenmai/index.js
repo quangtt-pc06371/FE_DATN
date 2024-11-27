@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Cookies from "js-cookie";
-
+import Swal from "sweetalert2";
 const QuanLySanPhamKhuyenMai = () => {
   const [formData, setFormData] = useState({
     sanPham: { idSanPham: parseInt('') },
@@ -109,6 +109,7 @@ const QuanLySanPhamKhuyenMai = () => {
 
     if (!formData.sanPham.idSanPham) {
       alert("Vui lòng chọn sản phẩm trước khi thêm!");
+      Swal.fire('Vui lòng chọn sản phẩm trước khi thêm !');
       return;
     }
 
