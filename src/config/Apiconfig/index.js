@@ -1,6 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
- 
+
 import {refreshToken, startTokenRefreshInterval } from "../../components/pages/Refresh";
 const BASE_URL = 'http://localhost:8080';
 
@@ -11,9 +11,9 @@ const request = async ({
   headers = {},
 }) => {
   try {
-    // const cookie = new Cookies();
+
     const token = Cookies.get('token'); 
-    // console.log(token);
+
     const res = await axios({
       method: method,
       baseURL: BASE_URL,
@@ -25,11 +25,11 @@ const request = async ({
       },
     });
 
-    console.log("API request: ", res.data);
+    // console.log("API request: ", res.data);
 
     return res.data;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
    if(error.status == 401){
     // startTokenRefreshInterval();
 
