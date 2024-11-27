@@ -8,6 +8,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';  // Import Bootstrap JS
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from "axios";
 
+
 const TrangChu = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -15,7 +16,8 @@ const TrangChu = () => {
     const navigate = useNavigate();
     const [, , removeCookie] = useCookies(['token','refreshToken'])
     console.log(typeof removeCookie);
-   
+  
+ 
 
     const handleSearch = (e) => {
         e.preventDefault();
