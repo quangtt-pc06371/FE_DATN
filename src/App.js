@@ -17,8 +17,8 @@ import ShopApproval from './components/pages/admin/DuyetShop/ShopApproval';
 import ShopManagement from './components/pages/admin/QuanLyShop/ShopManagement';
 
 import AdminLayout from './components/layouts/AdminLayout';
-import ShopRegistration from './components/pages/user/ShopRegistration';
-import ShopUser from './components/pages/user/ShopUser';
+import ShopRegistration from './components/pages/user/DangKyShop/ShopRegistration';
+import ShopUser from './components/pages/user/ShopUser/ShopUser';
 import ChiTietSanPham from './components/pages/Chitietsanpham';
 import QuanLykhuyenMai from './components/pages/Quanlykhuyenmai';
 import DanhSachkhuyenMai from './components/pages/Danhsachkhuyenmai';

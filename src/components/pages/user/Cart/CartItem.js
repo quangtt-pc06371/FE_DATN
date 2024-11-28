@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import axios from "axios";
-import { BASE_URL, API, SKU } from "../assets/config/api";
+import { BASE_URL, API, SKU } from "../../../../config/ApiCart/api";
 
 const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const [quantity, setQuantity] = useState(product.soLuongMua || 1);

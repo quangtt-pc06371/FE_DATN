@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CartItem from "./CartItem";
-import { BASE_URL, API, CART } from "./assets/config/api";
+import { BASE_URL, API, CART } from "../../../../config/ApiCart/api";
 
 const CartPage = () => {
   const [cart, setCart] = useState(null);
