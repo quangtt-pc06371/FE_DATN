@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router-dom";
-import './css.css';
 import { getProfile, loginApi } from "../../config//Auth";
 
 const User = () => {
