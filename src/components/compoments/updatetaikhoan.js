@@ -77,6 +77,7 @@ const Updataikhoan = () => {
                     });
                     // navigate('/listtaikhoan');
                     alert(" sửa thành công")
+                    window.location.reload()
                 } catch (error) {
                     console.error(error);
                 }
@@ -105,6 +106,7 @@ const Updataikhoan = () => {
                     );
                     // navigate('/listtaikhoan');
                     alert(" sửa thành công")
+                    window.location.reload()
                 } catch (error) {
                     console.error(error);
                 }

@@ -37,13 +37,13 @@ const refreshToken = async () => {
     const newAccessToken = response.data.token;
 
     // Cập nhật access token mới vào cookie, với thời gian hết hạn là 1 ngày
-    Cookies.set('token', newAccessToken, { expires: 1 });
+    Cookies.set('token', newAccessToken);
     console.log("Token đã được làm mới thành công");
     window.location.reload()
   } catch (error) {
     console.error("Làm mới token thất bại:", error);
     // Điều hướng người dùng đến trang đăng nhập nếu token không thể làm mới
-    window.location.href = '/login';
+    window.location.href = '/buyer/login';
   }
 };
 

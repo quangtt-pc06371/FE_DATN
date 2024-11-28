@@ -47,7 +47,7 @@ const Addtaikhoan = () => {
       matKhau,
       sdt,
       cmnd,
-      vaitro: { id: 3 }
+      vaitro: { id: 2 }
     };
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);

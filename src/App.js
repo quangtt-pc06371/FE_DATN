@@ -40,6 +40,7 @@ import Listtk from './components/compoments/Listtaikhoan';
 import Registergg from "./components/pages/logingoogle";
 import Index from "./components/pages/TrangChu";
 import ProtectedRoute from "./config/Authenticated/protectedRoute";
+import AddStaff from "./components/pages/addstaff";
 
 import { AuthProvider } from "./config/Authenticated/index";
 
@@ -90,7 +91,7 @@ export default function App() {
           <Route index element={<SanPham />} />
           <Route path="chitietsanpham/:id" element={<ChiTietSanPham />} />
 
-
+          <Route path="addstaff" element={<AddStaff />} />
           <Route path='quanlysanpham' element={<QuanlySanPham />} />
           <Route path="Logout" element={<Logout />} />
 

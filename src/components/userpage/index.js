@@ -89,7 +89,8 @@ const User = () => {
          <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('/user/shop-user')}> địa chỉ</button></li>
          <li className="menu-item"><button className="edit-profile-button"onClick={() => navigate('/user/shop-register')}>đăng kí shop</button> </li>
         <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('/user/shop-user')}> shop</button></li>
-       <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('/user/shop-register')}>Đăng ký shop</button></li>
+        
+        <a href="/user/shop-user"><li className="menu-item"> Đăng ký shop</li></a>
 
        </ul>
      </div>

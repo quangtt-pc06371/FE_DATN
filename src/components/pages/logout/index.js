@@ -14,6 +14,7 @@ const Logout = () => {
                 { path: 'http://localhost:3000/' }
                );
                navigator('/')
+               window.location.reload()
     }
     return (
         <button className="btn btn-secondary dropdown-item" type="button" onClick={handleRemoveCookie}>
