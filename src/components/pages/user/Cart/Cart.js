@@ -318,7 +318,12 @@ const CartPage = () => {
     return <div className="loading-message">Đang tải giỏ hàng...</div>;
   }
 
-  const totalAmount = cart.tongTien;
+  const totalAmount = Object.values(cartDetail || {}) // Duyệt qua từng shop
+  .flatMap((shop) => shop.products) // Trải phẳng danh sách sản phẩm từ tất cả các shop
+  .filter((item) => item.isSelected) // Lọc các sản phẩm được chọn
+  .reduce((sum, item) => sum + item.skuEntity.giaSanPham * item.soLuongMua, 0); // Tính tổng tiền
+
+
 
   return (
     <>
