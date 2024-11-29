@@ -7,6 +7,7 @@ const AdminLayout = () => {
     <div className="admin-layout">
       {/* Sidebar */}
       <div className="admin-sidebar">
+         but
         <div style={{ padding: '20px', fontWeight: 'bold', textAlign: 'center' }}>Admin</div>
         <ul>
           <li>

@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from "react-cookie";
-
+import Swal from 'sweetalert2';
 const Updataikhoan = () => {
     const [hoTen, sethoTen] = useState('');
     const [email, setemail] = useState('');
@@ -75,7 +75,15 @@ const Updataikhoan = () => {
                     await axios.put(`http://localhost:8080/api/taikhoan/update`, taikhoan, {
                         headers: { Authorization: ` ${token}` },
                     });
-                    navigate('/listtaikhoan');
+                    Swal.fire({
+                        title: "cập nhật thành công",
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 2000); 
                 } catch (error) {
                     console.error(error);
                 }
@@ -102,7 +110,15 @@ const Updataikhoan = () => {
                           }
                       
                     );
-                    navigate('/listtaikhoan');
+                    Swal.fire({
+                        title: "cập nhật thành công",
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false,
+                      });
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 2000); 
                 } catch (error) {
                     console.error(error);
                 }
