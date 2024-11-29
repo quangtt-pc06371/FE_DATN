@@ -3,7 +3,6 @@ import Carousel from 'react-bootstrap/Carousel';
 import axios from "axios";
 import { useLocation } from 'react-router-dom';
 import { format } from "date-fns";
-
 const SanPham = () => {
     const location = useLocation();
     const [data, setData] = useState([]);
@@ -14,30 +13,20 @@ const SanPham = () => {
     const [sapXep, setSapXep] = useState('');
     const [danhMucDaChon, setDanhMucDaChon] = useState('');
     const noiDungTimKiem = location.state?.noiDungTimKiem || '';
-    console.log(data)
 
-
-
-
+try {
     
-
-    async function handleDeleteKhuyenMai(id) {
-        const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai/updatetrangthai';
-        await axios.put(apiKhuyenMai + '/' + id);
-    }
-    async function handleDeleteSanPhamKhuyenMai(id) {
-        const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai';
-        await axios.put(apiSanPhamKhuyenMai + '/' + id);
-    }
-
+} catch (error) {
+    
+}
     async function getSanPhamKhuyenMai() {
         try {
             const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
             setSanPhamKhuyenMaiForm(response.data);
         } catch (error) {
-
+            
         }
-
+       
     }
 
     async function getDanhMuc() {
@@ -47,7 +36,7 @@ const SanPham = () => {
         } catch (error) {
             console.log(error)
         }
-
+       
     }
 
     async function hienThiSanPhamTheoDanhMuc(idDanhMuc, tenDanhMuc) {
@@ -68,10 +57,8 @@ const SanPham = () => {
         } catch (error) {
             console.log(error)
         }
-
+       
     }
-
-
 
     async function hienThiSanPhamTheoTen() {
         const url = `http://localhost:8080/api/sanpham/timkiem?ten=${noiDungTimKiem}`;
@@ -137,7 +124,7 @@ const SanPham = () => {
         );
     };
 
-  
+console.log(danhMucDaChon)
 
     return (
         <main style={{ background: 'rgb(245,245,250)' }}>
@@ -211,12 +198,11 @@ const SanPham = () => {
                             </div>
                         </div>
 
-                        
+
                         <div className="row">
                             {data.map((sanPham) => {
-
+                                
                                 const khuyenMaiData = findKhuyenMai(sanPham);
-                                console.log(khuyenMaiData)
                                 const now = new Date();
                                 const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
@@ -233,52 +219,45 @@ const SanPham = () => {
 
 
                                     khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
-
-                                    if (!khuyenMaiConHieuLuc) {
-                                        // Gọi các hàm xóa trạng thái khi khuyến mãi hết hiệu lực
-                                        handleDeleteKhuyenMai(khuyenMaiData.khuyenMai.idKhuyenMai);
-                                        handleDeleteSanPhamKhuyenMai(khuyenMaiData.idSanPhamKM);
-                                    }
-
                                 }
                                 const firstSku = sanPham.skus?.[0];
-                                const firstImage = firstSku?.hinhanh;
+                                const firstImage = firstSku?.hinhanhs?.[0];
                                 return (
-                                    sanPham.trangThai === false || sanPham.shop.isActive == false ? null : (
-                                        <div key={sanPham.idSanPham} className="col-md-3 mb-3">
-                                            <a href={`/chitietsanpham/${sanPham.idSanPham}`} className='text-white'>
-                                                <div className="card border rounded-3 shadow-sm h-100">
-                                                    <div className="card-img">
-                                                        {firstImage ? (
-                                                            <img
-                                                                src={firstImage.tenAnh}
-                                                                alt={`Product ${sanPham.tenSanPham} - Main Image`}
-                                                                className="img-fluid"
-                                                            />
-                                                        ) : (
-                                                            <div className="img-placeholder">No Image Available</div>
-                                                        )}
-                                                    </div>
-                                                    <div className="card-body">
-                                                        <p className='card-text'>{sanPham.tenSanPham}</p>
-                                                        <p className="card-text text-danger fw-bold">
-                                                            {khuyenMaiConHieuLuc ? (
-                                                                <>
-                                                                    <span className="text-muted" style={{ textDecoration: 'line-through' }}>
-                                                                        {giaGoc} VNĐ
-                                                                    </span>
-                                                                    <br />
-                                                                    {giaSauKhuyenMai.toFixed(2)} VNĐ
-                                                                </>
-                                                            ) : (
-                                                                `${giaGoc.toLocaleString()} VNĐ`
-                                                            )}
-                                                        </p>
-                                                    </div>
+                                     sanPham.trangThai === false ? null : (
+                                    <div key={sanPham.idSanPham} className="col-md-3 mb-3">
+                                        <a href={`/chitietsanpham/${sanPham.idSanPham}`} className='text-white'>
+                                            <div className="card border rounded-3 shadow-sm">
+                                                <div className="card-img">
+                                                    {firstImage ? (
+                                                        <img
+                                                            src={firstImage.tenAnh}
+                                                            alt={`Product ${sanPham.tenSanPham} - Main Image`}
+                                                            className="img-fluid"
+                                                        />
+                                                    ) : (
+                                                        <div className="img-placeholder">No Image Available</div>
+                                                    )}
                                                 </div>
-                                            </a>
-                                        </div>
-                                    )
+                                                <div className="card-body">
+                                                    <p className='card-text'>{sanPham.tenSanPham}</p>
+                                                    <p className="card-text text-danger fw-bold">
+                                                        {khuyenMaiConHieuLuc ? (
+                                                            <>
+                                                                <span className="text-muted" style={{ textDecoration: 'line-through' }}>
+                                                                    {giaGoc} VNĐ
+                                                                </span>
+                                                                <br />
+                                                                {giaSauKhuyenMai.toFixed(2)} VNĐ
+                                                            </>
+                                                        ) : (
+                                                            `${giaGoc.toLocaleString()} VNĐ`
+                                                        )}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                     )
                                 );
                             })}
                         </div>

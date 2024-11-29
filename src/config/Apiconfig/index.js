@@ -5,14 +5,12 @@ import {refreshToken, startTokenRefreshInterval } from "../../components/pages/R
 const BASE_URL = 'http://localhost:8080';
 
 const request = async ({
-  method = "",
+  method = "GET",
   path = "",
   data = {},
   headers = {},
 }) => {
   try {
-    // const cookie = new Cookies();
-    
 
     const token = Cookies.get('token'); 
 

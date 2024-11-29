@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
-import Cookies from "js-cookie";
 const QuanLyKhuyenMai = () => {
     const [formData, setFormData] = useState({
         tenKhuyenMai: '',
@@ -13,26 +12,19 @@ const QuanLyKhuyenMai = () => {
         ngayKetThuc: '',
         active: true,
         ghiChu: '',
-        shop: { id: '' },
-    });
-    console.log(formData)
+        shop: { id: '' }
+    }
+    );
     const [shopForm, setShopForm] = useState([]);
     const { idKhuyenMai } = useParams();
     const [edit, setEdit] = useState(true);
 
-    function getDefaultNgayBatDau() {
-        const now = new Date();
-        return format(now, "yyyy-MM-dd'T'HH:mm");
-    }
-    
-    function getDefaultNgayKetThuc() {
-        const now = new Date();
-        now.setHours(23, 59, 0, 0); // Thiết lập giờ 23:59
-        return format(now, "yyyy-MM-dd'T'HH:mm");
-    }
-    
 
 
+    async function layShop() {
+        const response = await axios.get('http://localhost:8080/api/shop');
+        setShopForm(response.data);
+    }
     async function getDataDisplayId() {
 
         const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai';
@@ -45,60 +37,31 @@ const QuanLyKhuyenMai = () => {
             getDataDisplayId();
             setEdit(false);
         }
-
+        layShop();
     }, [idKhuyenMai]);
 
     function handleChange(e) {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
-    const token = Cookies.get('token');
+
     async function handleAdd() {
-        // Kiểm tra bỏ trống các trường
-        if (
-            !formData.tenKhuyenMai.trim() ||
-            !formData.giaTriKhuyenMai ||
-            !formData.ngayBatDau ||
-            !formData.ngayKetThuc ||
-            !formData.ghiChu.trim()
-        ) {
-            alert('Vui lòng điền đầy đủ thông tin khuyến mãi.');
-            return;
+        const dataToSent = {
+            tenKhuyenMai: formData.tenKhuyenMai,
+         
+            giaTriKhuyenMai: formData.giaTriKhuyenMai,
+            ngayBatDau: formData.ngayBatDau,
+            ngayKetThuc: formData.ngayKetThuc,
+            active: true,
+            ghiChu: formData.ghiChu,
+            shop: { id: parseInt(formData.shop) }
         }
+        const addData = await axios.post('http://localhost:8080/api/khuyenmai', dataToSent);
+        alert('Thêm thành công', addData.data);
+        handleResetData();
 
-        // Kiểm tra ngày bắt đầu và ngày kết thúc
-        const ngayBatDau = new Date(formData.ngayBatDau);
-        const ngayKetThuc = new Date(formData.ngayKetThuc);
 
-        if (ngayBatDau > ngayKetThuc) {
-            alert('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
-            return;
-        }
-
-        try {
-            const dataToSent = {
-                tenKhuyenMai: formData.tenKhuyenMai,
-                giaTriKhuyenMai: formData.giaTriKhuyenMai,
-                ngayBatDau: getDefaultNgayBatDau(formData.ngayBatDau),
-                ngayKetThuc: getDefaultNgayKetThuc(formData.ngayKetThuc),
-                active: true,
-                ghiChu: formData.ghiChu,
-            };
-
-            const addData = await axios.post('http://localhost:8080/api/khuyenmai', dataToSent, {
-                headers: {
-                    'Authorization': token,
-                },
-            });
-
-            alert('Thêm thành công', addData.data);
-            handleResetData();
-        } catch (error) {
-            console.error('Lỗi khi thêm khuyến mãi:', error);
-            alert('Có lỗi xảy ra khi thêm khuyến mãi.');
-        }
     }
-
-    console.log(shopForm)
+console.log(shopForm)
     async function handleUpdate() {
         const dataToUpdate = {
             tenKhuyenMai: formData.tenKhuyenMai,
@@ -124,7 +87,7 @@ const QuanLyKhuyenMai = () => {
             ngayBatDau: '',
             ngayKetThuc: '',
             ghiChu: '',
-
+            shop: { id: '' }
         })
     }
     function getFormatDate(dateString) {
@@ -147,9 +110,9 @@ const QuanLyKhuyenMai = () => {
                                 <h2 className="card-title mb-0 text-primary">Quản lý Khuyến Mãi</h2>
                                 <a
                                     className="btn btn-primary"
-                                    href="/shop-user"
+                                    href="/danhsachkhuyenmai"
                                 >
-                                    Trở Về Trang Shop
+                                    Danh Sách Khuyến Mãi
                                 </a>
                             </div>
                             <div className="card-body">
@@ -164,7 +127,7 @@ const QuanLyKhuyenMai = () => {
                                         onChange={handleChange}
                                     />
                                 </div>
-
+                          
                                 <div className="mb-3">
                                     <label htmlFor="giaTriKhuyenMai" className="form-label">Giá Trị Khuyến Mãi (Giảm giá %):</label>
                                     <input
@@ -177,7 +140,7 @@ const QuanLyKhuyenMai = () => {
                                         onChange={handleChange}
                                     />
                                 </div>
-                                {/* <div className="mb-3">
+                                <div className="mb-3">
                                     <label htmlFor="ngayBatDau" className="form-label">Ngày Bắt Đầu:</label>
                                     <input
                                         type="date"
@@ -196,29 +159,7 @@ const QuanLyKhuyenMai = () => {
                                         value={getFormatDate(formData.ngayKetThuc)}
                                         onChange={handleChange}
                                     />
-                                </div> */}
-
-                                <div className="mb-3">
-                                    <label htmlFor="ngayBatDau" className="form-label">Ngày và Giờ Bắt Đầu:</label>
-                                    <input
-                                        type="date"
-                                        className="form-control"
-                                        name="ngayBatDau"
-                                        value={getFormatDate(formData.ngayBatDau)}
-                                        onChange={handleChange}
-                                    />
                                 </div>
-                                <div className="mb-3">
-                                    <label htmlFor="ngayKetThuc" className="form-label">Ngày và Giờ Kết Thúc:</label>
-                                    <input
-                                        type="date"
-                                        className="form-control"
-                                        name="ngayKetThuc"
-                                        value={getFormatDate(formData.ngayKetThuc)}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-
                                 <div className="mb-3">
                                     <label htmlFor="ghiChu" className="form-label">Ghi Chú:</label>
                                     <textarea
@@ -230,7 +171,20 @@ const QuanLyKhuyenMai = () => {
                                         onChange={handleChange}
                                     ></textarea>
                                 </div>
-
+                                <div className="mb-3">
+                                    <label htmlFor="">Shop khuyến mãi:</label>
+                                    <select
+                                        className="form-control"
+                                        name="shop"
+                                        value={formData.shop.id}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Chọn Shop</option>
+                                        {shopForm.map((s) => (
+                                            <option key={s.id} value={s.id}>{s.shopName}</option>
+                                        ))}
+                                    </select>
+                                </div>
                                 <div>
                                     {edit ? (
                                         <>

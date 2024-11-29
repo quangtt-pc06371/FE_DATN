@@ -32,6 +32,7 @@ const Addtaikhoan = () => {
     if (!hoTen) newErrors.hoTen = "Họ tên là bắt buộc";
     if (!email ) newErrors.email = "Email là bắt buộc";
     if (!matKhau) newErrors.matKhau = "Mật khẩu là bắt buộc";
+    if (matKhau == null) newErrors.matKhau = "Mật khẩu là bắt buộc";
     // if (!sdt) newErrors.sdt = "Số điện thoại là bắt buộc";
     // if (!diachi) newErrors.diachi = "Địa chỉ là bắt buộc";
     // if (!cmnd) newErrors.cmnd = "CMND là bắt buộc";
@@ -48,7 +49,10 @@ const Addtaikhoan = () => {
       cmnd,
       vaitro: { id: 2 }
     };
-
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
     try {
       // const token = cookies?.token;
       // if (!token) {
@@ -56,7 +60,7 @@ const Addtaikhoan = () => {
       //   return;
       // }
       console.log(taiKhoan)
-      if (file == null) {
+      if (file == null ||!newErrors ) {
         try {
           const taiKhoanResponse = await axios.post(
             `http://localhost:8080/api/taikhoan/user`,
@@ -109,10 +113,7 @@ const Addtaikhoan = () => {
     catch (error) {
       alert("Không thành công");
     }
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+  
   };
 
   return (

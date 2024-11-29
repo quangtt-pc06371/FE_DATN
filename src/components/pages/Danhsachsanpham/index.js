@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const DanhSachSanPham = () => {
   const [data, setData] = useState([]);
-  console.log(data)
+
 
   async function hienThi() {
     const response = await axios.get('http://localhost:8080/api/sanpham');
