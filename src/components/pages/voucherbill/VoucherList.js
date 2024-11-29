@@ -1,111 +1,153 @@
 import React, { useEffect, useState } from 'react';
-import { getAllVouchers, deleteVoucher } from '../../services/voucherService';
+import { getAllVouchers, addVoucher, updateVoucher, deleteVoucher } from '../../services/voucherService';
+import VoucherForm from './VoucherForm';
+import './VoucherForm.css'; // Thêm file CSS tùy chỉnh
 
-function VoucherList({ onEdit }) {
+const mockVouchers = [
+    {
+        id: 1,
+        tenvoucher: 'Voucher Giảm Giá 10%',
+        giamGia: 10,
+        soLuong: 100,
+        donToiThieu: 50000,
+        ngaybatdau: '2024-01-01',
+        ngayHetHan: '2024-12-31',
+    },
+    {
+        id: 2,
+        tenvoucher: 'Voucher Miễn Phí Vận Chuyển',
+        giamGia: 15,
+        soLuong: 50,
+        donToiThieu: 100000,
+        ngaybatdau: '2024-01-01',
+        ngayHetHan: '2024-12-31',
+    },
+];
+
+function VoucherList() {
     const [vouchers, setVouchers] = useState([]);
-    const [searchTerm, setSearchTerm] = useState(''); // Thêm trạng thái cho thanh tìm kiếm
+    const [searchTerm, setSearchTerm] = useState('');
     const [filteredVouchers, setFilteredVouchers] = useState([]);
+    const [editingVoucher, setEditingVoucher] = useState(null);
 
     useEffect(() => {
         fetchVouchers();
     }, []);
 
     useEffect(() => {
-        // Lọc danh sách voucher dựa trên từ khóa tìm kiếm
         setFilteredVouchers(
             vouchers.filter((voucher) =>
-                voucher.id.toString().includes(searchTerm) ||
+                voucher.tenvoucher.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 voucher.giamGia.toString().includes(searchTerm) ||
-                voucher.soLuong.toString().includes(searchTerm) ||
-                voucher.ngaybatdau.includes(searchTerm) ||
-                voucher.ngayHetHan.includes(searchTerm) ||
-                voucher.user.toString().includes(searchTerm)
+                voucher.donToiThieu.toString().includes(searchTerm)
             )
         );
     }, [searchTerm, vouchers]);
 
     const fetchVouchers = async () => {
-        // Dữ liệu mẫu (sử dụng khi chưa có API)
-        const sampleData = [
-            { id: 1, giamGia: 20, soLuong: 50, ngaybatdau: "2024-11-01", ngayHetHan: "2024-12-01", user: 101 },
-            { id: 2, giamGia: 15, soLuong: 30, ngaybatdau: "2024-11-10", ngayHetHan: "2024-12-10", user: 102 },
-            { id: 3, giamGia: 10, soLuong: 20, ngaybatdau: "2024-11-15", ngayHetHan: "2024-12-15", user: 103 }
-        ];
-
         try {
             const response = await getAllVouchers();
-            setVouchers(response?.data || sampleData);
+            setVouchers(response.data);
         } catch (error) {
-            console.error("Lỗi khi lấy dữ liệu:", error);
-            setVouchers(sampleData);  // Nếu có lỗi, dùng dữ liệu mẫu
+            console.error('Error fetching vouchers:', error);
+            // Sử dụng dữ liệu giả nếu API thất bại
+            setVouchers(mockVouchers);
         }
     };
 
     const handleDelete = async (id) => {
         try {
             await deleteVoucher(id);
-            fetchVouchers();  // Cập nhật danh sách sau khi xóa
+            fetchVouchers();
         } catch (error) {
-            console.error("Lỗi khi xóa voucher:", error);
+            console.error('Error deleting voucher:', error);
         }
+    };
+
+    const handleEdit = (voucher) => {
+        setEditingVoucher(voucher);
+    };
+
+    const handleSave = async (voucher) => {
+        try {
+            if (editingVoucher) {
+                // Update voucher
+                await updateVoucher(editingVoucher.id, voucher);
+            } else {
+                // Add new voucher
+                await addVoucher(voucher);
+            }
+            fetchVouchers();
+            setEditingVoucher(null);
+        } catch (error) {
+            console.error('Error saving voucher:', error);
+        }
+    };
+
+    const handleCancel = () => {
+        setEditingVoucher(null);
     };
 
     return (
         <div style={{ maxWidth: '800px', margin: 'auto', padding: '20px' }}>
             <h2 className="text-center my-4 fw-bold text-primary">DANH SÁCH VOUCHER</h2>
             
-            {/* Thanh tìm kiếm */}
-            <div style={{ marginBottom: '20px' }}>
-                <input
-                    type="text"
-                    placeholder="Tìm kiếm voucher..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    style={{ padding: '8px', width: '100%', borderRadius: '4px', border: '1px solid #ddd' }}
-                />
-            </div>
+            <input
+                type="text"
+                placeholder="Tìm kiếm voucher..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{ padding: '8px', width: '100%', marginBottom: '20px', borderRadius: '4px', border: '1px solid #ddd' }}
+            />
 
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            {editingVoucher ? (
+                <VoucherForm voucher={editingVoucher} onSave={handleSave} onCancel={handleCancel} />
+            ) : (
+                <button onClick={() => setEditingVoucher({})} className="btn-add">
+                    Thêm Voucher Mới
+                </button>
+            )}
+
+            <table className="voucher-table">
                 <thead>
                     <tr>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>ID Voucher</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>Giảm giá (%)</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>Số lượng</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>Ngày bắt đầu</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>Ngày hết hạn</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>ID người dùng</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'center' }}>Hành động</th>
+                        <th>ID</th>
+                        <th>Tên Voucher</th>
+                        <th>Giảm Giá</th>
+                        <th>Số Lượng</th>
+                        <th>Đơn Tối Thiểu</th>
+                        <th>Ngày Bắt Đầu</th>
+                        <th>Ngày Hết Hạn</th>
+                        <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
                     {filteredVouchers.length > 0 ? (
                         filteredVouchers.map((voucher) => (
                             <tr key={voucher.id}>
-                                <td style={{ border: '1px solid #ddd', padding: '6px', textAlign: 'center' }}>{voucher.id}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '6px', textAlign: 'center' }}>{voucher.giamGia}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '6px', textAlign: 'center' }}>{voucher.soLuong}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '6px', textAlign: 'center' }}>{voucher.ngaybatdau}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '6px', textAlign: 'center' }}>{voucher.ngayHetHan}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '6px', textAlign: 'center' }}>{voucher.user}</td>
-                                <td style={{ border: '1px solid #ddd', padding: '6px', textAlign: 'center' }}>
-                                    <button 
-                                        onClick={() => onEdit(voucher)} 
-                                        style={{ marginRight: '5px', padding: '4px 8px', fontSize: '12px' }}
-                                    >
-                                        Sửa
-                                    </button>
-                                    <button 
-                                        onClick={() => handleDelete(voucher.id)} 
-                                        style={{ padding: '4px 8px', fontSize: '12px' }}
-                                    >
-                                        Xóa
-                                    </button>
+                                <td>{voucher.id}</td>
+                                <td>{voucher.tenvoucher}</td>
+                                <td>{voucher.giamGia}</td>
+                                <td>{voucher.soLuong}</td>
+                                <td>{voucher.donToiThieu}</td>
+                                <td>{voucher.ngaybatdau}</td>
+                                <td>{voucher.ngayHetHan}</td>
+                                <td>
+                                    <div className="action-buttons">
+                                        <button className="btn-edit" onClick={() => handleEdit(voucher)}>
+                                            Sửa
+                                        </button>
+                                        <button className="btn-delete" onClick={() => handleDelete(voucher.id)}>
+                                            Xóa
+                                        </button>
+                                    </div>
                                 </td>
+
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="7" style={{ textAlign: 'center', padding: '10px' }}>Không tìm thấy voucher nào</td>
+                            <td colSpan="8">Không có voucher nào</td>
                         </tr>
                     )}
                 </tbody>

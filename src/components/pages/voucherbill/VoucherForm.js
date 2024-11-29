@@ -7,10 +7,12 @@ import './VoucherForm.css';
 
 function VoucherForm({ voucherToEdit, onSave }) {
     const [voucher, setVoucher] = useState({
+        tenVoucher: '', // Thêm trường Tên Voucher
         giamGia: '',
         soLuong: '',
         ngaybatdau: '',
         ngayHetHan: '',
+        donToiThieu: '',
         user: ''
     });
     const [error, setError] = useState('');
@@ -29,9 +31,17 @@ function VoucherForm({ voucherToEdit, onSave }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Kiểm tra nếu giảm giá vượt quá 50%
+        // Kiểm tra các điều kiện hợp lệ
+        if (!voucher.tenVoucher.trim()) {
+            setError('Tên voucher không được để trống');
+            return;
+        }
         if (voucher.giamGia > 50) {
             setError('Giảm giá không được vượt quá 50%');
+            return;
+        }
+        if (voucher.donToiThieu <= 0) {
+            setError('Đơn tối thiểu phải lớn hơn 0');
             return;
         }
 
@@ -47,7 +57,15 @@ function VoucherForm({ voucherToEdit, onSave }) {
             }
 
             onSave();
-            setVoucher({ giamGia: '', soLuong: '', ngaybatdau: '', ngayHetHan: '', user: '' });
+            setVoucher({
+                tenVoucher: '', // Reset trường Tên Voucher
+                giamGia: '',
+                soLuong: '',
+                ngaybatdau: '',
+                ngayHetHan: '',
+                donToiThieu: '',
+                user: ''
+            });
         } catch (error) {
             toast.error('Có lỗi xảy ra khi xử lý voucher!');
         }
@@ -58,20 +76,34 @@ function VoucherForm({ voucherToEdit, onSave }) {
             <form onSubmit={handleSubmit}>
                 <h2 className="text-center my-4 fw-bold text-primary">QUẢN LÝ VOUCHER</h2>
                 <fieldset className="fieldset-section">
-                    <legend>Điều kiện khuyến mãi</legend>
+                    <legend>Thông tin voucher</legend>
                     <input
-                        type="number"
-                        name="giamGia"
-                        placeholder="Giảm giá"
-                        value={voucher.giamGia}
+                        type="text"
+                        name="tenVoucher"
+                        placeholder="Tên voucher"
+                        value={voucher.tenVoucher}
                         onChange={handleChange}
                     />
                     {error && <p className="error-message">{error}</p>}
                     <input
                         type="number"
+                        name="giamGia"
+                        placeholder="Giảm giá (%)"
+                        value={voucher.giamGia}
+                        onChange={handleChange}
+                    />
+                    <input
+                        type="number"
                         name="soLuong"
                         placeholder="Số lượng"
                         value={voucher.soLuong}
+                        onChange={handleChange}
+                    />
+                    <input
+                        type="number"
+                        name="donToiThieu"
+                        placeholder="Đơn tối thiểu (VND)"
+                        value={voucher.donToiThieu}
                         onChange={handleChange}
                     />
                     <div className="date-container">
