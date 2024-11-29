@@ -66,7 +66,7 @@ const ShopManagement = () => {
         cancelButtonText: 'Hủy',
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate('/login');
+          navigate('/buyer/login');
         }
       });
       return;

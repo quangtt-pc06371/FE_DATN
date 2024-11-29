@@ -1,30 +1,35 @@
 import {React ,useEffect}from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../Authenticated/index";
+import Swal from "sweetalert2";
 
-const ProtectedRoute = ({ requiredRole }) => {
-  // window.location.reload()
-
-  const { role, isAuthenticated } = useAuth();
-  console.log(requiredRole)
-  console.log(role)
-  console.log(isAuthenticated)
-  // console.log(role)
+const ProtectedRoute = ({ requiredRoles }) => {
+  const { role, isAuthenticated,loading  } = useAuth();
+ 
+  
+console.log(role)
+console.log(requiredRoles)
+console.log(isAuthenticated)
+if (loading) {
+  return <p>Đang kiểm tra quyền truy cập...</p>; // Hiển thị trạng thái loading
+}
   if (!isAuthenticated) {
-    // return <Navigate to="/login" replace />;
-    // return   window.location.href = '/buyer/login';
-    return <h2>Bạn chưa dăng nhập.</h2>;
+    Swal.fire({
+      title: "Yêu cầu đăng nhập",
+      text: "Vui lòng đăng nhập để thực hiện thao tác này!",
+      icon: "warning",
+      confirmButtonText: "Đăng nhập",
+    }).then(() => {
+      // window.location.href = "/buyer/login"; // Chuyển hướng
+    });
+    return null; // Không render gì trong lúc xử lý
   }
 
-  if (requiredRole && role !== requiredRole) {
-    // alert("vui lòng đăng nhập")
-    //  window.location.href = '/login'
+  if (requiredRoles && !requiredRoles.includes(role)) {
     return <h2>Bạn không có quyền truy cập vào trang này.</h2>;
-    // alert("vui lòng đăng nhập")
   }
 
   return <Outlet />;
-  // return   window.location.href = '/login';
 };
 
 export default ProtectedRoute;
