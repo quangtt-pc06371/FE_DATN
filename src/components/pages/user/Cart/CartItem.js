@@ -101,6 +101,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
     const value = parseInt(e.target.value, 10);
     setModalQuantity(value > 0 ? value : 1); // Đảm bảo số lượng tối thiểu là 1
   };
+  
 
   return (
     <>

@@ -89,11 +89,12 @@ export default function App() {
         </Route>
 
         {/* Layout riêng cho admin */}
+        <Route element={<ProtectedRoute requiredRoles={"ROLE_Admin"} />} >
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="category-management" element={<CategoryManagement />} />
           <Route path="shop-approval" element={<ShopApproval />} />
           <Route path="shop-management" element={<ShopManagement />} />
-
+          </Route>
 
         </Route>
 
