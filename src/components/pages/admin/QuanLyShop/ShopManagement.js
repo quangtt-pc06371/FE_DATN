@@ -191,11 +191,11 @@ const ShopManagement = () => {
               />
             </InputGroup>
             <div className="border p-4 rounded shadow-sm bg-light mb-4">
-              <h4 className="fw-bold text-success">Cửa hàng đang hiển thị</h4>
+              <h4 className="fw-bold text-success">Cửa hàng đang đang hoạt động </h4>
               {renderShopTable(activeShops, true, currentActivePage, setCurrentActivePage)}
             </div>
             <div className="border p-4 rounded shadow-sm bg-light">
-              <h4 className="fw-bold text-danger">Cửa hàng đã ẩn</h4>
+              <h4 className="fw-bold text-danger">Cửa hàng đã tắt hoạt dộng</h4>
               {renderShopTable(hiddenShops, false, currentHiddenPage, setCurrentHiddenPage)}
             </div>
           </Col>
