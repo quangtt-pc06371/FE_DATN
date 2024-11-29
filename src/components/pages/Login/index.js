@@ -6,6 +6,7 @@ import { Container, Card, Form, Button, Alert, Spinner,Col,Row } from "react-boo
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import "./login.css";
+import Swal from 'sweetalert2';
 import Cookies from "js-cookie";
 import { auth, GoogleAuthProvider, signInWithPopup } from "../../../config/firebase";
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
@@ -52,9 +53,17 @@ const Login = () => {
         localStorage.removeItem("email");
         localStorage.removeItem("password");
       }
-
-      toast.success("Đăng nhập thành công!", { position: "top-center", autoClose: 2000 });
+       
+      Swal.fire({
+        title: "Đăng nhập thành công!",
+        icon: "success",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+     
+      // toast.success("Đăng nhập thành công!", { position: "top-center", autoClose: 2000 });
       setTimeout(() => navigate("/"), 2000);
+     
     } catch (error) {
       if (error.response?.status === 401) {
         const errorMessage = "Email hoặc mật khẩu không chính xác. Vui lòng thử lại.";
@@ -91,7 +100,15 @@ const Login = () => {
     Cookies.set('token',token); 
    Cookies.set('refreshToken',refreshToken); 
     console.log(idToken);
-    navigate("/")
+    Swal.fire({
+      title: "Đăng nhập thành công!",
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+    // window.location.reload()
+    setTimeout(() => navigate("/"), 2000);
+   
     // In ra kết quả từ server
     console.log("Response from backend: ", response.data);
   } catch (error) {

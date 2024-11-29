@@ -3,6 +3,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 const signInWithGoogle = async () => {
     // const [cookies, setCookie] = useCookies(["user"]);
   const provider = new GoogleAuthProvider();
@@ -24,7 +25,7 @@ const signInWithGoogle = async () => {
     console.log(idToken);
     // In ra kết quả từ server
     console.log("Response from backend: ", response.data);
-
+   
   } catch (error) {
     console.error("Lỗi đăng nhập:", error);
   }

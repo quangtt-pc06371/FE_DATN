@@ -5,11 +5,14 @@ import Cookies from "js-cookie";
 // Hàm kiểm tra xem token có hết hạn không
 const checkTokenExpiry = () => {
   const token = Cookies.get('token');
-  if (token==null) {
-    console.error("Không tìm thấy token trong cookie.");
-    return true; // Nếu không có token, cần làm mới
+  // if (token==null) {
+  //   console.error("Không tìm thấy token trong cookie.");
+  //   return true; // Nếu không có token, cần làm mới
+  // }
+  if (!token) {
+    console.error("Không tìm thấy token trong cookie. Cần làm mới token.");
+    return true; // Token không tồn tại, cần làm mới
   }
-
   try {
     const decoded = jwtDecode(token); // Sử dụng jwtDecode thay vì jwt_decode
     const now = Date.now() / 1000; // Lấy thời gian hiện tại tính bằng giây
@@ -37,10 +40,10 @@ const refreshToken = async () => {
     const newAccessToken = response.data.token;
 
     // Cập nhật access token mới vào cookie, với thời gian hết hạn là 1 ngày
-    Cookies.remove("token")
+    // Cookies.remove("token")
     Cookies.set('token', newAccessToken);
     console.log("Token đã được làm mới thành công");
-    window.location.reload()
+   
   } catch (error) {
     console.error("Làm mới token thất bại:", error);
     // Điều hướng người dùng đến trang đăng nhập nếu token không thể làm mới
@@ -54,7 +57,11 @@ const startTokenRefreshInterval = () => {
     if (checkTokenExpiry()) {
       refreshToken().catch(error => console.error('Lỗi làm mới token:', error));
     }
-  }, 10* 1000); // 2 phút
+    // if(!checkTokenExpiry()){
+    //   refreshToken().catch(error => console.error('Lỗi làm mới token:', error));
+    // }
+  }, 2*10* 1000);
+  
 };
 
 export { checkTokenExpiry, refreshToken, startTokenRefreshInterval };

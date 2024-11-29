@@ -16,7 +16,7 @@ const TrangChu = () => {
     const navigate = useNavigate();
     const [, , removeCookie] = useCookies(['token','refreshToken'])
     console.log(typeof removeCookie);
-  
+    // window.location.reload()
  
 
     const handleSearch = (e) => {
@@ -27,10 +27,17 @@ const TrangChu = () => {
     
    
     const handleRemoveCookie = () => {
-        removeCookie('token', { path: 'http://localhost:3000/' });
-    removeCookie('refreshToken', { path:'http://localhost:3000/' });
-        alert("Đăng xuất thành công");
-        navigate('/');
+    
+    const allCookies = Cookies.get(); // Lấy tất cả các cookie hiện tại
+  Object.keys(allCookies).forEach((cookieName) => {
+    Cookies.remove(cookieName); // Xóa từng cookie theo tên
+  });
+  removeCookie('token', { path: 'http://localhost:3000/' });
+   removeCookie('refreshToken', { path:'http://localhost:3000/' });
+  console.log("Tất cả cookie đã bị xóa!");
+      
+        navigate('/buyer/login');
+        window.location.reload()
     };
  
 
@@ -79,9 +86,9 @@ useEffect(() => {
         ) : (
             <>
                 <li>
-                    <NavLink className="dropdown-item" to="/user/profile">
+                    <a className="dropdown-item" href="/user/profile">
                         <i className="fa-solid fa-user"></i> Thông Tin Cá Nhân
-                    </NavLink>
+                    </a>
                 </li>
               
                 <li>
