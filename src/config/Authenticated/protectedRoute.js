@@ -14,6 +14,7 @@ const ProtectedRoute = ({ requiredRole }) => {
   if (requiredRole && role !== requiredRole) {
     // alert("vui lòng đăng nhập")
     //  window.location.href = '/login'
+    // window.location.reload()
     return <h2>Bạn không có quyền truy cập vào trang này.</h2>;
     // alert("vui lòng đăng nhập")
   }

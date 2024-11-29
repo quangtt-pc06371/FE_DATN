@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
 import './staff.css';
-
+import {jwtDecode} from "jwt-decode";
+import Cookies from "universal-cookie";
 const GetTaiKhoan = () => {
   const [email, setEmail] = useState("");
   const [taikhoan, setTaiKhoan] = useState(null);
   const [error, setError] = useState("");
   const [error2, setError2] = useState("");
+  const cookies = new Cookies();
+  const token = cookies.get("token");
+ 
+
   const handleSearch = async () => {
     setError("");
     setTaiKhoan(null);
@@ -29,11 +34,13 @@ const GetTaiKhoan = () => {
   };
 
   const addNhanVien = async (id) => {
+   
     console.log(id)
     setError2("");
 
     try {
-      const response = await axios.post(`http://localhost:8080/api/taikhoan/nhanvien/${id}`);
+      const decoded = jwtDecode(token);
+      const response = await axios.post(`http://localhost:8080/api/taikhoan/nhanvien/${id}/${decoded.id}`);
       alert("Thêm nhân viên thành công!");
     } catch (err) {
       if (err.response && err.response.status === 404) {

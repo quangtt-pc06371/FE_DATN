@@ -39,7 +39,7 @@ const refreshToken = async () => {
     // Cập nhật access token mới vào cookie, với thời gian hết hạn là 1 ngày
     Cookies.set('token', newAccessToken);
     console.log("Token đã được làm mới thành công");
-    window.location.reload()
+    // window.location.reload()
   } catch (error) {
     console.error("Làm mới token thất bại:", error);
     // Điều hướng người dùng đến trang đăng nhập nếu token không thể làm mới
@@ -53,7 +53,7 @@ const startTokenRefreshInterval = () => {
     if (checkTokenExpiry()) {
       refreshToken().catch(error => console.error('Lỗi làm mới token:', error));
     }
-  }, 2 * 60 * 1000); // 2 phút
+  }, 15*1000); // 2 phút
 };
 
 export { checkTokenExpiry, refreshToken, startTokenRefreshInterval };

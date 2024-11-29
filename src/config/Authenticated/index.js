@@ -1,17 +1,17 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import {jwtDecode} from "jwt-decode";
-import Cookies from "universal-cookie";
- 
+// import Cookies from "universal-cookie";
+import Cookies from "js-cookie";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [role, setRole] = useState(null); // Vai trò hiện tại
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Trạng thái đăng nhập
-  const cookies = new Cookies();
+  // const cookies = new Cookies();
 
   useEffect(() => {
-    const token = cookies.get("token"); // Lấy token từ cookie
+    const token = Cookies.get("token"); // Lấy token từ cookie
     if (token) {
       try {
         const decoded = jwtDecode(token);
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
       } catch (error) {
         console.error("Token không hợp lệ", error);
         setIsAuthenticated(false);
-        cookies.remove("token"); // Xóa token nếu không hợp lệ
+        Cookies.remove("token"); // Xóa token nếu không hợp lệ
       }
     }
   }, []);

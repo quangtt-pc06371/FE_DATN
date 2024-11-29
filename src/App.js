@@ -90,7 +90,7 @@ export default function App() {
         <Route path="/" element={<TrangChu />}>
           <Route index element={<SanPham />} />
           <Route path="chitietsanpham/:id" element={<ChiTietSanPham />} />
-
+          <Route path="/shop-approval" element={<ShopApproval />} />
           <Route path="addstaff" element={<AddStaff />} />
           <Route path='quanlysanpham' element={<QuanlySanPham />} />
           <Route path="Logout" element={<Logout />} />
@@ -99,7 +99,7 @@ export default function App() {
             <Route path="login" element={<Login />} />
             <Route path="register" element={<Register />} />
           </Route>
-          <Route element={<ProtectedRoute requiredRole="ROLE_User" />} >
+          <Route element={<ProtectedRoute requiredRoles={["ROLE_User", "ROLE_Staff"]} />} >
             <Route path="user" element={<User />}>
               <Route path="updateuser" element={<Updateuser2 />} />
               <Route path="profile" element={<Profile />} />
