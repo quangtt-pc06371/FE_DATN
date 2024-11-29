@@ -8,10 +8,10 @@ import 'bootstrap/dist/js/bootstrap.bundle.min';  // Import Bootstrap JS
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import axios from "axios";
 
-
+import {jwtDecode} from "jwt-decode";
 const TrangChu = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+    const [admin, setRoleadmin] = useState(null);
     const [noiDungTimKiem, setNoidungTimKiem] = useState('');
     const navigate = useNavigate();
     const [, , removeCookie] = useCookies(['token','refreshToken'])
@@ -43,10 +43,13 @@ const TrangChu = () => {
 
 useEffect(() => {
 
-
-    const token = Cookies.get('token'); 
    
+    const token = Cookies.get('token'); 
+    if (token && typeof token === "string") {
+    const decoded = jwtDecode(token);
+    setRoleadmin(decoded.role[0]?.authority || null);}
     setIsLoggedIn(!!token);
+
 }, [ Cookies.get('token')]);
     return (
         <>
@@ -102,7 +105,13 @@ useEffect(() => {
                 </li>
             </>
         )}
-
+          {admin === "ROLE_Admin" && (
+    <li>
+        <a className="dropdown-item" href="/admin">
+            <i className="fa-solid fa-user"></i> Quản lý
+        </a>
+    </li>
+)}
 
 
 
