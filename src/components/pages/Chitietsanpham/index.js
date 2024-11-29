@@ -4,20 +4,43 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
 import Cookies from "js-cookie";
+import Swal from "sweetalert2";
 export default function ChiTietSanPham() {
 
     const [data, setData] = useState({
         tenSanPham: '',
         moTa: '',
-        shop: { idShop: '' },
-        danhMuc: { idDanhMuc: '' }
+        shop: {},
+        danhMuc: {}
     });
+
+    const [sanPhamShop, setSanPhamShop] = useState([]);
+
     const [skusList, setSkusList] = useState([]);
     const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
     const { id } = useParams();
     const [soLuong, setSoLuong] = useState(1);
     const [selectedImage, setSelectedImage] = useState('');
     const [giaTriDaChon, setGiaTriDaChon] = useState({});
+    const [shopData, setShopData] = useState([]);
+    const token = Cookies.get('token');
+    async function layShop() {
+        try {
+            const response = await axios.get('http://localhost:8080/api/shop/nguoidung', {
+                headers: {
+                    'Authorization': token,
+                },
+            }
+            );
+
+            setShopData(response.data);
+        } catch (error) {
+            alert("Vui Lòng Đăng Nhập")
+        }
+
+
+    }
+    console.log(shopData)
 
     const tangSoLuong = () => {
         setSoLuong(prev => prev + 1);
@@ -32,6 +55,17 @@ export default function ChiTietSanPham() {
         setSanPhamKhuyenMaiForm(response.data);
     }
 
+    async function hienThiSanPham() {
+        try {
+            const apiShop = 'http://localhost:8080/api/sanpham/shop';
+            const response = await axios.get(apiShop + '/' + data.shop.id);
+            setSanPhamShop(response.data);
+
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
     async function getDataDisplayId() {
         const apiSanPham = 'http://localhost:8080/api/sanpham';
         const response = await axios.get(`${apiSanPham}/${id}`, data);
@@ -39,8 +73,8 @@ export default function ChiTietSanPham() {
         setData({
             tenSanPham: response.data.tenSanPham,
             moTa: response.data.moTa,
-            shop: { idShop: response.data.shop.idShop },
-            danhMuc: { idDanhMuc: response.data.danhMuc.idDanhMuc }
+            shop: response.data.shop,
+            danhMuc: response.data.danhMuc
         });
 
         setSkusList(
@@ -52,15 +86,24 @@ export default function ChiTietSanPham() {
                     tieuDe: tuyChon.tuyChonThuocTinh.thuocTinh.ten,
                     noiDungTieuDe: tuyChon.tuyChonThuocTinh.giaTri,
                 })),
-                hinhanhs: sku.hinhanhs.map((image) => image.tenAnh) // Lấy tất cả ảnh từ hinhanhs
+                hinhanh: sku.hinhanh // Lấy một hình ảnh duy nhất
+                    ? {
+                        idHinhAnh: sku.hinhanh.idHinhAnh,
+                        tenAnh: sku.hinhanh.tenAnh,
+                    }
+                    : null,
             }))
         );
-        if (response.data.skus.length > 0 && response.data.skus[0].hinhanhs.length > 0) {
-            setSelectedImage(response.data.skus[0].hinhanhs[0].tenAnh); // Chọn ảnh đầu tiên của SKU đầu tiên
+        if (
+            response.data.skus.length > 0 && // Có ít nhất 1 SKU
+            response.data.skus[0].hinhanh // SKU đầu tiên có hình ảnh
+        ) {
+            setSelectedImage(response.data.skus[0].hinhanh.tenAnh); // Chọn ảnh đầu tiên của SKU đầu tiên
         }
 
 
     }
+
     const getSku = () => {
         return skusList.find(sku => {
             return sku.atributes.every(attr =>
@@ -74,17 +117,17 @@ export default function ChiTietSanPham() {
     async function handleAddGioHang() {
         const sku = getSku();
         const token = Cookies.get('token');
-        console.log(token)
+
 
         if (!sku) {
-            alert('Vui lòng chọn đầy đủ các tùy chọn thuộc tính trước khi thêm vào giỏ hàng.');
+            Swal.fire('Vui lòng chọn đầy đủ các tùy chọn thuộc tính trước khi thêm vào giỏ hàng.');
             return;
         }
 
-        console.log(sku);
+
 
         if (!token) {
-            alert('Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.');
+            Swal.fire('Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.');
             return;
         }
 
@@ -95,7 +138,7 @@ export default function ChiTietSanPham() {
             skuEntity: { idSku: sku.idSku }
         };
 
-        console.log(dataToSent);
+
 
         try {
 
@@ -104,9 +147,9 @@ export default function ChiTietSanPham() {
                     'Authorization': token
                 }
             });
-            alert('Thêm vào giỏ hàng thành công!', addData.data);
+            Swal.fire('Thêm vào giỏ hàng thành công !');
         } catch (error) {
-            alert('Có lỗi xảy ra khi thêm vào giỏ hàng.');
+            Swal.fire('Có lỗi xảy ra khi thêm vào giỏ hàng !');
             console.error(error);
         }
     }
@@ -116,9 +159,18 @@ export default function ChiTietSanPham() {
     useEffect(() => {
         if (id) {
             getDataDisplayId();
+
         }
+        layShop();
         getSanPhamKhuyenMai();
-    }, []);
+    }, [id]);
+    useEffect(() => {
+        if (data.shop?.id) {
+            hienThiSanPham();
+        }
+    }, [data.shop?.id]);
+
+
     const skuGet = getSku();
 
     const giaGoc = skuGet ? skuGet.giaSanPham : skusList[0]?.giaSanPham || 0;
@@ -155,140 +207,237 @@ export default function ChiTietSanPham() {
             [tieuDe]: noiDungTieuDe
         }));
     };
-    console.log(giaTriDaChon)
+
 
     const handleThumbnailClick = (image) => {
         setSelectedImage(image); // Cập nhật ảnh lớn khi người dùng click vào thumbnail
     };
+    const findKhuyenMai = (sanPham) => {
+        return sanPhamKhuyenMaiForm.find(
+            (sanPhamKhuyenMai) => sanPhamKhuyenMai.sanPham.idSanPham === sanPham.idSanPham
+        );
+    };
 
     return (
-        <div className="container mt-5 ">
-            <div className="row my-3 m-5 border p-3 mb-5 shadow-sm">
-                <div className="col-md-4">
-                    <div className="card" style={{ width: '18rem' }}>
-                        <div className='card-header'>
-                            <img
-                                src={selectedImage}  // Hiển thị hình ảnh lớn khi click vào thumbnail
-                                className="card-img-top"
-                                alt="Product"
-                                style={{ width: '100%' }}  // Tự động điều chỉnh kích thước cho phù hợp
-                            />
-                        </div>
-                        <div className="card-body">
-                            {/* overflowX: 'auto': Cho phép cuộn ngang khi nội dung vượt quá chiều rộng container */}
-                            {/* whiteSpace: 'nowrap': Đảm bảo rằng các ảnh sẽ không xuống dòng mà nằm ngang trên một dòng duy nhất */}
-                            <div className="d-flex justify-content-start mt-3 " style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
-                                {skusList.map((sku) => (
-                                    sku.hinhanhs.map((hinhAnh, index) => (
+        <main >
+            <div className="container mt-5 " >
+                <div className="row my-3 m-5 border p-3 mb-5 shadow-sm rounded-3">
+                    <div className="col-md-4">
+                        <div className="card" style={{ width: '18rem' }}>
+                            <div className='card-header'>
+                                <img
+                                    src={selectedImage}  // Hiển thị hình ảnh lớn khi click vào thumbnail
+                                    className="card-img-top"
+                                    alt="Product"
+                                    style={{ width: '100%' }}  // Tự động điều chỉnh kích thước cho phù hợp
+                                />
+                            </div>
+                            <div className="card-body">
+                                {/* overflowX: 'auto': Cho phép cuộn ngang khi nội dung vượt quá chiều rộng container */}
+                                {/* whiteSpace: 'nowrap': Đảm bảo rằng các ảnh sẽ không xuống dòng mà nằm ngang trên một dòng duy nhất */}
+                                <div className="d-flex justify-content-start mt-3 " style={{ overflowX: 'auto', whiteSpace: 'nowrap' }}>
+                                    {skusList.map((sku, index) => (
+
                                         <img
                                             key={index}
-                                            src={hinhAnh}  // URL của ảnh thumbnail
+                                            src={sku.hinhanh.tenAnh}  // URL của ảnh thumbnail
                                             alt={`Thumbnail ${index + 1}`}
                                             className="img-thumbnail me-2 hinh-anh-chi-tiet"
                                             style={{ width: '80px', height: '80px', display: 'inline-block' }}
-                                            onClick={() => handleThumbnailClick(hinhAnh)} // Cập nhật ảnh lớn khi click vào thumbnail
+                                            onClick={() => handleThumbnailClick(sku.hinhanh.tenAnh)} // Cập nhật ảnh lớn khi click vào thumbnail
                                         />
-                                    ))
-                                ))}
+
+                                    ))}
+                                </div>
+
+                            </div>
+
+
+
+                            <div className="card-footer text-muted">
+                                <small>Xem thêm ưu điểm & lưu ý của sản phẩm</small>
+                            </div>
+
+
+                        </div>
+
+                        <div className="mt-3 card shadow-sm p-3 d-flex flex-row align-items-center gap-3" style={{ width: '18rem' }}>
+                            <img
+                                src={data.shop.shopImage}
+                                alt={data.shop.shopImage}
+                                className="rounded-circle border"
+                                style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+                            />
+                            <div>
+                                <h5 className="mb-2 fw-bold">{data.shop.shopName}</h5>
+                                <a className="btn btn-outline-primary btn-sm" href={`/shopsanpham/${data.shop.id}`}>
+                                    Xem Shop
+                                </a>
                             </div>
                         </div>
 
 
-
-                        <div className="card-footer text-muted">
-                            <small>Xem thêm ưu điểm & lưu ý của sản phẩm</small>
-                        </div>
                     </div>
-                </div>
-                <div className="col-md-8">
-                    <h2>🔥 NEW ARRIVAL 🔥</h2>
-                    <hr />
-                    <h3>{data.tenSanPham}</h3>
+                    <div className="col-md-8">
+                        <h2>🔥 NEW ARRIVAL 🔥</h2>
+                        <hr />
+                        <h3>{data.tenSanPham}</h3>
 
 
-                    {khuyenMaiConHieuLuc ? (
-                        <h1 className="text-muted" style={{ textDecoration: 'line-through' }}>
-                            {`${giaGoc.toLocaleString()} VNĐ`}
-                        </h1>
-                    ) : (
-                        <h1 className="text-danger" >
-                            {`${giaGoc.toLocaleString()} VNĐ`}
-                        </h1>
-                    )}
+                        {khuyenMaiConHieuLuc ? (
+                            <h1 className="text-muted" style={{ textDecoration: 'line-through' }}>
+                                {`${giaGoc.toLocaleString()} VNĐ`}
+                            </h1>
+                        ) : (
+                            <h1 className="text-danger" >
+                                {`${giaGoc.toLocaleString()} VNĐ`}
+                            </h1>
+                        )}
 
 
 
-                    {khuyenMaiConHieuLuc && (
-                        <h1 className='text-danger'>
-                            {`${giaSauKhuyenMai.toLocaleString()} VNĐ`}
-                        </h1>
-                    )}
+                        {khuyenMaiConHieuLuc && (
+                            <h1 className='text-danger'>
+                                {`${giaSauKhuyenMai.toLocaleString()} VNĐ`}
+                            </h1>
+                        )}
 
-                    <p>Còn: <strong>{tongSoLuong}</strong> sản phẩm | <strong>14,2k</strong> Đã Bán</p>
-                    <hr />
+                        <p>Số lượng còn: <strong>{tongSoLuong}</strong>  | <strong>14,2k</strong> Đã Bán</p>
+                        <hr />
 
-                    <p>Vận Chuyển: Miễn phí vận chuyển</p>
+                        <p>Vận Chuyển: Miễn phí vận chuyển</p>
 
-                    {skusList.length > 0 ? (
-                        <>
+                        {skusList.length > 0 ? (
+                            <>
 
-                            {skusList[0].atributes.map((attribute, attrIndex) => {
-                                const displayedNoiDung = new Set(); // Tập hợp để lưu các giá trị đã hiển thị
+                                {skusList[0].atributes.map((attribute, attrIndex) => {
+                                    const displayedNoiDung = new Set(); // Tập hợp để lưu các giá trị đã hiển thị
 
-                                return (
-                                    <div key={attrIndex}>
-                                        <h5>{attribute.tieuDe}</h5>
-                                        <div className="d-flex mb-3">
-                                            {skusList.flatMap((sku) =>
-                                                sku.atributes.filter((attr) =>
-                                                    attr.tieuDe === attribute.tieuDe &&
-                                                    !displayedNoiDung.has(attr.noiDungTieuDe)
+                                    return (
+                                        <div key={attrIndex}>
+                                            <h5>{attribute.tieuDe}</h5>
+                                            <div className="d-flex mb-3">
+                                                {skusList.flatMap((sku) =>
+                                                    sku.atributes.filter((attr) =>
+                                                        attr.tieuDe === attribute.tieuDe &&
+                                                        !displayedNoiDung.has(attr.noiDungTieuDe)
 
-                                                ).map((attr, index) => {
-                                                    displayedNoiDung.add(attr.noiDungTieuDe); // Thêm giá trị vào Set để tránh lặp lại
-                                                    return (
-                                                        <button
-                                                            key={index}
-                                                            className={`btn me-2 ${giaTriDaChon[attribute.tieuDe] === attr.noiDungTieuDe
-                                                                ? 'btn-primary'
-                                                                : 'border btn-light'
-                                                                }`}
-                                                            onClick={() => handleGiaTri(attribute.tieuDe, attr.noiDungTieuDe)}
-                                                        >
-                                                            {attr.noiDungTieuDe}
-                                                        </button>
-                                                    );
-                                                })
-                                            )}
+                                                    ).map((attr, index) => {
+                                                        displayedNoiDung.add(attr.noiDungTieuDe); // Thêm giá trị vào Set để tránh lặp lại
+                                                        return (
+                                                            <button
+                                                                key={index}
+                                                                className={`btn me-2 ${giaTriDaChon[attribute.tieuDe] === attr.noiDungTieuDe
+                                                                    ? 'btn-primary'
+                                                                    : 'border btn-light'
+                                                                    }`}
+                                                                onClick={() => handleGiaTri(attribute.tieuDe, attr.noiDungTieuDe)}
+                                                            >
+                                                                {attr.noiDungTieuDe}
+                                                            </button>
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
 
-                        </>
-                    ) : (
-                        <p>Chưa có tổ hợp nào được tạo.</p>
-                    )}
+                            </>
+                        ) : (
+                            <p>Chưa có tổ hợp nào được tạo.</p>
+                        )}
 
-                    <h5>Số lượng</h5>
-                    <div className="input-group mb-3">
+                        <h5>Số lượng</h5>
                         <div className="input-group mb-3">
-                            <button className="btn btn-secondary" type="button" onClick={giamSoLuong}>-</button>
-                            <input
-                                type="number"
-                                className="text-center"
-                                min="1"
-                                value={soLuong}
-                                onChange={(e) => setSoLuong(parseInt(e.target.value))}
-                            />
-                            <button className="btn btn-secondary" type="button" onClick={tangSoLuong}>+</button>
+                            <div className="input-group mb-3">
+                                <button className="btn btn-secondary" type="button" onClick={giamSoLuong}>-</button>
+                                <input
+                                    type="number"
+                                    className="text-center"
+                                    min="1"
+                                    value={soLuong}
+                                    onChange={(e) => setSoLuong(parseInt(e.target.value))}
+                                />
+                                <button className="btn btn-secondary" type="button" onClick={tangSoLuong}>+</button>
+                            </div>
+
                         </div>
+                        {shopData?.id !== data?.shop?.id && (
+                            <button className="btn btn-danger me-2" onClick={handleAddGioHang}>Thêm Vào Giỏ Hàng</button>
+                        )}
+
+
 
                     </div>
-                    <button className="btn btn-danger me-2" onClick={handleAddGioHang}>Thêm Vào Giỏ Hàng</button>
-                    <button className="btn btn-primary">Mua Ngay</button>
                 </div>
+
+                <div className="row my-3 m-5 border p-3 mb-5 shadow-sm rounded-3">
+                    <h3 className='my-3'>Các Sản Phẩm Khác Của Shop</h3>
+                    {sanPhamShop.map((sanPham) => {
+
+                        const khuyenMaiData = findKhuyenMai(sanPham);
+                        const now = new Date();
+                        const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
+
+                        let giaSauKhuyenMai = 0;
+                        let khuyenMaiConHieuLuc = false;
+
+
+                        if (khuyenMaiData) {
+                            const startDate = new Date(khuyenMaiData.khuyenMai.ngayBatDau);
+                            const endDate = new Date(khuyenMaiData.khuyenMai.ngayKetThuc);
+
+
+                            giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMaiData.khuyenMai.giaTriKhuyenMai / 100));
+
+
+                            khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
+                        }
+                        const firstSku = sanPham.skus?.[0];
+                        const firstImage = firstSku?.hinhanh;
+                        return (
+                            sanPham.trangThai === false ? null : (
+                                <div key={sanPham.idSanPham} className="col-md-2 mb-3">
+                                    <a href={`/chitietsanpham/${sanPham.idSanPham}`} className='text-white'>
+                                        <div className="card border rounded-3 shadow-sm">
+                                            <div className="card-img">
+                                                {firstImage ? (
+                                                    <img
+                                                        src={firstImage.tenAnh}
+                                                        alt={`Product ${sanPham.tenSanPham} - Main Image`}
+                                                        className="img-fluid"
+                                                    />
+                                                ) : (
+                                                    <div className="img-placeholder">No Image Available</div>
+                                                )}
+                                            </div>
+                                            <div className="card-body">
+                                                <p className='card-text'>{sanPham.tenSanPham}</p>
+                                                <p className="card-text text-danger fw-bold">
+                                                    {khuyenMaiConHieuLuc ? (
+                                                        <>
+                                                            <span className="text-muted" style={{ textDecoration: 'line-through' }}>
+                                                                {giaGoc} VNĐ
+                                                            </span>
+                                                            <br />
+                                                            {giaSauKhuyenMai.toFixed(2)} VNĐ
+                                                        </>
+                                                    ) : (
+                                                        `${giaGoc.toLocaleString()} VNĐ`
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            )
+                        );
+                    })}
+                </div>
+
             </div>
-        </div>
+        </main>
+
     );
 }

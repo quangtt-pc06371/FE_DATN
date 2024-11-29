@@ -59,16 +59,11 @@ const Login = () => {
       if (error.response?.status === 401) {
         const errorMessage = "Email hoặc mật khẩu không chính xác. Vui lòng thử lại.";
         setError(errorMessage);
-        // toast.error(errorMessage, { position: "top-center", autoClose: 2000 });
-      } else if (error.response?.status === 400) {
-        const errorMessage = "vui lòng nhập đủ thông tin";
-        setError(errorMessage);
-        // toast.error(errorMessage, { position: "top-center", autoClose: 2000 });
-      }
-       else {
+        toast.error(errorMessage, { position: "top-center", autoClose: 2000 });
+      } else {
         const generalError = "Đăng nhập thất bại. Vui lòng thử lại.";
         setError(generalError);
-        // toast.error(generalError, { position: "top-center", autoClose: 2000 });
+        toast.error(generalError, { position: "top-center", autoClose: 2000 });
       }
     } finally {
       setLoading(false);
@@ -116,7 +111,7 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-              
+                required
                 placeholder="Nhập email của bạn"
               />
             </Form.Group>
@@ -126,7 +121,7 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-               
+                required
                 placeholder="Nhập mật khẩu"
               />
             </Form.Group>

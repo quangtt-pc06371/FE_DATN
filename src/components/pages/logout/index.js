@@ -3,14 +3,14 @@ import { useCookies } from "react-cookie";
 import { useNavigate } from 'react-router-dom';
 const Logout = () => {
     
-    const [, , removeCookie] = useCookies(['token','refreshToken'])
+    const [, , removeCookie] = useCookies(['user','role'])
     console.log(typeof removeCookie);
     const navigator = useNavigate();
     const handleRemoveCookie= ()=> {
-        removeCookie('token',
+        removeCookie('user',
              { path: 'http://localhost:3000/' }
             );
-            removeCookie('refreshToken',
+            removeCookie('role',
                 { path: 'http://localhost:3000/' }
                );
                window.location.reload()

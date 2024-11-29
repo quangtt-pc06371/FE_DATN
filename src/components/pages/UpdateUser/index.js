@@ -75,7 +75,7 @@ const Updataikhoan = () => {
                     await axios.put(`http://localhost:8080/api/taikhoan/update`, taikhoan, {
                         headers: { Authorization: ` ${token}` },
                     });
-                    navigate('/user/listtaikhoan');
+                    navigate('/listtaikhoan');
                 } catch (error) {
                     console.error(error);
                 }
@@ -102,7 +102,7 @@ const Updataikhoan = () => {
                           }
                       
                     );
-                    navigate('/user/listtaikhoan');
+                    navigate('/listtaikhoan');
                 } catch (error) {
                     console.error(error);
                 }

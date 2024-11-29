@@ -9,6 +9,7 @@ const ShopApproval = () => {
   const [shops, setShops] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const token = Cookies.get('token'); 
   const shopsPerPage = 5;
   const navigate = useNavigate();
 
@@ -16,11 +17,12 @@ const ShopApproval = () => {
     fetchShops();
   }, []);
 
+console.log(token)
   const fetchShops = async () => {
     try {
       const response = await axios.get('http://localhost:8080/api/shops/unapproved', {
         headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`,
+          Authorization: `${token}`,
         },
       });
       setShops(response.data);
