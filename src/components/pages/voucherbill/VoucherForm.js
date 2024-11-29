@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addVoucher, updateVoucher } from '../../services/voucherService';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './VoucherForm.css';
 
-function VoucherForm({ voucherToEdit, onSave }) {
+function VoucherForm({ voucherToEdit, onSave, onCancel }) {
     const [voucher, setVoucher] = useState({
         tenVoucher: '', // Thêm trường Tên Voucher
         giamGia: '',
@@ -48,17 +47,10 @@ function VoucherForm({ voucherToEdit, onSave }) {
         setError(''); // Xóa lỗi nếu hợp lệ
 
         try {
-            if (voucherToEdit) {
-                await updateVoucher(voucherToEdit.id, voucher);
-                toast.success('Cập nhật voucher thành công!');
-            } else {
-                await addVoucher(voucher);
-                toast.success('Thêm voucher thành công!');
-            }
-
-            onSave();
+            onSave(voucher);
+            toast.success(voucherToEdit ? 'Cập nhật voucher thành công!' : 'Thêm voucher thành công!');
             setVoucher({
-                tenVoucher: '', // Reset trường Tên Voucher
+                tenVoucher: '',
                 giamGia: '',
                 soLuong: '',
                 ngaybatdau: '',
@@ -139,7 +131,7 @@ function VoucherForm({ voucherToEdit, onSave }) {
                     <button type="submit">{voucherToEdit ? 'Cập nhật' : 'Thêm'}</button>
                     <button
                         type="button"
-                        onClick={() => navigate('/voucher-list')}
+                        onClick={() => (onCancel ? onCancel() : navigate('/voucher-list'))}
                         style={{ marginLeft: '10px' }}
                     >
                         Danh sách Voucher
@@ -147,7 +139,6 @@ function VoucherForm({ voucherToEdit, onSave }) {
                 </div>
             </form>
 
-            {/* Toast container */}
             <ToastContainer
                 position="top-right"
                 autoClose={3000}

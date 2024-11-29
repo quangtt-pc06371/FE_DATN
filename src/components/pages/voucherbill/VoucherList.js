@@ -1,34 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { getAllVouchers, addVoucher, updateVoucher, deleteVoucher } from '../../services/voucherService';
 import VoucherForm from './VoucherForm';
-import './VoucherForm.css'; // Thêm file CSS tùy chỉnh
-
-const mockVouchers = [
-    {
-        id: 1,
-        tenvoucher: 'Voucher Giảm Giá 10%',
-        giamGia: 10,
-        soLuong: 100,
-        donToiThieu: 50000,
-        ngaybatdau: '2024-01-01',
-        ngayHetHan: '2024-12-31',
-    },
-    {
-        id: 2,
-        tenvoucher: 'Voucher Miễn Phí Vận Chuyển',
-        giamGia: 15,
-        soLuong: 50,
-        donToiThieu: 100000,
-        ngaybatdau: '2024-01-01',
-        ngayHetHan: '2024-12-31',
-    },
-];
+import './VoucherForm.css';
 
 function VoucherList() {
     const [vouchers, setVouchers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredVouchers, setFilteredVouchers] = useState([]);
     const [editingVoucher, setEditingVoucher] = useState(null);
+
+    const mockData = [
+        {
+            id: 1,
+            tenvoucher: 'Giảm giá 10%',
+            giamGia: 10,
+            soLuong: 100,
+            donToiThieu: 200000,
+            ngaybatdau: '2024-01-01',
+            ngayHetHan: '2024-01-31',
+        },
+        {
+            id: 2,
+            tenvoucher: 'Giảm giá 20%',
+            giamGia: 20,
+            soLuong: 50,
+            donToiThieu: 300000,
+            ngaybatdau: '2024-02-01',
+            ngayHetHan: '2024-02-28',
+        },
+    ];
 
     useEffect(() => {
         fetchVouchers();
@@ -50,8 +50,7 @@ function VoucherList() {
             setVouchers(response.data);
         } catch (error) {
             console.error('Error fetching vouchers:', error);
-            // Sử dụng dữ liệu giả nếu API thất bại
-            setVouchers(mockVouchers);
+            setVouchers(mockData); // Sử dụng dữ liệu giả nếu API không phản hồi
         }
     };
 
@@ -71,10 +70,8 @@ function VoucherList() {
     const handleSave = async (voucher) => {
         try {
             if (editingVoucher) {
-                // Update voucher
                 await updateVoucher(editingVoucher.id, voucher);
             } else {
-                // Add new voucher
                 await addVoucher(voucher);
             }
             fetchVouchers();
@@ -101,7 +98,7 @@ function VoucherList() {
             />
 
             {editingVoucher ? (
-                <VoucherForm voucher={editingVoucher} onSave={handleSave} onCancel={handleCancel} />
+                <VoucherForm voucherToEdit={editingVoucher} onSave={handleSave} onCancel={handleCancel} />
             ) : (
                 <button onClick={() => setEditingVoucher({})} className="btn-add">
                     Thêm Voucher Mới
@@ -142,7 +139,6 @@ function VoucherList() {
                                         </button>
                                     </div>
                                 </td>
-
                             </tr>
                         ))
                     ) : (

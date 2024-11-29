@@ -14,6 +14,9 @@ import VoucherForm from './components/pages/voucherbill/VoucherForm';
 import VoucherList from './components/pages/voucherbill/VoucherList'; // Import VoucherList
 
 
+import ThongKeForm from './components/pages/ThongKeForm';
+import DoanhThuTable from './components/pages/DoanhThuTable';
+
 function App() {
   return (
     <Router>
@@ -38,4 +41,34 @@ function App() {
   );
 }
 
+const App = () => {
+  const [doanhThu, setDoanhThu] = useState(null);
+
+  const handleThongKe = ({ shopId, dateType, ngay, month, year }) => {
+      if (dateType === 'day') {
+          api.getDoanhThuTheoNgay(shopId, ngay)
+              .then(response => setDoanhThu(response.data))
+              .catch(error => console.error(error));
+      } else if (dateType === 'month') {
+          api.getDoanhThuTheoThang(shopId, month, year)
+              .then(response => setDoanhThu(response.data))
+              .catch(error => console.error(error));
+      } else if (dateType === 'year') {
+          api.getDoanhThuTheoNam(shopId, year)
+              .then(response => setDoanhThu(response.data))
+              .catch(error => console.error(error));
+      }
+  };
+
+  return (
+      <div>
+          <h1>Thống Kê Doanh Thu Shop</h1>
+          <ThongKeForm onSubmit={handleThongKe} />
+          <DoanhThuTable data={doanhThu} />
+      </div>
+  );
+};
+
 export default App;
+
+

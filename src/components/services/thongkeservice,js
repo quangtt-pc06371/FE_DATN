@@ -1,0 +1,21 @@
+import axios from 'axios';
+
+const API_BASE_URL = 'http://localhost:8080/api/thongke';
+
+const getDoanhThuTheoNgay = (shopId, ngay) => {
+    return axios.get(`${API_BASE_URL}/doanhthu/ngay`, { params: { shopId, ngay } });
+};
+
+const getDoanhThuTheoThang = (shopId, month, year) => {
+    return axios.get(`${API_BASE_URL}/doanhthu/thang`, { params: { shopId, month, year } });
+};
+
+const getDoanhThuTheoNam = (shopId, year) => {
+    return axios.get(`${API_BASE_URL}/doanhthu/nam`, { params: { shopId, year } });
+};
+
+export default {
+    getDoanhThuTheoNgay,
+    getDoanhThuTheoThang,
+    getDoanhThuTheoNam
+};

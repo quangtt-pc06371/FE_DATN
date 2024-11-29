@@ -1,18 +1,29 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/vouchers';
+const API_URL = 'http://localhost:8080/api/voucherbills';
 
-export const getAllVouchers = () => axios.get(API_URL);
-export const addVoucher = (voucher) => axios.post(API_URL, voucher);
-export const updateVoucher = (id, voucher) => axios.put(`${API_URL}/${id}`, voucher);
-export const deleteVoucher = (id) => axios.delete(`${API_URL}/${id}`);
+// Thêm token vào header
+const getAuthHeader = () => {
+    const token = localStorage.getItem('token'); // Token lưu trữ trong localStorage
+    return { Authorization: `Bearer ${token}` };
+};
 
-export const getVouchers = async () => {
-    try {
-        const response = await axios.get('/api/vouchers'); // Đường dẫn API cần thay đổi phù hợp
-        return response.data;
-    } catch (error) {
-        console.error('Lỗi khi lấy danh sách voucher:', error);
-        return [];
-    }
+// Lấy danh sách voucher
+export const getAllVouchers = () => {
+    return axios.get(API_URL, { headers: getAuthHeader() });
+};
+
+// Thêm voucher
+export const addVoucher = (voucher) => {
+    return axios.post(`${API_URL}/add`, voucher, { headers: getAuthHeader() });
+};
+
+// Cập nhật voucher
+export const updateVoucher = (id, voucher) => {
+    return axios.put(`${API_URL}/${id}`, voucher, { headers: getAuthHeader() });
+};
+
+// Xóa voucher
+export const deleteVoucher = (id) => {
+    return axios.delete(`${API_URL}/${id}`, { headers: getAuthHeader() });
 };
