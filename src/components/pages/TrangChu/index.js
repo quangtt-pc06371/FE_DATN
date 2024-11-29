@@ -105,47 +105,47 @@ const TrangChu = () => {
                         </span>
 
                         <form
-    className="d-flex align-items-center"
-    role="search"
-    onSubmit={handleSearch}
-    style={{
-        margin: "0 auto", // Căn giữa theo chiều ngang trong navbar
-        maxWidth: "800px", // Giới hạn chiều rộng form để cân đối
-        flexGrow: 1, // Để form co giãn chiếm không gian hợp lý
-    }}
->
-    <input
-        className="form-control"
-        type="search"
-        placeholder="Search"
-        aria-label="Search"
-        value={noiDungTimKiem}
-        onChange={(e) => setNoidungTimKiem(e.target.value)}
-        style={{
-            padding: "10px 15px",
-            borderRadius: "25px",
-            border: "2px solid #0d6efd",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            width: "100%", // Đảm bảo input chiếm toàn bộ không gian form
-            marginRight: "10px", // Khoảng cách giữa input và nút
-        }}
-    />
-    <button
-        className="btn btn-outline-dark"
-        type="submit"
-        style={{
-            borderRadius: "25px",
-            backgroundColor: "#0d6efd",
-            color: "white",
-            padding: "10px 20px",
-            border: "none",
-            fontWeight: "bold",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-        }}
-    >
-        Search
-    </button>
-</form>
+                            className="d-flex align-items-center"
+                            role="search"
+                            onSubmit={handleSearch}
+                            style={{
+                                margin: "0 auto", // Căn giữa theo chiều ngang trong navbar
+                                maxWidth: "800px", // Giới hạn chiều rộng form để cân đối
+                                flexGrow: 1, // Để form co giãn chiếm không gian hợp lý
+                            }}
+                        >
+                            <input
+                                className="form-control"
+                                type="search"
+                                placeholder="Search"
+                                aria-label="Search"
+                                value={noiDungTimKiem}
+                                onChange={(e) => setNoidungTimKiem(e.target.value)}
+                                style={{
+                                    padding: "10px 15px",
+                                    borderRadius: "25px",
+                                    border: "2px solid #0d6efd",
+                                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                                    width: "100%", // Đảm bảo input chiếm toàn bộ không gian form
+                                    marginRight: "10px", // Khoảng cách giữa input và nút
+                                }}
+                            />
+                            <button
+                                className="btn btn-outline-dark"
+                                type="submit"
+                                style={{
+                                    borderRadius: "25px",
+                                    backgroundColor: "#0d6efd",
+                                    color: "white",
+                                    padding: "10px 20px",
+                                    border: "none",
+                                    fontWeight: "bold",
+                                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                                }}
+                            >
+                                Search
+                            </button>
+                        </form>
 
 
                     </div>
