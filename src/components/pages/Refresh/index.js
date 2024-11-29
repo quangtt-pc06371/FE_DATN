@@ -27,7 +27,7 @@ const refreshToken = async () => {
   if (!refreshToken) {
     console.error('Không tìm thấy refresh token');
     alert("vui lòng đăng nhập");
-    window.location.href = '/login';
+    window.location.href = '/buyer/login';
 
     return;
   }
@@ -43,7 +43,7 @@ const refreshToken = async () => {
   } catch (error) {
     console.error("Làm mới token thất bại:", error);
     // Điều hướng người dùng đến trang đăng nhập nếu token không thể làm mới
-    window.location.href = '/login';
+    window.location.href = '/buyer/login';
   }
 };
 

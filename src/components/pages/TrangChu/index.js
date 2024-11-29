@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate ,NavLink} from "react-router-dom";
+import { useCookies } from "react-cookie";
+import Cookies from "js-cookie";
 import { Carousel } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';  // Import Bootstrap JS
@@ -8,17 +10,37 @@ import axios from "axios";
 
 
 const TrangChu = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const [noiDungTimKiem, setNoidungTimKiem] = useState('');
     const navigate = useNavigate();
-
+    const [, , removeCookie] = useCookies(['token','refreshToken'])
+    console.log(typeof removeCookie);
+  
+ 
 
     const handleSearch = (e) => {
         e.preventDefault();
         navigate('/', { state: { noiDungTimKiem } });
     };
 
+    
+   
+    const handleRemoveCookie = () => {
+        removeCookie('token', { path: 'http://localhost:3000/' });
+    removeCookie('refreshToken', { path:'http://localhost:3000/' });
+        alert("Đăng xuất thành công");
+        navigate('/');
+    };
+ 
 
+useEffect(() => {
+
+
+    const token = Cookies.get('token'); 
+   
+    setIsLoggedIn(!!token);
+}, [ Cookies.get('token')]);
     return (
         <>
             <header>
@@ -42,35 +64,37 @@ const TrangChu = () => {
                             </button>
                             <ul className="dropdown-menu">
 
-                                <>
-                                    <li>
-                                        <a className="dropdown-item" href="/login">
-                                            <i className="fa-regular fa-face-smile-beam "></i> Đăng Nhập
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="/register">
-                                            <i className="fa-solid fa-key"></i> Tạo Tài KHoản
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="/profile">
-                                            <i className="fa-solid fa-key"></i> thông tin cá nhân
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="/updateuser">
-                                            <i className="fa-solid fa-key"></i> cập nhật tài khoản
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a className="dropdown-item" href="/shop-register">
-                                            <i className="fa-solid fa-key"></i> đăng kí shop
-                                        </a>
-                                    </li>
-                                   
-                                </>
-
+                            {!isLoggedIn ? (
+            <>
+                <li>
+                    <NavLink className="dropdown-item" to="/buyer/login">
+                        <i className="fa-regular fa-face-smile-beam "></i> Đăng Nhập
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink className="dropdown-item" to="/buyer/register"><i className="fa-solid fa-key"></i> Tạo Tài Khoản
+                    </NavLink>
+                </li>
+            </>
+        ) : (
+            <>
+                <li>
+                    <NavLink className="dropdown-item" to="/user/profile">
+                        <i className="fa-solid fa-user"></i> Thông Tin Cá Nhân
+                    </NavLink>
+                </li>
+              
+                <li>
+                    <button
+                        className="btn btn-secondary dropdown-item"
+                        type="button"
+                        onClick={handleRemoveCookie}
+                    >
+                        <i className="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+                    </button>
+                </li>
+            </>
+        )}
 
 
 
@@ -107,8 +131,7 @@ const TrangChu = () => {
                             <button className="btn btn-outline-dark" type="submit">Search</button>
                         </form>
                     </div>
-                </nav>
-                <nav className="navbar navbar-expand-lg" style={{ backgroundColor: 'rgb(21,37,69)' }}>
+                </nav><nav className="navbar navbar-expand-lg" style={{ backgroundColor: 'rgb(21,37,69)' }}>
                     <div className="container-fluid">
                         <div className="collapse navbar-collapse" id="navbarText">
                             <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
@@ -143,7 +166,7 @@ const TrangChu = () => {
 
                             </ul>
                             <span className="navbar-text text-white">
-                                <a href="/giohang" className="btn btn-outline-info me-5">
+                                <a href="/cart" className="btn btn-outline-info me-5">
                                     <i className="fa-solid fa-basket-shopping text-white fs-3"></i>
                                 </a>
                             </span>
@@ -156,11 +179,7 @@ const TrangChu = () => {
 
 
             {/* {content} */}
-            <Outlet />
-
-
-
-            <footer style={{ height: '400px', backgroundColor: 'rgb(21,37,69)' }} className="text-white py-5">
+            <Outlet /><footer style={{ height: '400px', backgroundColor: 'rgb(21,37,69)' }} className="text-white py-5">
                 <div className="container">
                     <div className="row">
                         <div className="col-sm-3 mb-4">
@@ -201,8 +220,7 @@ const TrangChu = () => {
                         </div>
                     </div>
                     <hr />
-                    <h6 className="text-center opacity-50 mb-0">
-                        Copyright © 2016 Janus Fashion - All rights reserved. Powered by Haravan
+                    <h6 className="text-center opacity-50 mb-0"> Copyright © 2016 Janus Fashion - All rights reserved. Powered by Haravan
                     </h6>
                 </div>
             </footer>

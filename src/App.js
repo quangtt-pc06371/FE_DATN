@@ -35,8 +35,14 @@ import CartPage from './components/pages/user/Cart/Cart'
 import CartItem from './components/pages/user/Cart/CartItem'
 import AddressForm from './components/pages/user/Cart/index'
 
+import VoucherForm from './components/pages/Voucher/VoucherForm';
+import VoucherList from './components/pages/Voucher/VoucherList';
 
-//import { startTokenRefreshInterval } from "./components/pages/Refresh";
+import { AuthProvider } from "./config/Authenticated/index";
+import ProtectedRoute from "./config/Authenticated/protectedRoute";
+import User from "./components/userpage";
+import Loginpage from "./components/loginpage";
+///import { startTokenRefreshInterval } from "./components/pages/Refresh";
 
 
 export default function App() {
@@ -49,7 +55,7 @@ export default function App() {
           <Route path="shopsanpham/:idShopSanPham" element={<ShopSanPham/>} />
           <Route path="register" element={<Register />} />
           <Route path="shop-register" element={<ShopRegistration />} />
-          <Route path="profile" element={<Profile />} />
+          {/* <Route path="profile" element={<Profile />} /> */}
           <Route path='chitietsanpham/:id' element={<ChiTietSanPham />} />
           <Route path="shop-user" element={<ShopUser />} />
           <Route path="registergg" element={<Registergg />} />
@@ -68,6 +74,18 @@ export default function App() {
           <Route path="cart" element={<CartPage/>} />
           <Route path="cartitem" element={<CartItem />} />
           <Route path="address" element={<AddressForm />} />
+
+          <Route path="voucherform" element={<VoucherForm />} />
+          <Route path="voucherlist" element={<VoucherList />} />*
+         
+        <Route element={<ProtectedRoute requiredRoles={["ROLE_User", "ROLE_Staff"]} />} >
+            <Route path="user" element={<User />}>
+              <Route path="updateuser" element={<Updateuser2 />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="shop-user" element={<ShopUser />} />
+              <Route path="shop-register" element={<ShopRegistration />} />
+            </Route>
+          </Route>
         </Route>
 
         {/* Layout riêng cho admin */}
@@ -79,14 +97,20 @@ export default function App() {
 
         </Route>
 
-        <Route>
-          <Route path="login" element={<Login />} />
+        <Route path="buyer" element={<Loginpage />} >
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
         </Route>
+
+      
       </>
     )
   );
 
   return (
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+    //<RouterProvider router={router} />
   );
 }

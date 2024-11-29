@@ -59,18 +59,22 @@ const Login = () => {
       if (error.response?.status === 401) {
         const errorMessage = "Email hoặc mật khẩu không chính xác. Vui lòng thử lại.";
         setError(errorMessage);
-        toast.error(errorMessage, { position: "top-center", autoClose: 2000 });
-      } else {
+        // toast.error(errorMessage, { position: "top-center", autoClose: 2000 });
+      } else if (error.response?.status === 400) {
+        const errorMessage = "vui lòng nhập đủ thông tin";
+        setError(errorMessage);
+        // toast.error(errorMessage, { position: "top-center", autoClose: 2000 });
+      }
+       else {
         const generalError = "Đăng nhập thất bại. Vui lòng thử lại.";
         setError(generalError);
-        toast.error(generalError, { position: "top-center", autoClose: 2000 });
+        // toast.error(generalError, { position: "top-center", autoClose: 2000 });
       }
     } finally {
       setLoading(false);
     }
   };
-  const signInWithGoogle = async () => {
-    // const [cookies, setCookie] = useCookies(["user"]);
+  const signInWithGoogle = async () => { // const [cookies, setCookie] = useCookies(["user"]);
   const provider = new GoogleAuthProvider();
   
   try {
@@ -97,11 +101,11 @@ const Login = () => {
   return (
     <div>
       <ToastContainer autoClose={5000} draggable limit={1} pauseOnFocusLoss={false} pauseOnHover={false} />
-      <Container className="d-flex justify-content-center align-items-center vh-100 login-container row">
-      <Form className="col-8 d-flex flex-column align-items-center text-center">
+      {/* <Container className="d-flex justify-content-center align-items-center vh-100  row"> */}
+      {/* <Form className="col-8 d-flex flex-column align-items-center text-center">
   <img src="/z6031447719157_599da22d960ebff0ff9d68fd6ed25c41-removebg-preview (1).png" alt="Platform Logo" style={{ width: '240px', height: '290px' }} />
   <p>Nền tảng thương mại điện tử tốt nhất Việt Nam</p>
-</Form>
+</Form> */}
         <Card className="login-card p-4 shadow-lg col-md-4 ">
           <h2 className="text-center mb-4">Đăng Nhập</h2>
           <Form onSubmit={handleSubmit}>
@@ -111,7 +115,7 @@ const Login = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
+              
                 placeholder="Nhập email của bạn"
               />
             </Form.Group>
@@ -121,7 +125,7 @@ const Login = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
+               
                 placeholder="Nhập mật khẩu"
               />
             </Form.Group>
@@ -139,11 +143,10 @@ const Login = () => {
   <Col>
     <Button onClick={signInWithGoogle} variant="outline-secondary" className="w-100">
     <img 
-        src="https://tse2.mm.bing.net/th?id=OIP.HG6XtzIxf4Nbo_vZt8T3EAHaHa&pid=Api&P=0&h=220" 
+        src="https://tse2.mm.bing.net/th?id=OIP.HG6XtzIxf4Nbo_vZt8T3EAHaHa&...=0&h=220" 
         alt="Google Icon" 
         style={{ width: '20px', height: '20px', marginRight: '8px' }}
-      />
-       Google
+      /> Google
     </Button>
   </Col>
   <Col>
@@ -158,13 +161,13 @@ const Login = () => {
   </Col>
 </Row>
 {/* </div> */}
-
+<button className=""onClick={() => navigate('/buyer/register')}>đăng kí </button>
             <Button type="submit" variant="primary" className="login-btn w-100" disabled={loading}>
               {loading ? <Spinner animation="border" size="sm" /> : "Đăng Nhập"}
             </Button>
           </Form>
         </Card>
-      </Container>
+      {/* </Container> */}
     </div>
   );
 };

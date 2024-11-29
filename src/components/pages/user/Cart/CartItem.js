@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import axios from "axios";
 import { BASE_URL, API, SKU } from "../../../../config/ApiCart/api";
+import Cookies from 'js-cookie';  // Import thư viện js-cookie
 
 const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const [quantity, setQuantity] = useState(product.soLuongMua || 1);
@@ -50,7 +51,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
     setQuantity(modalQuantity);
     setIsLoading(true);
 
-    const token = localStorage.getItem("token");
+    const token = Cookies.get("token");
     if (!token) {
       alert("Vui lòng đăng nhập.");
       setIsLoading(false);

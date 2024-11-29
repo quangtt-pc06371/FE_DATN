@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useCookies } from "react-cookie";
-import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from "react-router-dom";
 import './css.css';
 import { getProfile, loginApi } from "../../../config/Auth";
 
@@ -73,7 +73,7 @@ const Profile = () => {
   //     </div>
   //   </div>
      <div className="profile-container">
-     <div className="profile-sidebar">
+     {/* <div className="profile-sidebar">
        <img
          src={profile.anh}
          alt="User Avatar"
@@ -87,12 +87,14 @@ const Profile = () => {
          <li className="menu-item">Đơn hàng</li>
          <li className="menu-item">Địa chỉ</li>
          <li className="menu-item">Mã giảm giá</li>
+         <a href="/shop-user"><li className="menu-item">Đăng ký shop</li></a>
+
        </ul>
-     </div>
+     </div> */}
 
      <div className="profile-content">
-       <h2>Thông tin cá nhân</h2>
-       <div className="profile-info">
+     {/* <Outlet /> */}
+       <h2>Thông tin cá nhân</h2> <div className="profile-info">
          <div className="info-row">
            <label>Tên:</label>
            <span>{profile.hoten}</span>
@@ -115,6 +117,7 @@ const Profile = () => {
          </div>
        </div>
      </div>
+
    </div>
  
   );

@@ -1,0 +1,108 @@
+/* Container chính của form */
+.voucherform-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tiêu đề */
+.voucherform-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 20px;
+}
+
+/* Fieldset */
+.voucherform-fieldset {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.voucherform-legend {
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff;
+    padding: 0 10px;
+}
+
+/* Input chung */
+.voucherform-input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.voucherform-input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Input date */
+.voucherform-date-container {
+    display: flex;
+    gap: 15px;
+}
+
+.voucherform-date-field {
+    flex: 1;
+}
+
+.voucherform-date-label {
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Thông báo lỗi */
+.voucherform-error {
+    color: #ff4d4f;
+    font-size: 13px;
+    margin-top: -8px;
+    margin-bottom: 8px;
+}
+
+/* Các nút */
+.voucherform-button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.voucherform-button {
+    padding: 10px 20px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.voucherform-button-add {
+    background-color: #007bff;
+    color: white;
+}
+
+.voucherform-button-add:hover {
+    background-color: #0056b3;
+}
+
+.voucherform-button-cancel {
+    background-color: #6c757d;
+    color: white;
+    margin-left: 10px;
+}
+
+.voucherform-button-cancel:hover {
+    background-color: #5a6268;
+}

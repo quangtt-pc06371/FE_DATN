@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CartItem from "./CartItem";
-import { BASE_URL, API, CART } from "../../../../config/ApiCart/api";
+import { BASE_URL, API, CART, ORDER } from "../../../../config/ApiCart/api";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import Cookies from 'js-cookie';  // Import thư viện js-cookie
 
 const CartPage = () => {
   const [cart, setCart] = useState(null);
@@ -10,6 +12,7 @@ const CartPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectAll, setSelectAll] = useState(false); // Trạng thái chọn tất cả
   const [selectedIds, setSelectedIds] = useState([]); // Các ID được chọn
+  const navigate = useNavigate(); // Tạo navigate hook
 
   // Nhóm sản phẩm theo shop
   const groupByShop = (chiTietGioHangList) => {
@@ -45,7 +48,7 @@ const CartPage = () => {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = Cookies.get("token");
         if (!token) {
           setError("Vui lòng đăng nhập");
           return;
@@ -72,7 +75,7 @@ const CartPage = () => {
   //Gọi API Để Xóa Detail
   const handleRemoveProduct = async (idDetail) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token");
       if (!token) {
         setError("Vui lòng đăng nhập");
         return;
@@ -108,7 +111,7 @@ const CartPage = () => {
   // Gọi API để cập nhật giỏ hàng
   const handleSkuChange = async (idDetail, newQuantity, idSku) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token");
       if (!token) {
         setError("Vui lòng đăng nhập");
         return;
@@ -154,9 +157,11 @@ const CartPage = () => {
   const handleSelectAll = () => {
     const updatedCartDetail = { ...cartDetail };
     const newSelectedIds = [];
-  
+
     Object.keys(updatedCartDetail).forEach((shopId) => {
-      updatedCartDetail[shopId].products = updatedCartDetail[shopId].products.map((product) => {
+      updatedCartDetail[shopId].products = updatedCartDetail[
+        shopId
+      ].products.map((product) => {
         product.isSelected = !selectAll;
         if (product.isSelected) {
           newSelectedIds.push(product.idDetail); // Thêm vào danh sách đã chọn nếu được chọn
@@ -164,66 +169,95 @@ const CartPage = () => {
         return product;
       });
     });
-  
+
     setCartDetail(updatedCartDetail);
     setSelectAll(!selectAll); // Đảo trạng thái của "Chọn tất cả"
     setSelectedIds(newSelectedIds); // Cập nhật lại danh sách sản phẩm đã chọn
   };
-  
 
   //Hàm xử lý chọn từng idDetail
   const handleSelectProduct = (idDetail) => {
-  const updatedCartDetail = { ...cartDetail };
+    const updatedCartDetail = { ...cartDetail };
 
-  Object.keys(updatedCartDetail).forEach((shopId) => {
-    updatedCartDetail[shopId].products = updatedCartDetail[shopId].products.map((product) => {
-      if (product.idDetail === idDetail) {
-        product.isSelected = !product.isSelected;
+    Object.keys(updatedCartDetail).forEach((shopId) => {
+      updatedCartDetail[shopId].products = updatedCartDetail[
+        shopId
+      ].products.map((product) => {
+        if (product.idDetail === idDetail) {
+          product.isSelected = !product.isSelected;
 
-        // Cập nhật selectedIds
-        if (product.isSelected) {
-          setSelectedIds(prevIds => [...prevIds, idDetail]); // Thêm vào danh sách đã chọn
-        } else {
-          setSelectedIds(prevIds => prevIds.filter(id => id !== idDetail)); // Xóa khỏi danh sách đã chọn
+          // Cập nhật selectedIds
+          if (product.isSelected) {
+            setSelectedIds((prevIds) => [...prevIds, idDetail]); // Thêm vào danh sách đã chọn
+          } else {
+            setSelectedIds((prevIds) =>
+              prevIds.filter((id) => id !== idDetail)
+            ); // Xóa khỏi danh sách đã chọn
+          }
         }
-      }
-      return product;
+        return product;
+      });
     });
-  });
 
-  // Kiểm tra nếu tất cả các sản phẩm đã được chọn, cập nhật trạng thái "Chọn tất cả"
-  const allSelected = Object.values(updatedCartDetail).every(shop =>
-    shop.products.every(product => product.isSelected)
-  );
+    // Kiểm tra nếu tất cả các sản phẩm đã được chọn, cập nhật trạng thái "Chọn tất cả"
+    const allSelected = Object.values(updatedCartDetail).every((shop) =>
+      shop.products.every((product) => product.isSelected)
+    );
 
-  setCartDetail(updatedCartDetail);
-  setSelectAll(allSelected); // Cập nhật trạng thái "Chọn tất cả"
-};
+    setCartDetail(updatedCartDetail);
+    setSelectAll(allSelected); // Cập nhật trạng thái "Chọn tất cả"
+  };
 
+  // Hàm gửi yêu cầu tạo đơn hàng thanh toán
+  const handleCreateOrder = async () => {
+    try {
+      const token = Cookies.get("token");
+      if (!token) {
+        alert("Vui lòng đăng nhập.");
+        return;
+      }
+
+      const response = await axios.post(
+        `${BASE_URL}${API.Order}${ORDER.Add}`,
+        {},
+        {
+          headers: { Authorization: `${token}` },
+        }
+      );
+
+      if (response === 200) {
+        console.log(response);
+        alert("Tạo đơn hàng thành công!");
+      }
+    } catch (err) {
+      console.error("Lỗi khi tạo đơn hàng:", err.message);
+      alert("Không thể tạo đơn hàng. Vui lòng thử lại.");
+    }
+  };
 
   //Hàm Xử Lý Mua Hàng
   const handlePlaceOrder = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = Cookies.get("token");
       if (!token) {
         setError("Vui lòng đăng nhập");
         return;
       }
-  
+
       setIsSubmitting(true);
-  
+
       const selectedProducts = selectedIds;
-  
+
       if (selectedProducts.length === 0) {
         alert("Vui lòng chọn sản phẩm để đặt hàng.");
         setIsSubmitting(false);
         return;
       }
-  
+
       const payload = {
         idDetail: selectedProducts,
       };
-  
+
       const response = await axios.put(
         `${BASE_URL}${API.Cart}${CART.UpdateStatus}`,
         payload,
@@ -231,35 +265,50 @@ const CartPage = () => {
           headers: { Authorization: `${token}` },
         }
       );
-  
+
       if (response.status === 200) {
         alert("Đặt hàng thành công!");
-  
+
         // Cách 1: Gọi lại API để lấy giỏ hàng cập nhật
-        const updatedCart = await axios.get(`${BASE_URL}${API.Cart}${CART.List}`, {
-          headers: { Authorization: `${token}` },
-        });
-  
+        const updatedCart = await axios.get(
+          `${BASE_URL}${API.Cart}${CART.List}`,
+          {
+            headers: { Authorization: `${token}` },
+          }
+        );
+
         if (updatedCart.data.gioHang) {
           setCart(updatedCart.data.gioHang);
-          setCartDetail(groupByShop(updatedCart.data.gioHang.chiTietGioHangList));
+          setCartDetail(
+            groupByShop(updatedCart.data.gioHang.chiTietGioHangList)
+          );
         } else {
           setCartDetail({});
         }
-  
+
         // Reset danh sách sản phẩm đã chọn
         setSelectedIds([]);
       }
-  
+
       setIsSubmitting(false);
+
+      // Gọi API tạo đơn hàng sau khi selectedIds được cập nhật
+      await handleCreateOrder();
+      navigate(`/order`);
     } catch (error) {
       console.error("Lỗi khi đặt hàng:", error.message);
       setError("Không thể đặt hàng. Vui lòng thử lại.");
       setIsSubmitting(false);
     }
   };
-  
-  
+
+  // useEffect để thực hiện logic sau khi `selectedIds` thay đổi
+  useEffect(() => {
+    if (selectedIds.length > 0) {
+      console.log("Danh sách sản phẩm đã chọn:", selectedIds);
+      // Sau khi cập nhật selectedIds, có thể gọi thêm các tác vụ như tạo đơn hàng
+    }
+  }, [selectedIds]); // Khi `selectedIds` thay đổi, useEffect sẽ được kích hoạt
 
   if (error) {
     return <div className="error-message">{error}</div>;

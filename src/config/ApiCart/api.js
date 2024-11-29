@@ -1,7 +1,8 @@
 export const BASE_URL = 'http://localhost:8080';
 
 export const API ={
-    Cart: '/api/cart'
+    Cart: '/api/cart',
+    Order: '/api/order'
 } 
 
 export const CART = {
@@ -15,4 +16,10 @@ export const CART = {
 export const SKU = {
     List: '/sku',
     Update: '/updateDetail'
+}
+
+export const ORDER = {
+    List: '/list',
+    Add: '/create',
+    ApplyVoucher: '/apply-voucher'
 }
