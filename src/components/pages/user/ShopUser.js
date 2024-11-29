@@ -4,6 +4,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import { format } from "date-fns";
+import moment from 'moment';
 const ShopUser = () => {
   const [shop, setShop] = useState(null);
   const [isApproved, setIsApproved] = useState(false);
@@ -14,11 +15,11 @@ const ShopUser = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  console.log(shop)
+
   const [data, setData] = useState([]);
   const [dataKhuyenMai, setDataKhuyenMai] = useState([]);
   const [dataSanPhamKhuyenMai, setDataSanPhamKhuyenMai] = useState([]);
-  console.log(data)
+
 
 
 
@@ -63,7 +64,7 @@ const ShopUser = () => {
       confirmButtonText: "Xóa",
       cancelButtonText: "Hủy",
     });
-  
+
     // Nếu người dùng xác nhận, thực hiện xóa
     if (result.isConfirmed) {
       const apiSanPham = "http://localhost:8080/api/sanpham/updatetrangthai";
@@ -83,12 +84,12 @@ const ShopUser = () => {
       }
     }
   }
-  
+
 
   async function handleDeleteKhuyenMaiHetHan(id) {
     const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai/updatetrangthai';
     await axios.put(apiKhuyenMai + '/' + id);
-   
+
   }
   async function handleDeleteSanPhamKhuyenMaiHetHan(id) {
     const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai';
@@ -107,7 +108,7 @@ const ShopUser = () => {
       confirmButtonText: "Xóa",
       cancelButtonText: "Hủy",
     });
-  
+
     // Nếu người dùng xác nhận, thực hiện xóa
     if (result.isConfirmed) {
       const apiKhuyenMai = "http://localhost:8080/api/khuyenmai/updatetrangthai";
@@ -127,7 +128,7 @@ const ShopUser = () => {
       }
     }
   }
-  
+
   async function handleDeleteSanPhamKhuyenMai(id) {
     // Hiển thị thông báo xác nhận trước khi xóa
     const result = await Swal.fire({
@@ -139,7 +140,7 @@ const ShopUser = () => {
       confirmButtonText: "Xóa",
       cancelButtonText: "Hủy",
     });
-  
+
     // Nếu người dùng xác nhận, thực hiện xóa
     if (result.isConfirmed) {
       const apiSanPhamKhuyenMai = "http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai";
@@ -159,7 +160,8 @@ const ShopUser = () => {
       }
     }
   }
-  
+
+
 
   useEffect(() => {
     if (shop && shop.id) {
@@ -282,13 +284,11 @@ const ShopUser = () => {
     setShopImage(file);
     setImagePreviewUrl(URL.createObjectURL(file)); // Cập nhật ảnh xem trước
   };
-  function getFormatDate(dateString) {
-    if (!dateString) return ""; // Kiểm tra nếu không có giá trị
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return ""; // Kiểm tra nếu không phải là ngày hợp lệ
-    return format(date, 'yyyy-MM-dd');
-  }
 
+
+  function formatDateKeepUTC(dateString) {
+    return moment.utc(dateString).format('DD/MM/YYYY');
+  }
 
 
   console.log(dataSanPhamKhuyenMai)
@@ -395,39 +395,21 @@ const ShopUser = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {data.map((sanPham, index) => (
-                        // Kiểm tra nếu sản phẩm có trong hiddenProducts thì không hiển thị
-                        sanPham.trangThai === false ? null : (
-                          <tr key={sanPham.idSanPham}>
-                            <td>{index + 1}</td>
-                            <td>{sanPham.tenSanPham}</td>
-                            <td>{sanPham.moTa}</td>
-                            <td>{sanPham.shop.shopName}</td>
-                            <td>{sanPham.danhMuc.tenDanhMuc}</td>
-                            <td>
-                              Số lượng phiên bản: {sanPham.skus.length}
-                              {/* {sanPham.skus.length > 0 && (
-                                <ul className="list-unstyled">
-                                  <li>
-                                    <ul>
-                                      <li>Giá: {sanPham.skus[0].giaSanPham} VNĐ</li>
-                                      <li>Số lượng: {sanPham.skus[0].soLuong}</li>
-                                      {sanPham.skus[0].tuyChonThuocTinhSkus.map(tcSkus => (
-                                        <li key={tcSkus.idtuyChonThuocTinhSku}>
-                                          {tcSkus.tuyChonThuocTinh.thuocTinh.ten}: {tcSkus.tuyChonThuocTinh.giaTri}
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </li>
-                                </ul>
-                              )} */}
-                            </td>
-                            <td>
-                              <a href={`/sanpham/${sanPham.idSanPham}`} className="btn btn-warning me-2">Sửa</a>
-                              <button onClick={() => handleDeleteSanPham(sanPham.idSanPham)} className="btn btn-danger">Xóa</button>
-                            </td>
-                          </tr>
-                        )
+                      {data.filter(sanPham => sanPham.trangThai !== false).map((sanPham, index) => (
+                        <tr key={sanPham.idSanPham}>
+                          <td>{index + 1}</td> {/* Duy trì chỉ số với sản phẩm không ẩn */}
+                          <td>{sanPham.tenSanPham}</td>
+                          <td>{sanPham.moTa}</td>
+                          <td>{sanPham.shop.shopName}</td>
+                          <td>{sanPham.danhMuc.tenDanhMuc}</td>
+                          <td>
+                            Số lượng phiên bản: {sanPham.skus.length}
+                          </td>
+                          <td>
+                            <a href={`/sanpham/${sanPham.idSanPham}`} className="btn btn-warning me-2">Sửa</a>
+                            <button onClick={() => handleDeleteSanPham(sanPham.idSanPham)} className="btn btn-danger">Xóa</button>
+                          </td>
+                        </tr>
                       ))}
                     </tbody>
                   </table>
@@ -450,59 +432,55 @@ const ShopUser = () => {
                         <th>Ngày Kết Thúc</th>
                         <th>Ghi Chú</th>
                         <th>Shop</th>
-                        <th>Hạn Sử Dụng</th>
+
                         <th className="text-center">Hành Động</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {dataKhuyenMai.map((khuyenMai, index) => {
+                      {dataKhuyenMai.filter(khuyenMai => khuyenMai.active !== false).map((khuyenMai, filteredIndex) => {
                         const now = new Date();
                         // Chuyển đổi ngày bắt đầu và kết thúc của khuyến mãi thành đối tượng Date
-                        const startDate = new Date(khuyenMai.ngayBatDau);
                         const endDate = new Date(khuyenMai.ngayKetThuc);
+                        console.log(now);
+                        console.log(endDate);
 
                         // Kiểm tra nếu khuyến mãi còn hạn hay hết hạn
-                        const khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
-
-
-                        if(!khuyenMaiConHieuLuc){
-                          handleDeleteKhuyenMaiHetHan(khuyenMai.idKhuyenMai)
+                        const khuyenMaiDaHetHan = now > endDate;
+                        if (khuyenMaiDaHetHan) {
+                          handleDeleteKhuyenMaiHetHan(khuyenMai.idKhuyenMai);
                         }
 
                         return (
-                          khuyenMai.active === false ? null : (
-                            <tr key={khuyenMai.idKhuyenMai}>
-                              <td>{index + 1}</td>
-                              <td>{khuyenMai.tenKhuyenMai}</td>
-                              <td>{khuyenMai.giaTriKhuyenMai}%</td>
-                              <td>{getFormatDate(khuyenMai.ngayBatDau)}</td>
-                              <td>{getFormatDate(khuyenMai.ngayKetThuc)}</td>
-                              <td>{khuyenMai.ghiChu}</td>
-                              <td>{khuyenMai.shop.shopName}</td>
-                              <td>{khuyenMai.active ? "Còn hạn" : "Hết hạn"}</td> 
-                              <td className="text-center">
-                                <a className="btn btn-warning me-2" href={`/quanlykhuyenmai/${khuyenMai.idKhuyenMai}`}>Sửa</a>
-                                <button className="btn btn-danger" onClick={() => handleDeleteKhuyenMai(khuyenMai.idKhuyenMai)}>Xóa</button>
-                              </td>
-                            </tr>
-                          )
+                          <tr key={khuyenMai.idKhuyenMai}>
+                            <td>{filteredIndex + 1}</td> {/* Sử dụng filteredIndex để duy trì thứ tự liên tục */}
+                            <td>{khuyenMai.tenKhuyenMai}</td>
+                            <td>{khuyenMai.giaTriKhuyenMai}%</td>
+                            <td>{formatDateKeepUTC(khuyenMai.ngayBatDau)}</td>
+                            <td>{formatDateKeepUTC(khuyenMai.ngayKetThuc)}</td>
+                            <td>{khuyenMai.ghiChu}</td>
+                            <td>{khuyenMai.shop.shopName}</td>
+                            <td className="text-center">
+                              <a className="btn btn-warning me-2" href={`/quanlykhuyenmai/${khuyenMai.idKhuyenMai}`}>Sửa</a>
+                              <button className="btn btn-danger" onClick={() => handleDeleteKhuyenMai(khuyenMai.idKhuyenMai)}>Xóa</button>
+                            </td>
+                          </tr>
                         );
                       })}
                     </tbody>
                   </table>
                 </div>
               </div>
-
+                      
               <div className="card shadow w-100 mb-3">
                 <div className="card-header  bg-body-secondary d-flex justify-content-between align-items-center" >
                   <h2>Danh Sách Chương Trình Khuyến Mãi</h2>
-                  <a className="btn btn-success mt-3" href='/sanphamkhuyenmai'>Thêm Chương Trình Khuyến Mãi Mới</a>
+                  <a className="btn btn-success " href='/sanphamkhuyenmai'>Thêm Chương Trình Khuyến Mãi Mới</a>
                 </div>
                 <div className="card-body">
                   <table className="table table-hover">
                     <thead className="table-dark">
                       <tr>
-                        <th>ID</th>
+                        <th>STT</th>
                         <th>Sản Phẩm</th>
                         <th>Giá Gốc</th>
                         <th>Khuyến Mãi</th>
@@ -513,45 +491,45 @@ const ShopUser = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {dataSanPhamKhuyenMai.map(sanPhamKhuyenMai => {
+                      {dataSanPhamKhuyenMai.filter(sanPhamKhuyenMai => sanPhamKhuyenMai.trangThai !== false).map((sanPhamKhuyenMai, filteredIndex) => {
                         const now = new Date();
-                        console.log(now)
-                        const startDate = new Date(sanPhamKhuyenMai.khuyenMai.ngayBatDau);
+
                         const endDate = new Date(sanPhamKhuyenMai.khuyenMai.ngayKetThuc);
+
+                        console.log(now)
+                        console.log(endDate)
 
                         const giaGoc = sanPhamKhuyenMai.sanPham.skus[0]?.giaSanPham || 0;
                         const khuyenMai = sanPhamKhuyenMai.khuyenMai.giaTriKhuyenMai || 0;
                         const giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMai / 100));
-                        const khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
-                        console.log(dataSanPhamKhuyenMai)
-                        if (!khuyenMaiConHieuLuc) {
+                        const khuyenMaiConHieuLuc = now > endDate;
+                        const hieuLucKhuyenMai = sanPhamKhuyenMai.khuyenMai.active;
+                        const chuongTrinhKhuyenMai = sanPhamKhuyenMai.trangThai;
+
+                        if (khuyenMaiConHieuLuc || hieuLucKhuyenMai === false) {
                           // Gọi các hàm xóa trạng thái khi khuyến mãi hết hiệu lực
                           handleDeleteSanPhamKhuyenMaiHetHan(sanPhamKhuyenMai.idSanPhamKM);
-
                         }
+
                         return (
-                          sanPhamKhuyenMai.trangThai === false ? null : (
-                            <tr key={sanPhamKhuyenMai.idSanPhamKM}>
-                              <td>{sanPhamKhuyenMai.idSanPhamKM}</td>
-                              <td>{sanPhamKhuyenMai.sanPham.tenSanPham}</td>
-                              <td>{giaGoc.toFixed(2)} VNĐ</td>
-                              <td>{sanPhamKhuyenMai.khuyenMai.tenKhuyenMai} ({khuyenMai}%)</td>
-                              <td>
-                                {khuyenMaiConHieuLuc ? (
-                                  <span className="text-danger fw-bold">{giaSauKhuyenMai.toFixed(2)} VNĐ</span>
-                                ) : (
-                                  <span>{giaGoc.toFixed(2)} VNĐ</span>
-                                )}
-                              </td>
-                              <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayBatDau)}</td>
-                              <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayKetThuc)}</td>
-                              <td className="text-center">
-
-                                <button className="btn btn-danger" onClick={() => handleDeleteSanPhamKhuyenMai(sanPhamKhuyenMai.idSanPhamKM)}>Xóa</button>
-                              </td>
-                            </tr>
-                          )
-
+                          <tr key={sanPhamKhuyenMai.idSanPhamKM}>
+                            <td>{filteredIndex + 1}</td> {/* Duy trì chỉ số STT sau khi lọc */}
+                            <td>{sanPhamKhuyenMai.sanPham.tenSanPham}</td>
+                            <td>{giaGoc.toFixed(2)} VNĐ</td>
+                            <td>{sanPhamKhuyenMai.khuyenMai.tenKhuyenMai} ({khuyenMai}%)</td>
+                            <td>
+                              {chuongTrinhKhuyenMai === true ? (
+                                <span className="text-danger fw-bold">{giaSauKhuyenMai.toFixed(2)} VNĐ</span>
+                              ) : (
+                                <span>{giaGoc.toFixed(2)} VNĐ</span>
+                              )}
+                            </td>
+                            <td>{formatDateKeepUTC(sanPhamKhuyenMai.khuyenMai.ngayBatDau)}</td>
+                            <td>{formatDateKeepUTC(sanPhamKhuyenMai.khuyenMai.ngayKetThuc)}</td>
+                            <td className="text-center">
+                              <button className="btn btn-danger" onClick={() => handleDeleteSanPhamKhuyenMai(sanPhamKhuyenMai.idSanPhamKM)}>Xóa</button>
+                            </td>
+                          </tr>
                         );
                       })}
                     </tbody>

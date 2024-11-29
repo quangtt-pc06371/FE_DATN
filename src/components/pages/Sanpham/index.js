@@ -14,12 +14,12 @@ const SanPham = () => {
     const [sapXep, setSapXep] = useState('');
     const [danhMucDaChon, setDanhMucDaChon] = useState('');
     const noiDungTimKiem = location.state?.noiDungTimKiem || '';
-    console.log(data)
 
 
 
 
-    
+
+
 
     async function handleDeleteKhuyenMai(id) {
         const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai/updatetrangthai';
@@ -136,8 +136,10 @@ const SanPham = () => {
             (sanPhamKhuyenMai) => sanPhamKhuyenMai.sanPham.idSanPham === sanPham.idSanPham
         );
     };
+    const findSanPhamKhuyenMai = (sanPham) => sanPhamKhuyenMaiForm.filter(
+        (item) => item.sanPham.idSanPham === sanPham.idSanPham
+    );
 
-  
 
     return (
         <main style={{ background: 'rgb(245,245,250)' }}>
@@ -211,12 +213,19 @@ const SanPham = () => {
                             </div>
                         </div>
 
-                        
+
                         <div className="row">
                             {data.map((sanPham) => {
 
+                                const sanPhamKhuyenMaiDT = findSanPhamKhuyenMai(sanPham)
+
+                                const doiTuongSanPhamKM = sanPhamKhuyenMaiDT.find(
+                                    (promo) => promo.trangThai === true
+                                );
+                               
+                                console.log(doiTuongSanPhamKM)
                                 const khuyenMaiData = findKhuyenMai(sanPham);
-                                console.log(khuyenMaiData)
+                          
                                 const now = new Date();
                                 const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
@@ -224,23 +233,28 @@ const SanPham = () => {
                                 let khuyenMaiConHieuLuc = false;
 
 
-                                if (khuyenMaiData) {
-                                    const startDate = new Date(khuyenMaiData.khuyenMai.ngayBatDau);
-                                    const endDate = new Date(khuyenMaiData.khuyenMai.ngayKetThuc);
+                                // let giaTriChuongTrinhKhuyenMai =  khuyenMaiData.trangThai
+                                // console.log(giaTriChuongTrinhKhuyenMai)
 
+                                if (doiTuongSanPhamKM) {
+                                    const startDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+                                    const endDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
 
-                                    giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMaiData.khuyenMai.giaTriKhuyenMai / 100));
+                                    giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+                                    console.log(endDate)
 
-
-                                    khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
-
-                                    if (!khuyenMaiConHieuLuc) {
+                                    khuyenMaiConHieuLuc = now > endDate;
+                                    console.log(khuyenMaiConHieuLuc)
+                                    if (khuyenMaiConHieuLuc) {
                                         // Gọi các hàm xóa trạng thái khi khuyến mãi hết hiệu lực
-                                        handleDeleteKhuyenMai(khuyenMaiData.khuyenMai.idKhuyenMai);
-                                        handleDeleteSanPhamKhuyenMai(khuyenMaiData.idSanPhamKM);
+                                        handleDeleteKhuyenMai(doiTuongSanPhamKM.khuyenMai.idKhuyenMai);
+                                        handleDeleteSanPhamKhuyenMai(doiTuongSanPhamKM.idSanPhamKM);
                                     }
 
+
                                 }
+
+
                                 const firstSku = sanPham.skus?.[0];
                                 const firstImage = firstSku?.hinhanh;
                                 return (
@@ -248,7 +262,7 @@ const SanPham = () => {
                                         <div key={sanPham.idSanPham} className="col-md-3 mb-3">
                                             <a href={`/chitietsanpham/${sanPham.idSanPham}`} className='text-white'>
                                                 <div className="card border rounded-3 shadow-sm h-100">
-                                                    <div className="card-img">
+                                                    <div className="card-header">
                                                         {firstImage ? (
                                                             <img
                                                                 src={firstImage.tenAnh}
@@ -262,16 +276,17 @@ const SanPham = () => {
                                                     <div className="card-body">
                                                         <p className='card-text'>{sanPham.tenSanPham}</p>
                                                         <p className="card-text text-danger fw-bold">
-                                                            {khuyenMaiConHieuLuc ? (
+                                                            {khuyenMaiConHieuLuc === false ? (
                                                                 <>
                                                                     <span className="text-muted" style={{ textDecoration: 'line-through' }}>
-                                                                        {giaGoc} VNĐ
+                                                                    {`${giaGoc.toLocaleString('vi-VN')} VNĐ`}
+
                                                                     </span>
                                                                     <br />
-                                                                    {giaSauKhuyenMai.toFixed(2)} VNĐ
+                                                                    {`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}
                                                                 </>
                                                             ) : (
-                                                                `${giaGoc.toLocaleString()} VNĐ`
+                                                                `${giaGoc.toLocaleString('vi-VN')} VNĐ`
                                                             )}
                                                         </p>
                                                     </div>

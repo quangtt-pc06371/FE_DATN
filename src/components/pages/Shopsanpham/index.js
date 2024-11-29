@@ -120,7 +120,9 @@ export default function ShopSanPham() {
             (sanPhamKhuyenMai) => sanPhamKhuyenMai.sanPham.idSanPham === sanPham.idSanPham
         );
     };
-
+    const findSanPhamKhuyenMaiShop = (sanPham) => sanPhamKhuyenMaiForm.filter(
+        (item) => item.sanPham.idSanPham === sanPham.idSanPham
+    );
     console.log(data)
     // Tính tổng số lượng SKU trong tất cả các sản phẩm
     const tongSanPham = dataOne.length
@@ -211,23 +213,28 @@ export default function ShopSanPham() {
                     <div className="row">
                         {data.map((sanPham) => {
 
-                            const khuyenMaiData = findKhuyenMai(sanPham);
-                            const now = new Date();
+                            const sanPhamKhuyenMaiDT = findSanPhamKhuyenMaiShop(sanPham);
+
+                            const doiTuongSanPhamKM = sanPhamKhuyenMaiDT.find(
+                                (promo) => promo.trangThai === true
+                            );
+                            
                             const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
                             let giaSauKhuyenMai = 0;
                             let khuyenMaiConHieuLuc = false;
 
 
-                            if (khuyenMaiData) {
-                                const startDate = new Date(khuyenMaiData.khuyenMai.ngayBatDau);
-                                const endDate = new Date(khuyenMaiData.khuyenMai.ngayKetThuc);
+                            if (doiTuongSanPhamKM) {
+                                const now = new Date();
+                                const startDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+                                const endDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
 
 
-                                giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMaiData.khuyenMai.giaTriKhuyenMai / 100));
+                                giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
 
 
-                                khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
+                                khuyenMaiConHieuLuc = now > endDate;
                             }
                             const firstSku = sanPham.skus?.[0];
                             const firstImage = firstSku?.hinhanh;
@@ -235,8 +242,8 @@ export default function ShopSanPham() {
                                 sanPham.trangThai === false ? null : (
                                     <div key={sanPham.idSanPham} className="col-md-3 mb-3">
                                         <a href={`/chitietsanpham/${sanPham.idSanPham}`} className='text-white'>
-                                            <div className="card border rounded-3 shadow-sm">
-                                                <div className="card-img">
+                                            <div className="card border rounded-3 shadow-sm h-100">
+                                                <div className="card-header">
                                                     {firstImage ? (
                                                         <img
                                                             src={firstImage.tenAnh}
@@ -250,7 +257,7 @@ export default function ShopSanPham() {
                                                 <div className="card-body">
                                                     <p className='card-text'>{sanPham.tenSanPham}</p>
                                                     <p className="card-text text-danger fw-bold">
-                                                        {khuyenMaiConHieuLuc ? (
+                                                        {khuyenMaiConHieuLuc === false ? (
                                                             <>
                                                                 <span className="text-muted" style={{ textDecoration: 'line-through' }}>
                                                                     {giaGoc} VNĐ

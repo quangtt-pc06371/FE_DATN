@@ -16,6 +16,7 @@ const QuanLySanPhamKhuyenMai = () => {
   const [sanPhamKhuyenMaiData, setSanPhamKhuyenMaiData] = useState([]);
   const [shopData, setShopData] = useState([]);
   const token = Cookies.get('token');
+
   async function layShop() {
     try {
       const response = await axios.get('http://localhost:8080/api/shop/nguoidung', {
@@ -29,12 +30,8 @@ const QuanLySanPhamKhuyenMai = () => {
     } catch (error) {
       alert("Vui Lòng Đăng Nhập")
     }
-
-
   }
-  console.log(shopData)
-  console.log(khuyenMaiData)
-  console.log(sanPhamData)
+  
   async function laySanPham() {
 
     const apiShop = 'http://localhost:8080/api/sanpham/shop';
@@ -106,50 +103,52 @@ const QuanLySanPhamKhuyenMai = () => {
 
 
   async function handleAdd() {
-
     if (!formData.sanPham.idSanPham) {
-      alert("Vui lòng chọn sản phẩm trước khi thêm!");
-      Swal.fire('Vui lòng chọn sản phẩm trước khi thêm !');
+      Swal.fire('Lỗi', 'Vui lòng chọn sản phẩm trước khi thêm!', 'warning');
       return;
     }
-
-
+  
     if (!formData.khuyenMai.idKhuyenMai) {
-      alert("Vui lòng chọn khuyến mãi trước khi thêm!");
+      Swal.fire('Lỗi', 'Vui lòng chọn khuyến mãi trước khi thêm!', 'warning');
       return;
     }
-
-
-    const existingPromotion = sanPhamKhuyenMaiData.find(
+  
+    const existingPromotions = sanPhamKhuyenMaiData.filter(
       (item) => item.sanPham.idSanPham === formData.sanPham.idSanPham
     );
-
-    if (existingPromotion) {
-      alert('Sản phẩm này đã có khuyến mãi và không thể áp dụng thêm!');
+    
+    // Kiểm tra nếu bất kỳ khuyến mãi nào đang hoạt động
+    const hasActivePromotion = existingPromotions.some(
+      (promo) => promo.trangThai === true
+    );
+    
+    console.log(existingPromotions)
+    console.log(hasActivePromotion)
+    if (hasActivePromotion) {
+      Swal.fire('Lỗi', 'Sản phẩm này đã có khuyến mãi đang hoạt động!', 'warning');
       return;
     }
-
-
+  
     const dataToSent = {
       trangThai: true,
       sanPham: { idSanPham: parseInt(formData.sanPham.idSanPham) },
-      khuyenMai: { idKhuyenMai: parseInt(formData.khuyenMai.idKhuyenMai) }
+      khuyenMai: { idKhuyenMai: parseInt(formData.khuyenMai.idKhuyenMai) },
     };
-
+  
     try {
-
       const addData = await axios.post('http://localhost:8080/api/sanphamkhuyenmai', dataToSent, {
         headers: {
-          'Authorization': token,
+          Authorization: token,
         },
       });
-      alert('Thêm thành công', addData.data);
+      Swal.fire('Thành công', 'Đã thêm sản phẩm vào chương trình khuyến mãi!', 'success');
       handleResetData();
     } catch (error) {
       console.error('Lỗi khi thêm sản phẩm khuyến mãi:', error);
-      alert('Có lỗi xảy ra khi thêm sản phẩm khuyến mãi');
+      Swal.fire('Lỗi', 'Có lỗi xảy ra khi thêm sản phẩm khuyến mãi', 'error');
     }
   }
+  
 
 
 
@@ -161,7 +160,7 @@ const QuanLySanPhamKhuyenMai = () => {
     });
     setEdit(true);
   }
-  console.log(khuyenMaiData)
+
   return (
     <div className="container my-4">
       <div className="row">
