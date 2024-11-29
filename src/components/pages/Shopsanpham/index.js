@@ -222,7 +222,7 @@ export default function ShopSanPham() {
                             const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
                             let giaSauKhuyenMai = 0;
-                            let khuyenMaiConHieuLuc = false;
+                            let khuyenMaiConHieuLuc = true;
 
 
                             if (doiTuongSanPhamKM) {
@@ -260,13 +260,14 @@ export default function ShopSanPham() {
                                                         {khuyenMaiConHieuLuc === false ? (
                                                             <>
                                                                 <span className="text-muted" style={{ textDecoration: 'line-through' }}>
-                                                                    {giaGoc} VNĐ
+                                                                {`${giaGoc.toLocaleString('vi-VN')} VNĐ`}
+
                                                                 </span>
                                                                 <br />
-                                                                {giaSauKhuyenMai.toFixed(2)} VNĐ
+                                                                {`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}
                                                             </>
                                                         ) : (
-                                                            `${giaGoc.toLocaleString()} VNĐ`
+                                                            `${giaGoc.toLocaleString('vi-VN')} VNĐ`
                                                         )}
                                                     </p>
                                                 </div>

@@ -14,6 +14,7 @@ export default function ChiTietSanPham() {
         danhMuc: {}
     });
 
+
     const [sanPhamShop, setSanPhamShop] = useState([]);
 
     const [skusList, setSkusList] = useState([]);
@@ -66,7 +67,6 @@ export default function ChiTietSanPham() {
         } catch (error) {
             console.log(error)
         }
-
     }
     async function getDataDisplayId() {
         const apiSanPham = 'http://localhost:8080/api/sanpham';
@@ -133,9 +133,23 @@ export default function ChiTietSanPham() {
             return;
         }
 
+        let giaSauKhuyenMai = 0;
+        let khuyenMaiConHieuLuc = true;
+        if (doiTuongSanPhamKM) {
+            const startDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+            const endDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+    
+    
+            giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+    
+    
+            khuyenMaiConHieuLuc = now > endDate;
+        }
+     
+
         const dataToSent = {
             soLuongMua: soLuong,
-            giaMua: soLuong * sku.giaSanPham,
+            giaMua: soLuong * (khuyenMaiConHieuLuc === false ? giaSauKhuyenMai : giaGoc),
             trangThai: true,
             skuEntity: { idSku: sku.idSku }
         };
@@ -192,7 +206,7 @@ export default function ChiTietSanPham() {
     const now = new Date();
 
     let giaSauKhuyenMai = 0;
-    let khuyenMaiConHieuLuc = false;
+    let khuyenMaiConHieuLuc = true;
     if (doiTuongSanPhamKM) {
         const startDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
         const endDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
@@ -310,7 +324,7 @@ export default function ChiTietSanPham() {
 
                         {khuyenMaiConHieuLuc === false && (
                             <h1 className='text-danger'>
-                                {`${giaSauKhuyenMai.toLocaleString()} VNĐ`}
+                                {`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}
                             </h1>
                         )}
 
@@ -400,7 +414,7 @@ export default function ChiTietSanPham() {
                         const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
                         let giaSauKhuyenMai = 0;
-                        let khuyenMaiConHieuLuc = false;
+                        let khuyenMaiConHieuLuc = true;
 
 
                         if (doiTuongSanPhamKM) {

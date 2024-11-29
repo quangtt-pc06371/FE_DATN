@@ -68,7 +68,6 @@ const SanPham = () => {
         } catch (error) {
             console.log(error)
         }
-
     }
 
 
@@ -136,6 +135,7 @@ const SanPham = () => {
             (sanPhamKhuyenMai) => sanPhamKhuyenMai.sanPham.idSanPham === sanPham.idSanPham
         );
     };
+
     const findSanPhamKhuyenMai = (sanPham) => sanPhamKhuyenMaiForm.filter(
         (item) => item.sanPham.idSanPham === sanPham.idSanPham
     );
@@ -224,13 +224,12 @@ const SanPham = () => {
                                 );
                                
                                 console.log(doiTuongSanPhamKM)
-                                const khuyenMaiData = findKhuyenMai(sanPham);
-                          
+                                
                                 const now = new Date();
                                 const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
                                 let giaSauKhuyenMai = 0;
-                                let khuyenMaiConHieuLuc = false;
+                                let khuyenMaiConHieuLuc = true;
 
 
                                 // let giaTriChuongTrinhKhuyenMai =  khuyenMaiData.trangThai

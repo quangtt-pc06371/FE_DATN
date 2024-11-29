@@ -67,7 +67,7 @@ const TrangChu = () => {
                                             <i className="fa-solid fa-key"></i> đăng kí shop
                                         </a>
                                     </li>
-                                   
+
                                 </>
 
 
@@ -78,35 +78,82 @@ const TrangChu = () => {
                         </div>
                     </div>
                 </nav>
+
+
+
                 <nav className="navbar">
                     <div className="container-fluid">
                         <a className="navbar-brand ms-5" href="/">
-                            <img src="/img/t.png" alt="" style={{ width: '150px', height: '120px' }} /></a>
-                        <span className="navbar-text text-dark fs-5 d-flex align-items-center">
-                            <span className="rounded-circle border border-2 border-dark d-flex justify-content-center align-items-center" style={{ width: '40px', height: '40px' }}>
-                                <i className="fa fa-home"></i>
-                            </span>
-                            <span className="ms-2">Ngõ 15 Duy Tân, Mỹ Đình 2, Từ Liêm, Hà Nội</span>
-                        </span>
-                        <span className="navbar-text text-dark fs-5 d-flex align-items-center ms-3">
-                            <span className="rounded-circle border border-2 border-dark d-flex justify-content-center align-items-center" style={{ width: '40px', height: '40px' }}>
+                            <img
+                                src="/img/t.png"
+                                alt=""
+                                style={{ width: "150px", height: "120px" }}
+                            />
+                        </a>
+
+                        <span
+                            className="navbar-text text-dark fs-5 d-flex align-items-center ms-auto me-5"
+                            style={{ gap: "10px" }} // Thêm khoảng cách giữa icon và text
+                        >
+                            <span
+                                className="rounded-circle border border-2 border-dark d-flex justify-content-center align-items-center"
+                                style={{ width: "40px", height: "40px" }}
+                            >
                                 <i className="fa fa-envelope"></i>
                             </span>
-                            <span className="ms-2">info@janus.com</span>
+                            <span>info@janus.com</span>
                         </span>
-                        <form className="d-flex me-5" role="search" onSubmit={handleSearch}>
-                            <input
-                                className="form-control me-2"
-                                type="search"
-                                placeholder="Search"
-                                aria-label="Search"
-                                value={noiDungTimKiem}
-                                onChange={(e) => setNoidungTimKiem(e.target.value)} // Cập nhật từ khóa tìm kiếm
-                            />
-                            <button className="btn btn-outline-dark" type="submit">Search</button>
-                        </form>
+
+                        <form
+    className="d-flex align-items-center"
+    role="search"
+    onSubmit={handleSearch}
+    style={{
+        margin: "0 auto", // Căn giữa theo chiều ngang trong navbar
+        maxWidth: "800px", // Giới hạn chiều rộng form để cân đối
+        flexGrow: 1, // Để form co giãn chiếm không gian hợp lý
+    }}
+>
+    <input
+        className="form-control"
+        type="search"
+        placeholder="Search"
+        aria-label="Search"
+        value={noiDungTimKiem}
+        onChange={(e) => setNoidungTimKiem(e.target.value)}
+        style={{
+            padding: "10px 15px",
+            borderRadius: "25px",
+            border: "2px solid #0d6efd",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+            width: "100%", // Đảm bảo input chiếm toàn bộ không gian form
+            marginRight: "10px", // Khoảng cách giữa input và nút
+        }}
+    />
+    <button
+        className="btn btn-outline-dark"
+        type="submit"
+        style={{
+            borderRadius: "25px",
+            backgroundColor: "#0d6efd",
+            color: "white",
+            padding: "10px 20px",
+            border: "none",
+            fontWeight: "bold",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+        }}
+    >
+        Search
+    </button>
+</form>
+
+
                     </div>
                 </nav>
+
+
+
+
                 <nav className="navbar navbar-expand-lg" style={{ backgroundColor: 'rgb(21,37,69)' }}>
                     <div className="container-fluid">
                         <div className="collapse navbar-collapse" id="navbarText">

@@ -289,7 +289,10 @@ const ShopUser = () => {
   function formatDateKeepUTC(dateString) {
     return moment.utc(dateString).format('DD/MM/YYYY');
   }
-
+  // function formatDateKeepUTC(dateString) {
+  //   return moment.utc(dateString).local().format('DD/MM/YYYY');
+  // }
+  
 
   console.log(dataSanPhamKhuyenMai)
   return (
@@ -515,13 +518,13 @@ const ShopUser = () => {
                           <tr key={sanPhamKhuyenMai.idSanPhamKM}>
                             <td>{filteredIndex + 1}</td> {/* Duy trì chỉ số STT sau khi lọc */}
                             <td>{sanPhamKhuyenMai.sanPham.tenSanPham}</td>
-                            <td>{giaGoc.toFixed(2)} VNĐ</td>
+                            <td> {`${giaGoc.toLocaleString('vi-VN')} VNĐ`} </td>
                             <td>{sanPhamKhuyenMai.khuyenMai.tenKhuyenMai} ({khuyenMai}%)</td>
                             <td>
                               {chuongTrinhKhuyenMai === true ? (
-                                <span className="text-danger fw-bold">{giaSauKhuyenMai.toFixed(2)} VNĐ</span>
+                                <span className="text-danger fw-bold">{`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}</span>
                               ) : (
-                                <span>{giaGoc.toFixed(2)} VNĐ</span>
+                                <span></span>
                               )}
                             </td>
                             <td>{formatDateKeepUTC(sanPhamKhuyenMai.khuyenMai.ngayBatDau)}</td>
