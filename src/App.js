@@ -11,10 +11,10 @@ import {
 
 
 
-import NavbarAdmin from './components/pages/admin/NavbarAdmin';
-import CategoryManagement from './components/pages/admin/CategoryManagement';
-import ShopApproval from './components/pages/admin/ShopApproval';
-import ShopManagement from './components/pages/admin/ShopManagement';
+// import NavbarAdmin from './components/pages/admin/NavbarAdmin';
+// import CategoryManagement from './components/pages/admin/CategoryManagement';
+// import ShopApproval from './components/pages/admin/ShopApproval';
+// import ShopManagement from './components/pages/admin/ShopManagement';
 
 import ShopRegistration from './components/pages/user/ShopRegistration';
 import ShopUser from './components/pages/user/ShopUser';
@@ -33,7 +33,7 @@ import QuanlySanPham from './components/pages/Quanlysanpham';
 import DanhSachSanPham from './components/pages/Danhsachsanpham';
 import DanhSachSanPhamKM from './components/pages/Danhsachchuongtrinhkm';
 import QuanLySanPhamKhuyenMai from './components/pages/Quanlysanphamkhuyenmai';
-import Admin from "./components/pages/admin/NavbarAdmin";
+// import Admin from "./components/pages/admin/NavbarAdmin";
 import Register from "./components/pages/Register";
 import Updateuser2 from './components/compoments/updatetaikhoan';
 import Listtk from './components/compoments/Listtaikhoan';
@@ -90,7 +90,7 @@ export default function App() {
         <Route path="/" element={<TrangChu />}>
           <Route index element={<SanPham />} />
           <Route path="chitietsanpham/:id" element={<ChiTietSanPham />} />
-          <Route path="/shop-approval" element={<ShopApproval />} />
+          {/* <Route path="/shop-approval" element={<ShopApproval />} /> */}
           <Route path="addstaff" element={<AddStaff />} />
           <Route path='quanlysanpham' element={<QuanlySanPham />} />
           <Route path="Logout" element={<Logout />} />
