@@ -16,7 +16,6 @@ const QuanlySanPham = () => {
     tenSanPham: '',
     moTa: '',
     weight: '', // Cân nặng (mặc định là chuỗi rỗng)
-
     shop: { id: parseInt('') },
     danhMuc: { idDanhMuc: parseInt('') }
   }
@@ -35,6 +34,7 @@ const QuanlySanPham = () => {
   }]);
 
   const [skusList, setSkusList] = useState([]);
+
   const { idSanPham } = useParams();
 
   const [giaSanPham, setGiaSanPham] = useState(0);
@@ -610,6 +610,7 @@ const QuanlySanPham = () => {
         });
         return;
       }
+      
       
       if (!sku.hinhanh) {
         Swal.fire({

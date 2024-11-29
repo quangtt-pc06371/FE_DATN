@@ -5,6 +5,8 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
 import Cookies from "js-cookie";
+import Swal from "sweetalert2";
+import moment from 'moment';
 const QuanLyKhuyenMai = () => {
     const [formData, setFormData] = useState({
         tenKhuyenMai: '',
@@ -15,8 +17,11 @@ const QuanLyKhuyenMai = () => {
         ghiChu: '',
         shop: { id: '' },
     });
-    console.log(formData)
-    const [shopForm, setShopForm] = useState([]);
+    function clearTime(date) {
+        date.setHours(0, 0, 0, 0); // Đặt lại giờ, phút, giây và mili-giây về 0
+        return date;
+    }
+   
     const { idKhuyenMai } = useParams();
     const [edit, setEdit] = useState(true);
 
@@ -24,14 +29,17 @@ const QuanLyKhuyenMai = () => {
         const now = new Date();
         return format(now, "yyyy-MM-dd'T'HH:mm");
     }
-    
-    function getDefaultNgayKetThuc() {
-        const now = new Date();
+
+    function getDefaultNgayKetThuc(ngayKetThuc) {
+        const now = new Date(ngayKetThuc);
         now.setHours(23, 59, 0, 0); // Thiết lập giờ 23:59
         return format(now, "yyyy-MM-dd'T'HH:mm");
     }
-    
 
+    function getFormatDateTime(date) {
+        const now = new Date(date);
+        return format(now, "dd/MM/yyyy");
+    }
 
     async function getDataDisplayId() {
 
@@ -61,16 +69,60 @@ const QuanLyKhuyenMai = () => {
             !formData.ngayKetThuc ||
             !formData.ghiChu.trim()
         ) {
-            alert('Vui lòng điền đầy đủ thông tin khuyến mãi.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Vui lòng điền đầy đủ thông tin khuyến mãi!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
             return;
         }
 
-        // Kiểm tra ngày bắt đầu và ngày kết thúc
-        const ngayBatDau = new Date(formData.ngayBatDau);
-        const ngayKetThuc = new Date(formData.ngayKetThuc);
+        // Kiểm tra giá trị khuyến mãi nằm trong khoảng 0 - 100
+        if (formData.giaTriKhuyenMai <= 0 || formData.giaTriKhuyenMai > 100) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Giá trị khuyến mãi phải nằm trong khoảng từ 1% đến 100!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
 
+        const ngayHienTai = clearTime(new Date()); // Ngày hiện tại, đã clear giờ
+        const ngayBatDau = clearTime(new Date(formData.ngayBatDau)); // Ngày bắt đầu, đã clear giờ
+        const ngayKetThuc = clearTime(new Date(formData.ngayKetThuc)); // Ngày kết thúc, đã clear giờ
+
+        console.log(ngayBatDau)
+        console.log(ngayHienTai)
+        console.log(ngayKetThuc)
+
+        if (ngayBatDau < ngayHienTai) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Ngày bắt đầu không được nhỏ hơn ngày hiện tại!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
+
+        if (ngayKetThuc < ngayHienTai) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Ngày kết thúc không được nhỏ hơn ngày hiện tại!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
         if (ngayBatDau > ngayKetThuc) {
-            alert('Ngày bắt đầu không được lớn hơn ngày kết thúc.');
+            Swal.fire({
+                icon: 'warning',
+                title: 'Ngày bắt đầu không được lớn hơn ngày kết thúc!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
             return;
         }
 
@@ -78,43 +130,140 @@ const QuanLyKhuyenMai = () => {
             const dataToSent = {
                 tenKhuyenMai: formData.tenKhuyenMai,
                 giaTriKhuyenMai: formData.giaTriKhuyenMai,
-                ngayBatDau: getDefaultNgayBatDau(formData.ngayBatDau),
+                ngayBatDau: formData.ngayBatDau,
                 ngayKetThuc: getDefaultNgayKetThuc(formData.ngayKetThuc),
                 active: true,
                 ghiChu: formData.ghiChu,
             };
-
+            console.log(dataToSent)
             const addData = await axios.post('http://localhost:8080/api/khuyenmai', dataToSent, {
                 headers: {
                     'Authorization': token,
                 },
             });
 
-            alert('Thêm thành công', addData.data);
+            Swal.fire({
+                icon: 'success',
+                title: 'Thêm thành công!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
             handleResetData();
         } catch (error) {
             console.error('Lỗi khi thêm khuyến mãi:', error);
-            alert('Có lỗi xảy ra khi thêm khuyến mãi.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Có lỗi xảy ra!',
+                text: 'Không thể thêm khuyến mãi. Vui lòng thử lại sau.',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
         }
     }
 
-    console.log(shopForm)
+
+   
     async function handleUpdate() {
-        const dataToUpdate = {
-            tenKhuyenMai: formData.tenKhuyenMai,
-            giaTriKhuyenMai: formData.giaTriKhuyenMai,
-            ngayBatDau: formData.ngayBatDau,
-            ngayKetThuc: formData.ngayKetThuc,
-            active: true,
-            ghiChu: formData.ghiChu,
-            shop: { id: parseInt(formData.shop.id) }
+        // Kiểm tra bỏ trống các trường
+        if (
+            !formData.tenKhuyenMai.trim() ||
+            !formData.giaTriKhuyenMai ||
+            !formData.ngayBatDau ||
+            !formData.ngayKetThuc ||
+            !formData.ghiChu.trim()
+        ) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Vui lòng điền đầy đủ thông tin khuyến mãi!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
+            return;
         }
-        console.log(dataToUpdate)
-        const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai';
-        await axios.put(apiKhuyenMai + '/' + idKhuyenMai, dataToUpdate);
-        alert('Sửa thành công');
-        handleResetData();
+
+        // Kiểm tra giá trị khuyến mãi nằm trong khoảng 0 - 100
+        if (formData.giaTriKhuyenMai <= 0 || formData.giaTriKhuyenMai > 80) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Giá trị khuyến mãi phải nằm trong khoảng từ 1% đến 100!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
+
+        const ngayHienTai = clearTime(new Date()); // Ngày hiện tại, đã clear giờ
+        const ngayBatDau = clearTime(new Date(formData.ngayBatDau)); // Ngày bắt đầu, đã clear giờ
+        const ngayKetThuc = clearTime(new Date(formData.ngayKetThuc)); // Ngày kết thúc, đã clear giờ
+
+        if (ngayBatDau < ngayHienTai) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Ngày bắt đầu không được nhỏ hơn ngày hiện tại!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
+
+        if (ngayKetThuc < ngayHienTai) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Ngày kết thúc không được nhỏ hơn ngày hiện tại!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
+
+        if (ngayBatDau > ngayKetThuc) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Ngày bắt đầu không được lớn hơn ngày kết thúc!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
+
+        try {
+            const dataToUpdate = {
+                tenKhuyenMai: formData.tenKhuyenMai,
+                giaTriKhuyenMai: formData.giaTriKhuyenMai,
+                ngayBatDau: formData.ngayBatDau,
+                ngayKetThuc: getDefaultNgayKetThuc(formData.ngayKetThuc),
+                active: true,
+                ghiChu: formData.ghiChu,
+                shop: { id: parseInt(formData.shop.id) }, // Kiểm tra nếu cần đảm bảo `formData.shop.id` là số
+            };
+
+            const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai';
+            const response = await axios.put(`${apiKhuyenMai}/${idKhuyenMai}`, dataToUpdate, {
+                headers: {
+                    Authorization: token,
+                },
+            });
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Cập nhật thành công!',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
+
+            handleResetData();
+        } catch (error) {
+            console.error('Lỗi khi cập nhật khuyến mãi:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Có lỗi xảy ra!',
+                text: 'Không thể cập nhật khuyến mãi. Vui lòng thử lại sau.',
+                showConfirmButton: true,
+                confirmButtonText: 'OK',
+            });
+        }
     }
+
 
     function handleResetData() {
         setFormData({
@@ -132,6 +281,9 @@ const QuanLyKhuyenMai = () => {
         const date = new Date(dateString);
         if (isNaN(date.getTime())) return ""; // Kiểm tra nếu không phải là ngày hợp lệ
         return format(date, 'yyyy-MM-dd');
+    }
+    function formatDateForInput(dateString) {
+        return moment.utc(dateString).format('YYYY-MM-DD'); // Chuyển đổi sang định dạng phù hợp
     }
 
 
@@ -204,7 +356,7 @@ const QuanLyKhuyenMai = () => {
                                         type="date"
                                         className="form-control"
                                         name="ngayBatDau"
-                                        value={getFormatDate(formData.ngayBatDau)}
+                                        value={formatDateForInput(formData.ngayBatDau)}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -214,7 +366,7 @@ const QuanLyKhuyenMai = () => {
                                         type="date"
                                         className="form-control"
                                         name="ngayKetThuc"
-                                        value={getFormatDate(formData.ngayKetThuc)}
+                                        value={formatDateForInput(formData.ngayKetThuc)}
                                         onChange={handleChange}
                                     />
                                 </div>
