@@ -1,17 +1,33 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { BASE_URL, API, ORDER } from "../assets/config/api"; // Cập nhật đường dẫn API theo dự án của bạn
 import Cookies from "js-cookie"; // Import thư viện js-cookie
 import Voucher from "./Voucher"; // Import component Voucher
 import ShippingCalculator from "./Ship";
+import Payment from "./Payment";
+import AddressForm from "./index";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useLocation } from "react-router-dom";
 
 function Order() {
   const [orders, setOrders] = useState([]); // Lưu danh sách đơn hàng
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [showVoucherModal, setShowVoucherModal] = useState(false); // Hiển thị Modal Voucher
-  const [voucherList] = useState([]); // Danh sách voucher có sẵn
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [selectedVoucher, setSelectedVoucher] = useState(null); // Lưu voucher đã áp dụng
+  const [totalDonHang, setTotalDonHang] = useState(100000); // Tổng tiền ban đầu
+  const navigate = useNavigate(); // Tạo navigate hook
+  const location = useLocation();
+  const { selectedIds } = location.state || {};
+  const [showModal, setShowModal] = useState(false);
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
+  console.log(selectedIds); // Danh sách các sản phẩm đã chọn
 
   // Lấy danh sách đơn hàng
   useEffect(() => {
@@ -85,6 +101,10 @@ function Order() {
     }
   };
 
+  const handleTotalUpdate = (newTotal) => {
+    setTotalDonHang(newTotal); // Cập nhật tổng tiền sau khi áp dụng voucher
+  };
+
   return (
     <>
       <div className="container my-5">
@@ -124,9 +144,15 @@ function Order() {
 
                           {/* Nút Thay đổi luôn nằm bên phải */}
                           <div className="ms-3">
-                            <button type="button" className="btn btn-primary">
-                              Thay đổi
+                            <button
+                              className="btn btn-primary"
+                              data-bs-toggle="modal"
+                              data-bs-target="#addressModal"
+                            >
+                              Thêm Địa Chỉ
                             </button>
+
+                            <AddressForm />
                           </div>
                         </div>
                       </li>
@@ -196,25 +222,9 @@ function Order() {
                     {/* Thêm phần thông tin vận chuyển */}
                     <div className="mt-3">
                       <h6>Thông Tin Vận Chuyển:</h6>
+
                       {/* {Gửi Request Tính Phí Vận Chuyển} */}
-                      <ShippingCalculator
-                        pickProvince={
-                          order.chiTietDonHangs[0].skuEntity.sanPhamEntity.shop
-                            .diaChiEntities[0].nameProvince
-                        }
-                        pickDistrict={
-                          order.chiTietDonHangs[0].skuEntity.sanPhamEntity.shop
-                            .diaChiEntities[0].nameDistrict
-                        }
-                        province={
-                          order.taiKhoanEntity.diaChiEntity[0].nameProvince
-                        }
-                        district={
-                          order.taiKhoanEntity.diaChiEntity[0].nameDistrict
-                        }
-                        weight={order.chiTietDonHangs[0].skuEntity.sanPhamEntity.canNang}
-                        deliverOption="none" // Hoặc có thể lấy thông tin từ đơn hàng nếu có
-                      />
+                      <ShippingCalculator order={orders} />
                     </div>
                   </div>
                 ))}
@@ -225,11 +235,11 @@ function Order() {
                   {/* Modal Voucher */}
                   <Voucher
                     show={showVoucherModal}
-                    vouchers={voucherList}
                     onClose={() => setShowVoucherModal(false)}
-                    idDonHang={order.idDonHang}
-                    totalDonHang={order.tongSoTien}
-                    onVoucherSelect={setSelectedVoucher} // Truyền hàm cập nhật voucher đã chọn
+                    idDonHang={orders}
+                    onVoucherSelect={(voucher) => setSelectedVoucher(voucher)} // Cập nhật selectedVoucher từ VoucherModal
+                    totalDonHang={totalDonHang}
+                    onTotalUpdate={handleTotalUpdate}
                   />
                 </div>
               </div>
@@ -257,6 +267,17 @@ function Order() {
                       VND
                     </div>
                   </div>
+                  {/* Tính tổng phí vận chuyển */}
+                  <div>
+                    <strong>Tổng phí vận chuyển:</strong>{" "}
+                    {order.chiTietDonHangs
+                      .reduce(
+                        (total, item) => total + (item.phiVanChuyen || 0),
+                        0
+                      )
+                      .toLocaleString()}{" "}
+                    VND
+                  </div>
                   <div>
                     {/* Hiển thị giảm giá nếu voucher đã được áp dụng */}
                     {selectedVoucher && (
@@ -273,9 +294,7 @@ function Order() {
                   <strong>Tổng thanh toán:</strong>{" "}
                   {order.tongSoTien.toLocaleString()} VND
                 </div>
-                <button type="button" className="btn btn-success">
-                  Đặt Hàng
-                </button>
+                <Payment orders={orders} totalDonHang={totalDonHang}></Payment>
               </div>
             </div>
           ))

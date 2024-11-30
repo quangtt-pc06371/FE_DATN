@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie"; // Import thư viện js-cookie
 
-function VoucherModal({ idDonHang, totalDonHang, onVoucherSelect }) {
+function VoucherModal({ onVoucherSelect, totalDonHang, idDonHang, onTotalUpdate }) {
   const [vouchers, setVouchers] = useState([]); // Lưu danh sách các voucher
   const [selectedVoucher, setSelectedVoucher] = useState(null); // Lưu voucher đã chọn
-  const [setError] = useState(""); // Lỗi khi gọi API
   const [showModal, setShowModal] = useState(false); // Quản lý trạng thái hiển thị modal
-  const [setDiscount] = useState(0); // Giảm giá từ voucher
-  const [setIsVoucherApplied] = useState(false); // Trạng thái khi voucher đã được áp dụng
-  const [setUpdatedTotal] = useState(totalDonHang); // Tổng tiền sau khi áp dụng
+  const [discount, setDiscount] = useState(0); // Giảm giá từ voucher
+  const [isVoucherApplied, setIsVoucherApplied] = useState(false); // Trạng thái khi voucher đã được áp dụng
+  const [updatedTotal, setUpdatedTotal] = useState(totalDonHang); // Tổng tiền sau khi áp dụng
 
   // Hàm lấy danh sách voucher từ API
   useEffect(() => {
@@ -17,7 +16,7 @@ function VoucherModal({ idDonHang, totalDonHang, onVoucherSelect }) {
       try {
         const token = Cookies.get("token");
         if (!token) {
-          setError("Vui lòng đăng nhập.");
+          alert("Vui lòng đăng nhập.");
           return;
         }
 
@@ -31,12 +30,12 @@ function VoucherModal({ idDonHang, totalDonHang, onVoucherSelect }) {
         setVouchers(response.data); // Lưu danh sách voucher vào state
       } catch (err) {
         console.error("Lỗi khi lấy danh sách voucher:", err.message);
-        setError("Không thể tải danh sách khuyến mãi.");
+        alert("Không thể tải danh sách khuyến mãi.");
       }
     };
 
     fetchVouchers();
-  });
+  }, []); // Chạy chỉ một lần khi component mount
 
   // Xử lý khi chọn voucher
   const handleVoucherSelect = (voucher) => {
@@ -47,38 +46,44 @@ function VoucherModal({ idDonHang, totalDonHang, onVoucherSelect }) {
   // Xử lý áp dụng voucher
   const handleApplyVoucher = async () => {
     if (!selectedVoucher) {
-      setError("Vui lòng chọn voucher.");
+      alert("Vui lòng chọn voucher.");
       return;
     }
 
     // Kiểm tra điều kiện voucher
     if (totalDonHang < selectedVoucher.donToiThieu) {
-      setError("Tổng đơn hàng không đủ điều kiện áp dụng voucher.");
+      alert("Tổng đơn hàng không đủ điều kiện áp dụng voucher.");
       return;
     }
 
     try {
+      const token = Cookies.get("token");
       const response = await axios.put(
-        `http://localhost:8080/api/order/apply-voucher?donHangId=${idDonHang}&voucherId=${selectedVoucher.idvoucher}`,
+        `http://localhost:8080/api/order/apply-voucher?donHangId=${idDonHang[0].idDonHang}&voucherId=${selectedVoucher.idvoucher}`,
         {},
         {
-          headers: { Authorization: `${Cookies.get("token")}` },
+          headers: { Authorization: `${token}` },
         }
       );
 
       const { discountAmount } = response.data;
       setDiscount(discountAmount);
 
-      // Cập nhật tổng tiền
+      // Cập nhật tổng tiền sau khi giảm giá
       const discountedTotal = totalDonHang - discountAmount;
       setUpdatedTotal(discountedTotal > 0 ? discountedTotal : 0);
+
+      // Cập nhật lại tổng tiền cho component cha (onTotalUpdate)
+      if (onTotalUpdate) {
+        onTotalUpdate(discountedTotal > 0 ? discountedTotal : 0);
+      }
 
       // Đánh dấu voucher đã được áp dụng
       setIsVoucherApplied(true);
       setShowModal(false); // Đóng modal
     } catch (err) {
       console.error("Lỗi khi áp dụng voucher:", err.message);
-      setError("Voucher không hợp lệ hoặc đã hết hạn.");
+      alert("Voucher không hợp lệ hoặc đã hết hạn.");
     }
   };
 
@@ -158,7 +163,6 @@ function VoucherModal({ idDonHang, totalDonHang, onVoucherSelect }) {
           </div>
         </div>
       )}
-
     </div>
   );
 }

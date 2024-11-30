@@ -33,6 +33,7 @@ import ShopSanPham from './components/pages/Shopsanpham';
 
 import CartPage from './components/pages/user/Cart/Cart'
 import CartItem from './components/pages/user/Cart/CartItem'
+import Order from './components/pages/user/Cart/Order'
 import AddressForm from './components/pages/user/Cart/index'
 
 import VoucherForm from './components/pages/Voucher/VoucherForm';
@@ -73,6 +74,7 @@ export default function App() {
 
           <Route path="cart" element={<CartPage/>} />
           <Route path="cartitem" element={<CartItem />} />
+          <Route path="/order" element={<Order />} />
           <Route path="address" element={<AddressForm />} />
 
           <Route path="voucherform" element={<VoucherForm />} />

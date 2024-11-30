@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import axios from "axios";
-import { BASE_URL, API, SKU } from "../../../../config/ApiCart/api";
+import { BASE_URL, API, SKU } from "../assets/config/api";
 import Cookies from 'js-cookie';  // Import thư viện js-cookie
 
 const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {

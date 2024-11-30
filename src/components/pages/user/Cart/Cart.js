@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CartItem from "./CartItem";
-import { BASE_URL, API, CART, ORDER } from "../../../../config/ApiCart/api";
+import { BASE_URL, API, CART, ORDER } from "../assets/config/api";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Cookies from 'js-cookie';  // Import thư viện js-cookie
 
@@ -294,7 +294,7 @@ const CartPage = () => {
 
       // Gọi API tạo đơn hàng sau khi selectedIds được cập nhật
       await handleCreateOrder();
-      navigate(`/order`);
+      navigate(`/order`, { state: { selectedIds } });
     } catch (error) {
       console.error("Lỗi khi đặt hàng:", error.message);
       setError("Không thể đặt hàng. Vui lòng thử lại.");
