@@ -74,7 +74,7 @@ export default function App() {
 
           <Route path="cart" element={<CartPage/>} />
           <Route path="cartitem" element={<CartItem />} />
-          <Route path="/order" element={<Order />} />
+          <Route path="order" element={<Order />} />
           <Route path="address" element={<AddressForm />} />
 
           <Route path="voucherform" element={<VoucherForm />} />

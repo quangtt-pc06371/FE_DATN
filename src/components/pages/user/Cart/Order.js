@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BASE_URL, API, ORDER } from "../assets/config/api"; // Cập nhật đường dẫn API theo dự án của bạn
+import { BASE_URL, API, ORDER } from "../../../../config/ApiCart/api"; // Cập nhật đường dẫn API theo dự án của bạn
 import Cookies from "js-cookie"; // Import thư viện js-cookie
 import Voucher from "./Voucher"; // Import component Voucher
 import ShippingCalculator from "./Ship";

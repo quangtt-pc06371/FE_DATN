@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CartItem from "./CartItem";
-import { BASE_URL, API, CART, ORDER } from "../assets/config/api";
+import { BASE_URL, API, CART, ORDER } from "../../../../config/ApiCart/api";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Cookies from 'js-cookie';  // Import thư viện js-cookie
 
