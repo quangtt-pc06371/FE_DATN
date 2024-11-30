@@ -20,7 +20,7 @@ if (loading) {
       icon: "warning",
       confirmButtonText: "Đăng nhập",
     }).then(() => {
-      // window.location.href = "/buyer/login"; // Chuyển hướng
+      window.location.href = "/buyer/login"; // Chuyển hướng
     });
     return null; // Không render gì trong lúc xử lý
   }

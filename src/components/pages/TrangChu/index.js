@@ -32,8 +32,8 @@ const TrangChu = () => {
         Object.keys(allCookies).forEach((cookieName) => {
             Cookies.remove(cookieName); // Xóa từng cookie theo tên
         });
-        removeCookie('token', { path: 'http://localhost:3000/' });
-        removeCookie('refreshToken', { path: 'http://localhost:3000/' });
+        // removeCookie('token', { path: 'http://localhost:3000/' });
+        // removeCookie('refreshToken', { path: 'http://localhost:3000/' });
         console.log("Tất cả cookie đã bị xóa!");
 
         navigate('/buyer/login');

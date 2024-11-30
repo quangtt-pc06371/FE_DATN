@@ -18,7 +18,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [cookies, setCookie] = useCookies(["user"]);
+  const [cookies, setCookie] = useCookies([""]);
 
   useEffect(() => {
     const savedEmail = localStorage.getItem("email");
