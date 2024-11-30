@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const GHN_API_KEY = "0c610ff6-a1c5-11ef-9228-86dad1308bda"; // Thay bằng API Key của bạn
-const SHOP_ID = "	5454610"; // Thay bằng Shop ID của bạn
+const GHN_API_KEY = "39c8e057-ae7c-11ef-9083-dadc35c0870d"; // Thay bằng API Key của bạn
+const SHOP_ID = "195516"; // Thay bằng Shop ID của bạn
 
 function AddressForm() {
   const [provinces, setProvinces] = useState([]);
@@ -19,7 +19,7 @@ function AddressForm() {
   // Lấy danh sách tỉnh thành
   useEffect(() => {
     axios
-      .get("https://online-gateway.ghn.vn/shiip/public-api/master-data/province", {
+      .get("https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/province", {
         headers: { Token: GHN_API_KEY },
       })
       .then((response) => {
@@ -34,7 +34,7 @@ function AddressForm() {
   useEffect(() => {
     if (selectedProvince) {
       axios
-        .get("https://online-gateway.ghn.vn/shiip/public-api/master-data/district", {
+        .get("https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/district", {
           headers: { Token: GHN_API_KEY },
           params: { province_id: selectedProvince },
         })
@@ -50,23 +50,26 @@ function AddressForm() {
   }, [selectedProvince]);
 
   // Lấy danh sách phường/xã dựa vào quận/huyện được chọn
-  useEffect(() => {
-    if (selectedDistrict) {
-      axios
-        .get("https://online-gateway.ghn.vn/shiip/public-api/master-data/ward", {
-          headers: { Token: GHN_API_KEY },
-          params: { district_id: selectedDistrict },
-        })
-        .then((response) => {
-          setWards(response.data.data);
-          setSelectedWard("");
-        })
-        .catch((error) => {
-          console.error("Lỗi khi lấy danh sách phường/xã:", error);
-        });
-    }
-  }, [selectedDistrict]);
+ // Lấy danh sách phường/xã dựa vào quận/huyện được chọn
+useEffect(() => {
+  if (selectedDistrict) {
+    console.log(selectedDistrict)
+    axios
+      .get("https://dev-online-gateway.ghn.vn/shiip/public-api/master-data/ward", {
+        headers: { Token: GHN_API_KEY },
+        params: { district_id: selectedDistrict }, // Sửa ở đây
+      })
+      .then((response) => {
+        setWards(response.data.data);
+        setSelectedWard("");
+      })
+      .catch((error) => {
+        console.error("Lỗi khi lấy danh sách phường/xã:", error);
+      });
+  }
+}, [selectedDistrict]);
 
+console.log(wards)
   const handleProvinceChange = (e) => {
     setSelectedProvince(e.target.value);
   };
@@ -85,12 +88,18 @@ function AddressForm() {
 
   // Tính phí vận chuyển
   const calculateShippingFee = () => {
+    if (!selectedDistrict || !selectedWard || weight <= 0) {
+      alert("Vui lòng chọn đủ thông tin và nhập trọng lượng hợp lệ!");
+      return;
+    }
+  
     axios
       .post(
-        "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee",
+        "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee",
         {
-          from_district_id: 1442, // Mã quận/huyện của shop
-          service_id: 53320, // ID dịch vụ, có thể tìm từ GHN API
+          from_district_id: 1574, // Mã quận/huyện của shop (cần chính xác)
+          service_type_id: 2,     // Loại dịch vụ cần chính xác
+          from_ward_code: 550304, // Mã phường của shop (cần chính xác)
           to_district_id: selectedDistrict,
           to_ward_code: selectedWard,
           weight: weight,
@@ -103,12 +112,18 @@ function AddressForm() {
         }
       )
       .then((response) => {
-        setShippingFee(response.data.data.total);
+        if (response.data && response.data.data) {
+          setShippingFee(response.data.data.total);
+        } else {
+          console.error("Dữ liệu trả về không hợp lệ", response);
+        }
       })
       .catch((error) => {
         console.error("Lỗi khi tính phí vận chuyển:", error);
+        alert("Có lỗi xảy ra khi tính phí vận chuyển!");
       });
   };
+  
 
   // Xác nhận tạo đơn hàng
   const createOrder = () => {

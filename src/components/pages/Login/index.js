@@ -178,7 +178,7 @@ const Login = () => {
   </Col>
 </Row>
 {/* </div> */}
-<button className=""onClick={() => navigate('/buyer/register')}>đăng kí </button>
+<button className="btn btn-info form-control mb-2 text-white "onClick={() => navigate('/buyer/register')}>Đăng Ký </button>
             <Button type="submit" variant="primary" className="login-btn w-100" disabled={loading}>
               {loading ? <Spinner animation="border" size="sm" /> : "Đăng Nhập"}
             </Button>

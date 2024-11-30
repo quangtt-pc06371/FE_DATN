@@ -134,6 +134,7 @@ const QuanLySanPhamKhuyenMai = () => {
       sanPham: { idSanPham: parseInt(formData.sanPham.idSanPham) },
       khuyenMai: { idKhuyenMai: parseInt(formData.khuyenMai.idKhuyenMai) },
     };
+    console.log(dataToSent)
   
     try {
       const addData = await axios.post('http://localhost:8080/api/sanphamkhuyenmai', dataToSent, {

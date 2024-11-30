@@ -118,7 +118,8 @@ const ShopUser = () => {
           icon: "success",
           title: "Khuyến mãi đã được xóa",
         });
-        hienThiKhuyenMai(); // Load lại danh sách khuyến mãi sau khi xóa
+        hienThiKhuyenMai();
+        hienThiSanPhamKhuyenMai(); // Load lại danh sách khuyến mãi sau khi xóa
       } catch (error) {
         Swal.fire({
           icon: "error",

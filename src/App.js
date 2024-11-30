@@ -43,8 +43,9 @@ import ProtectedRoute from "./config/Authenticated/protectedRoute";
 import User from "./components/userpage";
 import Loginpage from "./components/loginpage";
 ///import { startTokenRefreshInterval } from "./components/pages/Refresh";
-
-
+import Diachi  from "./components/pages/Diachi";
+import LienHe from "./components/pages/Lienhe"
+import GioiThieu from "./components/pages/Gioithieu"
 export default function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -70,10 +71,13 @@ export default function App() {
           <Route path='danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
           <Route path='sanphamkhuyenmai' element={<QuanLySanPhamKhuyenMai />} />
           <Route path='sanphamkhuyenmai/:idSanPhamKhuyenMai' element={<QuanLySanPhamKhuyenMai />} />
-
+          <Route path="diachi" element={<Diachi/>} />
           <Route path="cart" element={<CartPage/>} />
           <Route path="cartitem" element={<CartItem />} />
           <Route path="address" element={<AddressForm />} />
+
+          <Route path="lienhe" element={<LienHe />} />
+          <Route path="gioithieu" element={<GioiThieu />} />
 
           <Route path="voucherform" element={<VoucherForm />} />
           <Route path="voucherlist" element={<VoucherList />} />*
