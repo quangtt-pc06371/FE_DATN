@@ -1,0 +1,57 @@
+/* Phần bố cục chung */
+.container {
+    padding: 20px;
+  }
+  
+  .heading {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .filter-search-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  /* Dropdown lọc */
+  .filter-container {
+    flex: 1;
+  }
+  
+  .filter-label {
+    font-size: 14px;
+    margin-right: 5px;
+    font-weight: bold;
+  }
+  
+  .filter-select {
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 150px;
+  }
+  
+  /* Thanh tìm kiếm */
+  .search-container {
+    flex: 2;
+  }
+  
+  .search-input {
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+  }
+  
+  /* Biểu đồ */
+  .chart-container {
+    width: 80%;
+    margin: 0 auto;
+  }
+  

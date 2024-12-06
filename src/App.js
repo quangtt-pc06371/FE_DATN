@@ -11,11 +11,10 @@ import DangKy from "./components/compoments/Addtaikhoan";
 import Profile from "./components/pages/Profile/index";
 import Login from "./components/pages/Login";
 import VoucherForm from './components/pages/voucherbill/VoucherForm';
-import VoucherList from './components/pages/voucherbill/VoucherList'; // Import VoucherList
+import VoucherList from './components/pages/voucherbill/VoucherList';
+import ThongKe from './components/pages/thongke/ThongKe';
 
 
-import ThongKeForm from './components/pages/ThongKeForm';
-import DoanhThuTable from './components/pages/DoanhThuTable';
 
 function App() {
   return (
@@ -28,47 +27,18 @@ function App() {
         <Route path="/shop-management" element={<ShopManagement />} />
         <Route path="/shop-register" element={<ShopRegistration />} />
 
-        <Route path="/voucher" element={<VoucherForm/>} />
+        <Route path="/voucher" element={<VoucherForm />} />
         <Route path="/voucher-list" element={<VoucherList />} /> 
 
+        <Route path="/login" element={<Login />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/dangky" element={<DangKy />} />
 
-        <Route path="login" element={<Login />} />
-        <Route path="profile" element={<Profile />} />
-        <Route path="dangky" element={<DangKy />} />
+        {/* Route cho Thống kê */}
+        <Route path="/thongke" element={<ThongKe />} />
       </Routes>
-
     </Router>
   );
 }
 
-const App = () => {
-  const [doanhThu, setDoanhThu] = useState(null);
-
-  const handleThongKe = ({ shopId, dateType, ngay, month, year }) => {
-      if (dateType === 'day') {
-          api.getDoanhThuTheoNgay(shopId, ngay)
-              .then(response => setDoanhThu(response.data))
-              .catch(error => console.error(error));
-      } else if (dateType === 'month') {
-          api.getDoanhThuTheoThang(shopId, month, year)
-              .then(response => setDoanhThu(response.data))
-              .catch(error => console.error(error));
-      } else if (dateType === 'year') {
-          api.getDoanhThuTheoNam(shopId, year)
-              .then(response => setDoanhThu(response.data))
-              .catch(error => console.error(error));
-      }
-  };
-
-  return (
-      <div>
-          <h1>Thống Kê Doanh Thu Shop</h1>
-          <ThongKeForm onSubmit={handleThongKe} />
-          <DoanhThuTable data={doanhThu} />
-      </div>
-  );
-};
-
 export default App;
-
-
