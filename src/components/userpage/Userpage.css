@@ -1,0 +1,33 @@
+.profile-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu-item {
+
+    display: flex;
+    justify-content: center;
+  }
+  
+  .edit-profile-button {
+    background-color: #1890ff;
+    color: white;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-align: center;
+    width: 100%;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+  
+  .edit-profile-button:hover {
+    background-color: #1e8ee5;
+    transform: scale(1.05); /* Tăng kích thước nút một chút khi hover */
+  }
+  
+  .edit-profile-button:focus {
+    outline: none; /* Loại bỏ đường viền mặc định khi nút được chọn */
+  }
+  
