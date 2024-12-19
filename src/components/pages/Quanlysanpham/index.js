@@ -747,7 +747,7 @@ const QuanlySanPham = () => {
                   ))}
                 </select>
               </div>
-              {edit === true ? (
+             
                 <>
                   <h4 className="mt-4">Danh Sách Thuộc Tính</h4>
                   <div className="border p-3 mb-4 rounded shadow-sm">
@@ -822,11 +822,7 @@ const QuanlySanPham = () => {
                   </div>
                 </>
 
-              ) : (
-                <p></p>
-              )
-
-              }
+          
               <h4 className="mt-4">Danh Sách SKU</h4>
 
 
