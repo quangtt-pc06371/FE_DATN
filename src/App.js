@@ -5,7 +5,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements
 } from 'react-router-dom';
-import './App.css'; 
+import './App.css';
 import TrangChu from "./components/pages/TrangChu";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
@@ -43,7 +43,7 @@ import ProtectedRoute from "./config/Authenticated/protectedRoute";
 import User from "./components/userpage";
 import Loginpage from "./components/loginpage";
 ///import { startTokenRefreshInterval } from "./components/pages/Refresh";
-import Diachi  from "./components/pages/Diachi";
+import Diachi from "./components/pages/Diachi";
 import LienHe from "./components/pages/Lienhe"
 import GioiThieu from "./components/pages/Gioithieu"
 export default function App() {
@@ -53,12 +53,12 @@ export default function App() {
         {/* Layout cho người dùng */}
         <Route element={<TrangChu />}>
           <Route path="/" element={<SanPham />} />
-          <Route path="shopsanpham/:idShopSanPham" element={<ShopSanPham/>} />
+          <Route path="shopsanpham/:idShopSanPham" element={<ShopSanPham />} />
           <Route path="register" element={<Register />} />
           <Route path="shop-register" element={<ShopRegistration />} />
           {/* <Route path="profile" element={<Profile />} /> */}
           <Route path='chitietsanpham/:id' element={<ChiTietSanPham />} />
-          <Route path="shop-user" element={<ShopUser />} />
+
           <Route path="registergg" element={<Registergg />} />
           <Route path="listtaikhoan" element={<Listtk />} />
           <Route path="updateuser" element={<Updateuser2 />} />
@@ -71,8 +71,8 @@ export default function App() {
           <Route path='danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
           <Route path='sanphamkhuyenmai' element={<QuanLySanPhamKhuyenMai />} />
           <Route path='sanphamkhuyenmai/:idSanPhamKhuyenMai' element={<QuanLySanPhamKhuyenMai />} />
-          <Route path="diachi" element={<Diachi/>} />
-          <Route path="cart" element={<CartPage/>} />
+          <Route path="diachi" element={<Diachi />} />
+          <Route path="cart" element={<CartPage />} />
           <Route path="cartitem" element={<CartItem />} />
           <Route path="address" element={<AddressForm />} />
 
@@ -81,12 +81,16 @@ export default function App() {
 
           <Route path="voucherform" element={<VoucherForm />} />
           <Route path="voucherlist" element={<VoucherList />} />*
-         
-        <Route element={<ProtectedRoute requiredRoles={["ROLE_User", "ROLE_Staff"]} />} >
+
+          <Route element={<ProtectedRoute requiredRoles={["ROLE_User", "ROLE_Staff"]} />} >
             <Route path="user" element={<User />}>
               <Route path="updateuser" element={<Updateuser2 />} />
               <Route path="profile" element={<Profile />} />
-              <Route path="shop-user" element={<ShopUser />} />
+              <Route path="shop-user" element={<ShopUser />}>
+                <Route path='danhsachsanpham' element={<DanhSachSanPham />} />
+                <Route path='danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
+                <Route path='danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
+              </Route>
               <Route path="shop-register" element={<ShopRegistration />} />
             </Route>
           </Route>
@@ -94,20 +98,20 @@ export default function App() {
 
         {/* Layout riêng cho admin */}
         <Route element={<ProtectedRoute requiredRoles={"ROLE_Admin"} />} >
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route path="category-management" element={<CategoryManagement />} />
-          <Route path="shop-approval" element={<ShopApproval />} />
-          <Route path="shop-management" element={<ShopManagement />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="category-management" element={<CategoryManagement />} />
+            <Route path="shop-approval" element={<ShopApproval />} />
+            <Route path="shop-management" element={<ShopManagement />} />
           </Route>
-
         </Route>
 
         <Route path="buyer" element={<Loginpage />} >
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
         </Route>
 
-      
+
+
       </>
     )
   );

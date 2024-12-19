@@ -319,7 +319,7 @@ export default function ChiTietSanPham() {
                         <p>Số lượng còn: <strong>{tongSoLuong}</strong>  | <strong>14,2k</strong> Đã Bán</p>
                         <hr />
 
-                        <p>Vận Chuyển: Miễn phí vận chuyển</p>
+                     
 
                         {skusList.length > 0 ? (
                             <>
