@@ -43,8 +43,18 @@ const Login = () => {
       const date = new Date();
       date.setHours(date.getHours() + 1);
 
-      setCookie("token", token, { expires: date });
-      setCookie("refreshToken", refreshToken, { expires: date });
+      setCookie("token", token, { 
+        path: "/", 
+        // expires: date, 
+        secure: true, // Chỉ bật trong môi trường production
+        sameSite: "Strict" 
+      });
+      setCookie("refreshToken", refreshToken, { 
+        path: "/", 
+        // expires: date, 
+        secure: true, 
+        sameSite: "Strict" 
+      });
 
       if (rememberMe) {
         localStorage.setItem("email", email);
