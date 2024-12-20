@@ -300,7 +300,7 @@ const CartPage = () => {
 
       // Gọi API tạo đơn hàng sau khi selectedIds được cập nhật
       await handleCreateOrder();
-      navigate(`/order`);
+      navigate(`/order`, { state: { selectedIds } });
     } catch (error) {
       console.error("Lỗi khi đặt hàng:", error.message);
       setError("Không thể đặt hàng. Vui lòng thử lại.");

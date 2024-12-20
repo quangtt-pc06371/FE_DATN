@@ -190,6 +190,7 @@ const ShopUser = () => {
   useEffect(() => {
     fetchProfile();
     const token = Cookies.get("token");
+    console.log(token)
     if (!token) {
       Swal.fire("Thông báo", "Bạn cần đăng nhập để truy cập trang này", "warning");
       navigate("/login");

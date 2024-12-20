@@ -1,33 +1,28 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';  // Import thư viện js-cookie
 
 const GHN_API_KEY = "170c2289-75de-11ef-8a64-e298e9300273"; // Thay bằng API Key của bạn
 
-function AddressForm() {
+function AddressForm({ closeModal }) {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
-  const [detailAddress, setDetailAddress] = useState(""); // State cho địa chỉ chi tiết
+  const [detailAddress, setDetailAddress] = useState("");
 
   const [selectedProvince, setSelectedProvince] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [selectedWard, setSelectedWard] = useState("");
 
-  // Lấy danh sách tỉnh thành
   useEffect(() => {
     axios
       .get("https://online-gateway.ghn.vn/shiip/public-api/master-data/province", {
         headers: { Token: GHN_API_KEY },
       })
-      .then((response) => {
-        setProvinces(response.data.data);
-      })
-      .catch((error) => {
-        console.error("Lỗi khi lấy danh sách tỉnh:", error);
-      });
+      .then((response) => setProvinces(response.data.data))
+      .catch((error) => console.error("Lỗi khi lấy danh sách tỉnh:", error));
   }, []);
 
-  // Lấy danh sách quận/huyện dựa vào tỉnh được chọn
   useEffect(() => {
     if (selectedProvince) {
       axios
@@ -37,16 +32,13 @@ function AddressForm() {
         })
         .then((response) => {
           setDistricts(response.data.data);
-          setWards([]); // Reset phường/xã khi chọn tỉnh mới
+          setWards([]);
           setSelectedDistrict("");
         })
-        .catch((error) => {
-          console.error("Lỗi khi lấy danh sách quận/huyện:", error);
-        });
+        .catch((error) => console.error("Lỗi khi lấy danh sách quận/huyện:", error));
     }
   }, [selectedProvince]);
 
-  // Lấy danh sách phường/xã dựa vào quận/huyện được chọn
   useEffect(() => {
     if (selectedDistrict) {
       axios
@@ -58,150 +50,142 @@ function AddressForm() {
           setWards(response.data.data);
           setSelectedWard("");
         })
-        .catch((error) => {
-          console.error("Lỗi khi lấy danh sách phường/xã:", error);
-        });
+        .catch((error) => console.error("Lỗi khi lấy danh sách phường/xã:", error));
     }
   }, [selectedDistrict]);
 
-  const handleProvinceChange = (e) => {
-    setSelectedProvince(e.target.value);
-  };
-
-  const handleDistrictChange = (e) => {
-    setSelectedDistrict(e.target.value);
-  };
-
-  const handleWardChange = (e) => {
-    setSelectedWard(e.target.value);
-  };
-
   const handleSaveAddress = () => {
-    const token = localStorage.getItem("token"); // Lấy token từ localStorage
+    const token = Cookies.get("token");
+    if (!token) {
+      alert("Bạn cần đăng nhập!");
+      return;
+    }
 
-  if (!token) {
-    alert("Bạn cần đăng nhập!");
-    return;
-  }
+    const province = provinces.find((p) => p.ProvinceID === parseInt(selectedProvince));
+    const district = districts.find((d) => d.DistrictID === parseInt(selectedDistrict));
+    const ward = wards.find((w) => w.WardCode === selectedWard);
 
-    // Tìm tỉnh, quận, phường dựa trên ID đã chọn
-    const province = provinces.find((province) => province.ProvinceID === parseInt(selectedProvince));
-    const district = districts.find((district) => district.DistrictID === parseInt(selectedDistrict));
-    const ward = wards.find((ward) => ward.WardCode === selectedWard);
-  
-    // Kiểm tra xem tất cả các trường có hợp lệ không
-    if (!selectedProvince || !selectedDistrict || !selectedWard) {
-      alert("Vui lòng chọn đầy đủ thông tin tỉnh, quận và phường!");
+    if (!province || !district || !ward) {
+      alert("Vui lòng chọn đầy đủ thông tin!");
       return;
     }
-  
-    // Kiểm tra province có tồn tại và không phải undefined
-    if (!province) {
-      console.error("Tỉnh không hợp lệ:", province); // In ra thông báo lỗi vào console
-      alert("Tỉnh không hợp lệ!");  // Hiển thị thông báo lỗi
-      return;
-    }
-  
-    // Kiểm tra district có tồn tại và không phải undefined
-    if (!district) {
-      console.error("Quận không hợp lệ:", district); // In ra thông báo lỗi vào console
-      alert("Quận không hợp lệ!");  // Hiển thị thông báo lỗi
-      return;
-    }
-  
-    // Kiểm tra ward có tồn tại và không phải undefined
-    if (!ward) {
-      console.error("Phường không hợp lệ:", ward); // In ra thông báo lỗi vào console
-      alert("Phường không hợp lệ!");  // Hiển thị thông báo lỗi
-      return;
-    }
-  
-    // Nếu tất cả đều hợp lệ, tiến hành lưu địa chỉ
+
     const addressData = {
-      provinceId: parseInt(selectedProvince),  // ProvinceID của GHN
-      provinceName: province.ProvinceName,  // Tên tỉnh
-      districtId: parseInt(selectedDistrict),  // DistrictID của GHN
-      districtName: district.DistrictName,  // Tên quận
-      wardCode: selectedWard,  // WardCode của GHN
-      wardName: ward.WardName,  // Tên phường xã
-      detailAddress: detailAddress.trim() 
+      provinceId: parseInt(selectedProvince),
+      provinceName: province.ProvinceName,
+      districtId: parseInt(selectedDistrict),
+      districtName: district.DistrictName,
+      wardCode: selectedWard,
+      wardName: ward.WardName,
+      detailAddress: detailAddress.trim(),
     };
-  
-    // Gửi yêu cầu POST về Backend để lưu địa chỉ
-    axios.post('http://localhost:8080/api/addresses/save', addressData,{
-      headers: { Authorization: `${token}` }, // Thêm token vào header
-    }
-    )
-      .then((response) => {
-        console.log('Địa chỉ đã được lưu:', response.data);
-        alert('Địa chỉ đã được lưu thành công!');
+
+    axios
+      .post("http://localhost:8080/api/addresses/save", addressData, {
+        headers: { Authorization: `${token}` },
+      })
+      .then(() => {
+        alert("Địa chỉ đã được lưu thành công!");
+        closeModal(); // Đóng modal sau khi lưu
       })
       .catch((error) => {
-        console.error('Lỗi khi lưu địa chỉ:', error);
-        alert('Lỗi khi lưu địa chỉ!');
+        console.error("Lỗi khi lưu địa chỉ:", error);
       });
   };
-  
+
   return (
-    <form>
-      <div>
-        <label>Địa chỉ chi tiết:</label>
-        <input
-          type="text"
-          value={detailAddress}
-          onChange={(e) => setDetailAddress(e.target.value)}
-          placeholder="Nhập địa chỉ chi tiết (số nhà, đường, ...)"
-        />
+    <div
+      className="modal fade"
+      id="addressModal"
+      tabIndex="-1"
+      aria-labelledby="addressModalLabel"
+      aria-hidden="true"
+    >
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title" id="addressModalLabel">
+              Thêm Địa Chỉ
+            </h5>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div className="modal-body">
+            <form>
+              <div className="mb-3">
+                <label className="form-label">Địa chỉ chi tiết:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={detailAddress}
+                  onChange={(e) => setDetailAddress(e.target.value)}
+                  placeholder="Nhập địa chỉ chi tiết (số nhà, đường, ...)"
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Tỉnh/Thành phố:</label>
+                <select
+                  className="form-select"
+                  value={selectedProvince}
+                  onChange={(e) => setSelectedProvince(e.target.value)}
+                >
+                  <option value="">Chọn tỉnh/thành phố</option>
+                  {provinces.map((province) => (
+                    <option key={province.ProvinceID} value={province.ProvinceID}>
+                      {province.ProvinceName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Quận/Huyện:</label>
+                <select
+                  className="form-select"
+                  value={selectedDistrict}
+                  onChange={(e) => setSelectedDistrict(e.target.value)}
+                  disabled={!selectedProvince}
+                >
+                  <option value="">Chọn quận/huyện</option>
+                  {districts.map((district) => (
+                    <option key={district.DistrictID} value={district.DistrictID}>
+                      {district.DistrictName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Phường/Xã:</label>
+                <select
+                  className="form-select"
+                  value={selectedWard}
+                  onChange={(e) => setSelectedWard(e.target.value)}
+                  disabled={!selectedDistrict}
+                >
+                  <option value="">Chọn phường/xã</option>
+                  {wards.map((ward) => (
+                    <option key={ward.WardCode} value={ward.WardCode}>
+                      {ward.WardName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </form>
+          </div>
+          <div className="modal-footer">
+            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+              Đóng
+            </button>
+            <button type="button" className="btn btn-primary" onClick={handleSaveAddress}>
+              Lưu Địa Chỉ
+            </button>
+          </div>
+        </div>
       </div>
-
-      <div>
-        <label>Tỉnh/Thành phố:</label>
-        <select value={selectedProvince} onChange={handleProvinceChange}>
-          <option value="">Chọn tỉnh/thành phố</option>
-          {provinces.map((province) => (
-            <option key={province.ProvinceID} value={province.ProvinceID}>
-              {province.ProvinceName}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label>Quận/Huyện:</label>
-        <select
-          value={selectedDistrict}
-          onChange={handleDistrictChange}
-          disabled={!selectedProvince}
-        >
-          <option value="">Chọn quận/huyện</option>
-          {districts.map((district) => (
-            <option key={district.DistrictID} value={district.DistrictID}>
-              {district.DistrictName}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label>Phường/Xã:</label>
-        <select
-          value={selectedWard}
-          onChange={handleWardChange}
-          disabled={!selectedDistrict}
-        >
-          <option value="">Chọn phường/xã</option>
-          {wards.map((ward) => (
-            <option key={ward.WardCode} value={ward.WardCode}>
-              {ward.WardName}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <button type="button" onClick={handleSaveAddress}>Lưu Địa Chỉ</button>
-      </div>
-    </form>
+    </div>
   );
 }
 
