@@ -25,7 +25,9 @@ const CartPage = () => {
 
     chiTietGioHangList.forEach((item) => {
       // Kiểm tra cấu trúc dữ liệu của từng item
-      const shopId = item?.skuEntity?.sanPhamEntity?.shop?.id;
+      const shopId = item?.skuEntity?.sanPham?.shop?.id;
+      console.log(item?.skuEntity?.sanPham?.shop?.id)
+      console.log(item?.skuEntity)
       if (!shopId) {
         console.warn("Sản phẩm không có thông tin shop:", item);
         return; // Bỏ qua nếu không có thông tin shop
@@ -34,7 +36,7 @@ const CartPage = () => {
       if (!grouped[shopId]) {
         grouped[shopId] = {
           shopName:
-            item.skuEntity.sanPhamEntity.shop.shopName || "Shop không tên",
+            item?.skuEntity?.sanPham?.shop?.shopName || "Shop không tên",
           products: [],
         };
       }
@@ -57,7 +59,9 @@ const CartPage = () => {
         const response = await axios.get(`${BASE_URL}${API.Cart}${CART.List}`, {
           headers: { Authorization: `${token}` },
         });
-
+       console.log(response.data)
+       console.log(response.data.gioHang)
+       console.log( response.data.gioHang.chiTietGioHangList)
         if (response.data.gioHang) {
           setCart(response.data.gioHang);
           setCartDetail(groupByShop(response.data.gioHang.chiTietGioHangList));
@@ -257,6 +261,8 @@ const CartPage = () => {
       const payload = {
         idDetail: selectedProducts,
       };
+      console.log(payload)
+      console.log(selectedProducts)
 
       const response = await axios.put(
         `${BASE_URL}${API.Cart}${CART.UpdateStatus}`,

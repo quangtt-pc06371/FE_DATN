@@ -32,9 +32,11 @@ import Registergg from "./components/pages/logingoogle";
 import ShopSanPham from './components/pages/Shopsanpham';
 
 import CartPage from './components/pages/user/Cart/Cart'
+//  import CartPage from './components/compoments/'
 import CartItem from './components/pages/user/Cart/CartItem'
 import AddressForm from './components/pages/user/Cart/index'
-
+import AddressFormuser from './components/compoments/Addressuser'
+import AddressFormshop from './components/compoments/Addressshop'
 import VoucherForm from './components/pages/Voucher/VoucherForm';
 import VoucherList from './components/pages/Voucher/VoucherList';
 
@@ -43,8 +45,10 @@ import ProtectedRoute from "./config/Authenticated/protectedRoute";
 import User from "./components/userpage";
 import Loginpage from "./components/loginpage";
 ///import { startTokenRefreshInterval } from "./components/pages/Refresh";
-
-
+import Order from "./components/compoments/Order";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// import 'bootstrap-icons/font/bootstrap-icons.css';
 export default function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -74,14 +78,16 @@ export default function App() {
           <Route path="cart" element={<CartPage/>} />
           <Route path="cartitem" element={<CartItem />} />
           <Route path="address" element={<AddressForm />} />
-
+          <Route path="addressshop" element={<AddressFormshop />} />
+          <Route path="order" element={<Order/>} />
           <Route path="voucherform" element={<VoucherForm />} />
           <Route path="voucherlist" element={<VoucherList />} />*
          
         <Route element={<ProtectedRoute requiredRoles={["ROLE_User", "ROLE_Staff"]} />} >
             <Route path="user" element={<User />}>
               <Route path="updateuser" element={<Updateuser2 />} />
-              <Route path="profile" element={<Profile />} />
+              <Route path="profile" element={<Profile />} />             
+              <Route path="addressuser" element={<AddressFormuser />} />
               <Route path="shop-user" element={<ShopUser />} />
               <Route path="shop-register" element={<ShopRegistration />} />
             </Route>
@@ -112,6 +118,6 @@ export default function App() {
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
-    //<RouterProvider router={router} />
+    // <RouterProvider router={router} />
   );
 }

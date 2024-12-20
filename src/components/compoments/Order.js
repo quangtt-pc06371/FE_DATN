@@ -1,20 +1,26 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { BASE_URL, API, ORDER } from "../assets/config/api"; // Cập nhật đường dẫn API theo dự án của bạn
+import { BASE_URL, API, ORDER } from "../../config/ApiCart/api"; // Cập nhật đường dẫn API theo dự án của bạn
 import Cookies from "js-cookie"; // Import thư viện js-cookie
 import Voucher from "./Voucher"; // Import component Voucher
 import ShippingCalculator from "./Ship";
+import Payment from "./Payment";
+import AddressForm from "./Addressuser";
 
 function Order() {
   const [orders, setOrders] = useState([]); // Lưu danh sách đơn hàng
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [showVoucherModal, setShowVoucherModal] = useState(false); // Hiển thị Modal Voucher
-  const [voucherList] = useState([]); // Danh sách voucher có sẵn
   const [selectedVoucher, setSelectedVoucher] = useState(null); // Lưu voucher đã áp dụng
-
+  const [totalDonHang, setTotalDonHang] = useState(orders.tongSoTien); // Tổng tiền ban đầu
+ 
+ 
+ 
   // Lấy danh sách đơn hàng
   useEffect(() => {
+   
     const fetchOrders = async () => {
       try {
         const token = Cookies.get("token");
@@ -38,7 +44,7 @@ function Order() {
         setLoading(false);
       }
     };
-
+  
     fetchOrders();
   }, []);
 
@@ -68,22 +74,8 @@ function Order() {
     return acc;
   }, {});
 
-  //Xử Lý Thanh Toán VNPay
-  const handlePayment = async () => {
-    try {
-      const response = await axios.post(
-        `${BASE_URL}${API.Order}${ORDER.VnPay}`,
-        {
-          amount: 100000, // Số tiền thanh toán (VND)
-          orderInfo: "Thanh toán cho đơn hàng 12345",
-        }
-      );
-
-      const paymentUrl = response.data; // URL thanh toán từ backend
-      window.location.href = paymentUrl; // Chuyển hướng người dùng đến trang thanh toán VNPay
-    } catch (error) {
-      console.error("Lỗi khi tạo URL thanh toán:", error);
-    }
+  const handleTotalUpdate = (newTotal) => {
+    setTotalDonHang(newTotal); // Cập nhật tổng tiền sau khi áp dụng voucher
   };
 
   return (
@@ -125,9 +117,15 @@ function Order() {
 
                           {/* Nút Thay đổi luôn nằm bên phải */}
                           <div className="ms-3">
-                            <button type="button" className="btn btn-primary">
-                              Thay đổi
+                            <button
+                              className="btn btn-primary"
+                              data-bs-toggle="modal"
+                              data-bs-target="#addressModal"
+                            >
+                              Thêm Địa Chỉ
                             </button>
+
+                            <AddressForm />
                           </div>
                         </div>
                       </li>
@@ -179,15 +177,15 @@ function Order() {
                           />
                         </div>
                         <div className="col-md-2">
-                          <p>{item.skuEntity.sanPhamEntity.tenSanPham}</p>
+                          <p>{item?.skuEntity?.sanPham?.tenSanPham}</p>
                         </div>
                         <div className="col-md-3">
-                          {item.skuEntity.giaSanPham.toLocaleString()} VND
+                          {item?.skuEntity?.giaSanPham?.toLocaleString()} VND
                         </div>
                         <div className="col-md-3">{item.soLuong}</div>
                         <div className="col-md-1">
                           {(
-                            item.skuEntity.giaSanPham * item.soLuong
+                            item?.skuEntity?.giaSanPham * item?.soLuong
                           ).toLocaleString()}{" "}
                           VND
                         </div>
@@ -197,25 +195,9 @@ function Order() {
                     {/* Thêm phần thông tin vận chuyển */}
                     <div className="mt-3">
                       <h6>Thông Tin Vận Chuyển:</h6>
+
                       {/* {Gửi Request Tính Phí Vận Chuyển} */}
-                      <ShippingCalculator
-                        pickProvince={
-                          order.chiTietDonHangs[0].skuEntity.sanPhamEntity.shop
-                            .diaChiEntities[0].nameProvince
-                        }
-                        pickDistrict={
-                          order.chiTietDonHangs[0].skuEntity.sanPhamEntity.shop
-                            .diaChiEntities[0].nameDistrict
-                        }
-                        province={
-                          order.taiKhoanEntity.diaChiEntity[0].nameProvince
-                        }
-                        district={
-                          order.taiKhoanEntity.diaChiEntity[0].nameDistrict
-                        }
-                        weight={order.chiTietDonHangs[0].skuEntity.sanPhamEntity.canNang}
-                        deliverOption="none" // Hoặc có thể lấy thông tin từ đơn hàng nếu có
-                      />
+                      <ShippingCalculator order={orders} />
                     </div>
                   </div>
                 ))}
@@ -226,11 +208,11 @@ function Order() {
                   {/* Modal Voucher */}
                   <Voucher
                     show={showVoucherModal}
-                    vouchers={voucherList}
                     onClose={() => setShowVoucherModal(false)}
-                    idDonHang={order.idDonHang}
-                    totalDonHang={order.tongSoTien}
-                    onVoucherSelect={setSelectedVoucher} // Truyền hàm cập nhật voucher đã chọn
+                    idDonHang={orders}
+                    onVoucherSelect={(voucher) => setSelectedVoucher(voucher)} // Cập nhật selectedVoucher từ VoucherModal
+                    totalDonHang={totalDonHang}
+                    onTotalUpdate={handleTotalUpdate}
                   />
                 </div>
               </div>
@@ -251,12 +233,23 @@ function Order() {
                       </strong>{" "}
                       {order.chiTietDonHangs
                         .reduce(
-                          (total, item) => total + item.soLuong * item.tongTien,
+                          (total, item) => total + item.tongTien,
                           0
                         )
                         .toLocaleString()}{" "}
                       VND
                     </div>
+                  </div>
+                  {/* Tính tổng phí vận chuyển */}
+                  <div>
+                    <strong>Tổng phí vận chuyển:</strong>{" "}
+                    {order.chiTietDonHangs
+                      .reduce(
+                        (total, item) => total + (item.phiVanChuyen || 0),
+                        0
+                      )
+                      .toLocaleString()}{" "}
+                    VND
                   </div>
                   <div>
                     {/* Hiển thị giảm giá nếu voucher đã được áp dụng */}
@@ -274,9 +267,7 @@ function Order() {
                   <strong>Tổng thanh toán:</strong>{" "}
                   {order.tongSoTien.toLocaleString()} VND
                 </div>
-                <button type="button" className="btn btn-success">
-                  Đặt Hàng
-                </button>
+                <Payment orders={orders} totalDonHang={order.tongSoTien}></Payment>
               </div>
             </div>
           ))

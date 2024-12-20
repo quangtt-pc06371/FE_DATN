@@ -133,16 +133,17 @@ export default function ChiTietSanPham() {
 
         const dataToSent = {
             soLuongMua: soLuong,
-            giaMua: soLuong * sku.giaSanPham,
-            trangThai: true,
-            skuEntity: { idSku: sku.idSku }
+            // giaMua: soLuong * sku.giaSanPham,
+            // thanhTien;
+            // trangThai: false,
+            skuDTO: { idSku: sku.idSku }
         };
 
 
 
         try {
-
-            const addData = await axios.post('http://localhost:8080/api/chitietgiohang', dataToSent, {
+console.log(dataToSent)
+            const addData = await axios.post('http://localhost:8080/api/cart/addDetail', dataToSent, {
                 headers: {
                     'Authorization': token
                 }

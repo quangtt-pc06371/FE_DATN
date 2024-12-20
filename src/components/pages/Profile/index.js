@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router-dom";
 import './css.css';
-import { getProfile, loginApi } from "../../../config/Auth";
+import { getProfile } from "../../../config/Auth";
+import AddressForm from "../../compoments/Addressuser";
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
@@ -11,26 +12,14 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [cookies] = useCookies(['user']);
   const navigate = useNavigate();
+
   useEffect(() => {
-    // Hàm để lấy dữ liệu profile từ API
     const fetchProfile = async () => {
       try {
-     
-        //  const token = cookies?.token;
-    
-
-        // Gửi yêu cầu đến API với token
-        const res = await getProfile({
-        
-        })
-        // console.log(res)
-        // Lưu dữ liệu profile vào state
-        
-        setProfile(res);
-        
+        const res = await getProfile();
+        setProfile(res); // Lưu dữ liệu profile vào state
       } catch (err) {
-        // Xử lý lỗi
-        if (err.response && err.response.data && err.response.data.error) {
+        if (err.response?.data?.error) {
           setError(err.response.data.error);
         } else {
           setError('Không thể lấy dữ liệu profile.');
@@ -41,7 +30,7 @@ const Profile = () => {
     };
 
     fetchProfile();
-  }, []); // Chỉ chạy một lần khi component mount
+  }, []); 
 
   if (loading) {
     return <div>Loading...</div>;
@@ -56,70 +45,77 @@ const Profile = () => {
   }
 
   return (
+    <div className="profile-container">
+      <div className="profile-content">
+        <h2>Thông tin cá nhân</h2>
+        <div className="profile-info">
+          <div className="info-row">
+            <label>Tên:</label>
+            <span>{profile.hoten}</span>
+          </div>
+          <div className="info-row">
+            <label>Email:</label>
+            <span>{profile.email}</span>
+          </div>
+          <div className="info-row">
+            <label>Số điện thoại:</label>
+            <span>{profile.sdt}</span>
+          </div>
+          <div className="info-row">
+            <label>Căn cước công dân:</label>
+            <span>{profile.cmnd}</span>
+            
+          </div>
+        </div>
 
-  //   <div className="profile-container">
-  //     <div className='row'>
-  //     <h2>Thông Tin Cá Nhân</h2>
-  //     <p><strong>ID:</strong> {profile.id}</p>
-  //     <p><strong>Họ tên:</strong> {profile.hoten}</p>
-  //     <p><strong>Email:</strong> {profile.email}</p>
-  //     {/* <p><strong>quyền :</strong> {profile.quyen?.[0].name}</p> */}
-  //     <div className="text-center zoom-wrapper">
-  //   <img src={profile.anh} alt="Profile" width="300px" height="300px" />
-  // </div>
-  //     <div>
-  //     <p><strong>Token:</strong> {profile.token}</p>
-  //     </div>
-  //     </div>
-  //   </div>
-     <div className="profile-container">
-     {/* <div className="profile-sidebar">
-       <img
-         src={profile.anh}
-         alt="User Avatar"
-         className="profile-avatar"
-       />
-       <h3 className="profile-name"> {profile.hoten}</h3>
-       <button className="edit-profile-button"onClick={() => navigate('/updateuser')}>Chỉnh sửa hồ sơ</button>
-
-       <ul className="profile-menu">
-         <li className="menu-item active">Hồ sơ của tôi</li>
-         <li className="menu-item">Đơn hàng</li>
-         <li className="menu-item">Địa chỉ</li>
-         <li className="menu-item">Mã giảm giá</li>
-         <a href="/shop-user"><li className="menu-item">Đăng ký shop</li></a>
-
-       </ul>
-     </div> */}
-
-     <div className="profile-content">
-     {/* <Outlet /> */}
-       <h2>Thông tin cá nhân</h2> <div className="profile-info">
-         <div className="info-row">
-           <label>Tên:</label>
-           <span>{profile.hoten}</span>
-         </div>
-         <div className="info-row">
-           <label>Email:</label>
-           <span> {profile.email}</span>
-         </div>
-         <div className="info-row">
-           <label>Số điện thoại:</label>
-           <span> {profile.sdt}</span>
-         </div>
-         <div className="info-row">
-           <label>Địa chỉ:</label>
-           <span> {profile.diachi}</span>
-         </div>
-         <div className="info-row">
-           <label>căn cước công dân:</label>
-           <span> {profile.cmnd}</span>
-         </div>
-       </div>
-     </div>
-
-   </div>
+        {/* Bảng hiển thị thông tin địa chỉ */}
+        <div className="address-container">
+  {/* <h5 className='mt-3'>Thông Tin Địa Chỉ</h5> */}
+  <div className="">
+            <label className=" mt-2 ">địa chỉ:</label>            
+            </div>
+  <table className="address-table-horizontal">
  
+    <thead>
+      <tr>
+        <th>Địa chỉ chi tiết</th>
+        <th>Tỉnh/Thành phố</th>
+        <th>Quận/Huyện</th>
+        <th>Phường/Xã</th>
+      </tr>
+    </thead>
+    <tbody>
+    {profile.diachi.map((address, index) => {
+          if (address.shop === null) {
+            return null; // Bỏ qua địa chỉ có shop không null
+          }
+          return (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{address.diachiDetail}</td>
+              <td>{address.nameProvince} (ID: {address.provinceId})</td>
+              <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
+              <td>{address.nameWard} (ID: {address.idWard})</td>
+            </tr>
+          );
+        })}
+    </tbody>
+  </table>
+  
+  <button
+    className="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#addressModal"
+  >
+    Thêm Địa Chỉ
+  </button>
+  <AddressForm />
+</div>
+
+
+
+      </div>
+    </div>
   );
 };
 

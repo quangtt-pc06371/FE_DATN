@@ -88,7 +88,7 @@ const User = () => {
          <li className="menu-item">Địa chỉ</li> */}
          <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('/user/profile')}>thông tin cá nhân</button> </li>
          <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('')}>đơn hàng</button> </li>
-         <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('')}>địa chỉ</button> </li>
+         <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('/user/addressuser')}>địa chỉ</button> </li>
          {/* <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('/user/shop-user')}>địa chỉ</button> </li> */}
          <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('/user/shop-user')}>shop</button> </li>
 

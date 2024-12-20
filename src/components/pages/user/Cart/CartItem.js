@@ -4,6 +4,7 @@ import { BASE_URL, API, SKU } from "../../../../config/ApiCart/api";
 import Cookies from 'js-cookie';  // Import thư viện js-cookie
 
 const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
+  console.log(product)
   const [quantity, setQuantity] = useState(product.soLuongMua || 1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [skuList, setSkuList] = useState([]);
@@ -17,7 +18,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
     try {
       setError(null); // Đặt lại lỗi
       const response = await axios.get(
-        `${BASE_URL}${API.Cart}${SKU.List}?idSanPham=${product.skuEntity.sanPhamEntity.idSanPham}`
+        `${BASE_URL}${API.Cart}${SKU.List}?idSanPham=${product.skuEntity.sanPham.idSanPham}`
       );
       setSkuList(response.data || []); // Đảm bảo luôn là mảng
     } catch (err) {
@@ -25,7 +26,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
       setError("Không thể tải danh sách SKU. Vui lòng thử lại sau.");
       setSkuList([]); // Gán mảng rỗng khi gặp lỗi
     }
-  }, [product.skuEntity.sanPhamEntity.idSanPham]);
+  }, [product.skuEntity.sanPham.idSanPham]);
 
   // Xử lý khi thay đổi số lượng sản phẩm
   const handleSkuChange = (newQuantity) => {
@@ -132,7 +133,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
 
             {/* Tên Sản Phẩm */}
             <div className="col-md-1 d-flex align-items-center justify-content-center">
-              {product.skuEntity.sanPhamEntity.tenSanPham}
+              {product?.skuEntity?.sanPham?.tenSanPham}
             </div>
 
             {/* Nút tùy chọn */}
@@ -143,12 +144,12 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
                 style={{ minWidth: "120px", height: "40px" }}
               >
                 {
-                  product.skuEntity.tuyChonThuocTinhSku[0].tuyChonThuocTinh
+                  product.skuEntity.tuyChonThuocTinhSkus[0].tuyChonThuocTinh
                     .giaTri
                 }{" "}
-                -
+                
                 {
-                  product.skuEntity.tuyChonThuocTinhSku[0].tuyChonThuocTinh
+                  product.skuEntity.tuyChonThuocTinhSkus[0].tuyChonThuocTinh
                     .thuocTinh.ten
                 }
               </button>
