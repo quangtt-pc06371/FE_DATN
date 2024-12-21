@@ -273,8 +273,8 @@ const ShopUser = () => {
               <Link to="/user/shop-user/danhsachsanphamkhuyenmai" className="btn btn-success mx-3">
                 Danh sách sản phẩm khuyến mãi
               </Link>
-              <Link to="/user/shop-user/danhsachkhuyenmai" className="btn btn-info">
-                Sản phẩm khuyến mãi
+              <Link to="/user/shop-user/danhsachkhuyenmai" className="btn btn-info ">
+                Danh sách khuyến mãi
               </Link>
 
               <Outlet />

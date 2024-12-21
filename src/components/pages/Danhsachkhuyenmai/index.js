@@ -132,6 +132,9 @@ export default function DanhSachkhuyenMai() {
                                         <td className="text-center">
                                             <a className="btn btn-warning me-2" href={`/quanlykhuyenmai/${khuyenMai.idKhuyenMai}`}>Sửa</a>
                                             <button className="btn btn-danger" onClick={() => handleDeleteKhuyenMai(khuyenMai.idKhuyenMai)}>Xóa</button>
+                                           <div className="mt-3"> 
+                                           <a className="btn btn-primary " href={`/sanphamkhuyenmai/${khuyenMai.idKhuyenMai}`}>Thêm Chương Trình Khuyến Mãi</a>
+                                           </div>
                                         </td>
                                     </tr>
                                 );

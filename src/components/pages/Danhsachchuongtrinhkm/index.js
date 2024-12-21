@@ -5,9 +5,11 @@ import { format } from 'date-fns';
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
 import moment from 'moment';
+import { useParams } from "react-router-dom";
 const DanhSachSanPhamKM = () => {
   const [shop, setShop] = useState(null);
   const [dataSanPhamKhuyenMai, setDataSanPhamKhuyenMai] = useState([]);
+ 
 
   async function hienThiSanPhamKhuyenMai() {
     const apiShop = 'http://localhost:8080/api/sanphamkhuyenmai/shop';
@@ -84,7 +86,7 @@ const DanhSachSanPhamKM = () => {
       <div className="card shadow w-100 mb-3">
         <div className="card-header  bg-body-secondary d-flex justify-content-between align-items-center" >
           <h2>Danh Sách Chương Trình Khuyến Mãi</h2>
-          <a className="btn btn-success " href='/sanphamkhuyenmai'>Thêm Chương Trình Khuyến Mãi Mới</a>
+          
         </div>
         <div className="card-body">
           <table className="table table-hover">

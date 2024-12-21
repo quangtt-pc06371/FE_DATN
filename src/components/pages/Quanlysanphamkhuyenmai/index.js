@@ -50,13 +50,7 @@ const QuanLySanPhamKhuyenMai = () => {
 
   }
 
-  async function getDataDisplayId() {
 
-    const apiKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai';
-    const response = await axios.get(apiKhuyenMai + '/' + idSanPhamKhuyenMai, formData);
-    setFormData(response.data);
-    console.log(response.data);
-  }
   async function laySanPhamKhuyenMai() {
     const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
     setSanPhamKhuyenMaiData(response.data);
@@ -132,7 +126,7 @@ const QuanLySanPhamKhuyenMai = () => {
     const dataToSent = {
       trangThai: true,
       sanPham: { idSanPham: parseInt(formData.sanPham.idSanPham) },
-      khuyenMai: { idKhuyenMai: parseInt(formData.khuyenMai.idKhuyenMai) },
+      khuyenMai: { idKhuyenMai: parseInt(idSanPhamKhuyenMai) },
     };
     console.log(dataToSent)
   
@@ -169,7 +163,7 @@ const QuanLySanPhamKhuyenMai = () => {
           <div className="card shadow-sm">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h2 className="card-title mb-0">Quản Lý Sản Phẩm Khuyến Mãi</h2>
-              <a href='/shop-user' type="button" className="btn btn-primary ms-auto">
+              <a href='/user/shop-user' type="button" className="btn btn-primary ms-auto">
                 Trở Về Quản Lý Shop
               </a>
             </div>
@@ -194,25 +188,7 @@ const QuanLySanPhamKhuyenMai = () => {
                   </select>
                 </div>
 
-                <div className="mb-3">
-                  <label className="form-label">Khuyến Mãi:</label>
-                  <select
-                    name="khuyenMai"
-                    value={formData.khuyenMai.idKhuyenMai}
-                    onChange={handleChange}
-                    className="form-control"
-                  >
-                    <option value="">Chọn Khuyến Mãi</option>
-                    {khuyenMaiData.map((s) => (
-                      s.active === false ? null : (
-                        <option key={s.idKhuyenMai} value={s.idKhuyenMai}>
-                        {s.tenKhuyenMai}
-                      </option>
-                      )
-                  
-                    ))}
-                  </select>
-                </div>
+                
                   
                 <div className="">
                   {/* {edit ? ( */}
