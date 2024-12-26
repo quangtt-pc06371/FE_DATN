@@ -82,12 +82,7 @@ const QuanLySanPhamKhuyenMai = () => {
         ...formData,
         sanPham: { idSanPham: parseInt(value) }
       });
-    } else if (name === "khuyenMai") {
-      setFormData({
-        ...formData,
-        khuyenMai: { idKhuyenMai: parseInt(value) }
-      });
-    } else {
+    }  else {
       setFormData({
         ...formData,
         [name]: value
@@ -102,11 +97,7 @@ const QuanLySanPhamKhuyenMai = () => {
       return;
     }
   
-    if (!formData.khuyenMai.idKhuyenMai) {
-      Swal.fire('Lỗi', 'Vui lòng chọn khuyến mãi trước khi thêm!', 'warning');
-      return;
-    }
-  
+
     const existingPromotions = sanPhamKhuyenMaiData.filter(
       (item) => item.sanPham.idSanPham === formData.sanPham.idSanPham
     );
