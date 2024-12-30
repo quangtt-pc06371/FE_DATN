@@ -108,7 +108,11 @@ export default function App() {
               <Route path="updateuser" element={<Updateuser2 />} />
               <Route path="profile" element={<Profile />} />             
               <Route path="addressuser" element={<AddressFormuser />} />
-              <Route path="shop-user" element={<ShopUser />} />
+              <Route path="shop-user" element={<ShopUser />}>
+                <Route path='danhsachsanpham' element={<DanhSachSanPham />} />
+                <Route path='danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
+                <Route path='danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
+              </Route>
               <Route path="shop-register" element={<ShopRegistration />} />
             </Route>
           </Route>
