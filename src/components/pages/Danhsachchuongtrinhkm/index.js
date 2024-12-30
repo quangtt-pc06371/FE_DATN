@@ -2,42 +2,97 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { format } from 'date-fns';
-
+import Swal from "sweetalert2";
+import Cookies from "js-cookie";
+import moment from 'moment';
+import { useParams } from "react-router-dom";
 const DanhSachSanPhamKM = () => {
-  const [data, setData] = useState([]);
+  const [shop, setShop] = useState(null);
+  const [dataSanPhamKhuyenMai, setDataSanPhamKhuyenMai] = useState([]);
+ 
 
-  async function hienThi() {
-    const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
-    setData(response.data);
+  async function hienThiSanPhamKhuyenMai() {
+    const apiShop = 'http://localhost:8080/api/sanphamkhuyenmai/shop';
+    const response = await axios.get(apiShop + '/' + shop.id);
+    setDataSanPhamKhuyenMai(response.data);
   }
 
-  function getFormatDate(dateString) {
-    const date = new Date(dateString);
-    return format(date, 'dd/MM/yyyy');
+  async function handleDeleteSanPhamKhuyenMai(id) {
+    // Hiển thị thông báo xác nhận trước khi xóa
+    const result = await Swal.fire({
+      title: "Bạn có chắc chắn muốn xóa sản phẩm khuyến mãi này?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Xóa",
+      cancelButtonText: "Hủy",
+    });
+
+    // Nếu người dùng xác nhận, thực hiện xóa
+    if (result.isConfirmed) {
+      const apiSanPhamKhuyenMai = "http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai";
+      try {
+        await axios.put(`${apiSanPhamKhuyenMai}/${id}`);
+        Swal.fire({
+          icon: "success",
+          title: "Sản phẩm khuyến mãi đã được xóa",
+        });
+        hienThiSanPhamKhuyenMai(); // Load lại danh sách sản phẩm khuyến mãi sau khi xóa
+      } catch (error) {
+        Swal.fire({
+          icon: "error",
+          title: "Đã xảy ra lỗi",
+          text: "Không thể xóa sản phẩm khuyến mãi. Vui lòng thử lại sau.",
+        });
+      }
+    }
   }
 
-  async function handleDelete(id) {
-    const apiKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai';
-    await axios.delete(apiKhuyenMai + '/' + id);
-    hienThi();
-    alert("Xóa thành công");
+  async function handleDeleteSanPhamKhuyenMaiHetHan(id) {
+    const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai';
+    await axios.put(apiSanPhamKhuyenMai + '/' + id);
+
   }
 
   useEffect(() => {
-    hienThi();
+    if (shop && shop.id) {
+      hienThiSanPhamKhuyenMai();
+    }
+  }, [shop]);
+
+  useEffect(() => {
+    const fetchShop = async () => {
+      const token = Cookies.get("token");
+      try {
+        const response = await axios.get('http://localhost:8080/api/shops/user', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setShop(response.data);
+      } catch (error) {
+        console.error("Lỗi khi lấy thông tin shop:", error);
+      }
+    };
+    fetchShop();
   }, []);
 
+
+  function formatDateKeepUTC(dateString) {
+    return moment.utc(dateString).format('DD/MM/YYYY');
+  }
+  
   return (
     <div className="container my-5 d-flex justify-content-center">
-      <div className="card shadow" style={{ maxWidth: '800px', width: '100%' }}>
-        <div className="card-header text-white" style={{ backgroundColor: 'rgb(21,37,69)' }}>
+      <div className="card shadow w-100 mb-3">
+        <div className="card-header  bg-body-secondary d-flex justify-content-between align-items-center" >
           <h2>Danh Sách Chương Trình Khuyến Mãi</h2>
+          
         </div>
         <div className="card-body">
           <table className="table table-hover">
             <thead className="table-dark">
               <tr>
-                <th>ID</th>
+                <th>STT</th>
                 <th>Sản Phẩm</th>
                 <th>Giá Gốc</th>
                 <th>Khuyến Mãi</th>
@@ -48,41 +103,50 @@ const DanhSachSanPhamKM = () => {
               </tr>
             </thead>
             <tbody>
-              {data.map(sanPhamKhuyenMai => {
+              {dataSanPhamKhuyenMai.filter(sanPhamKhuyenMai => sanPhamKhuyenMai.trangThai !== false).map((sanPhamKhuyenMai, filteredIndex) => {
                 const now = new Date();
-                const startDate = new Date(sanPhamKhuyenMai.khuyenMai.ngayBatDau);
+
                 const endDate = new Date(sanPhamKhuyenMai.khuyenMai.ngayKetThuc);
+
+                console.log(now)
+                console.log(endDate)
 
                 const giaGoc = sanPhamKhuyenMai.sanPham.skus[0]?.giaSanPham || 0;
                 const khuyenMai = sanPhamKhuyenMai.khuyenMai.giaTriKhuyenMai || 0;
                 const giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMai / 100));
-                const khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
+                const khuyenMaiConHieuLuc = now > endDate;
+                const hieuLucKhuyenMai = sanPhamKhuyenMai.khuyenMai.active;
+                const chuongTrinhKhuyenMai = sanPhamKhuyenMai.trangThai;
+
+                if (khuyenMaiConHieuLuc || hieuLucKhuyenMai === false) {
+                  // Gọi các hàm xóa trạng thái khi khuyến mãi hết hiệu lực
+                  handleDeleteSanPhamKhuyenMaiHetHan(sanPhamKhuyenMai.idSanPhamKM);
+                }
 
                 return (
                   <tr key={sanPhamKhuyenMai.idSanPhamKM}>
-                    <td>{sanPhamKhuyenMai.idSanPhamKM}</td>
+                    <td>{filteredIndex + 1}</td> {/* Duy trì chỉ số STT sau khi lọc */}
                     <td>{sanPhamKhuyenMai.sanPham.tenSanPham}</td>
-                    <td>{giaGoc.toFixed(2)} VNĐ</td>
+                    <td> {`${giaGoc.toLocaleString('vi-VN')} VNĐ`} </td>
                     <td>{sanPhamKhuyenMai.khuyenMai.tenKhuyenMai} ({khuyenMai}%)</td>
                     <td>
-                      {khuyenMaiConHieuLuc ? (
-                        <span className="text-danger fw-bold">{giaSauKhuyenMai.toFixed(2)} VNĐ</span>
+                      {chuongTrinhKhuyenMai === true ? (
+                        <span className="text-danger fw-bold">{`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}</span>
                       ) : (
-                        <span>{giaGoc.toFixed(2)} VNĐ</span>
+                        <span></span>
                       )}
                     </td>
-                    <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayBatDau)}</td>
-                    <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayKetThuc)}</td>
+                    <td>{formatDateKeepUTC(sanPhamKhuyenMai.khuyenMai.ngayBatDau)}</td>
+                    <td>{formatDateKeepUTC(sanPhamKhuyenMai.khuyenMai.ngayKetThuc)}</td>
                     <td className="text-center">
-
-                      <button className="btn btn-danger" onClick={() => handleDelete(sanPhamKhuyenMai.idSanPhamKM)}>Xóa</button>
+                      <button className="btn btn-danger" onClick={() => handleDeleteSanPhamKhuyenMai(sanPhamKhuyenMai.idSanPhamKM)}>Xóa</button>
                     </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
-          <a className="btn btn-success mt-3" href='/sanphamkhuyenmai'>Thêm Chương Trình Khuyến Mãi Mới</a>
+
         </div>
       </div>
     </div>

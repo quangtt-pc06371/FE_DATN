@@ -31,6 +31,7 @@ import Listtk from "./components/compoments/Listtaikhoan";
 import Registergg from "./components/pages/logingoogle";
 import ShopSanPham from "./components/pages/Shopsanpham";
 
+<<<<<<< HEAD
 import CartPage from "./components/pages/user/Cart/Cart";
 import OrderPage from "./components/pages/user/Cart/Order";
 import PaymentPage from "./components/pages/user/Cart/Payment";
@@ -43,13 +44,31 @@ import Bill from "./components/pages/user/Cart/Bill";
 
 import VoucherForm from "./components/pages/Voucher/VoucherForm";
 import VoucherList from "./components/pages/Voucher/VoucherList";
+=======
+import CartPage from './components/pages/user/Cart/Cart'
+//  import CartPage from './components/compoments/'
+import CartItem from './components/pages/user/Cart/CartItem'
+import Order from './components/pages/user/Cart/Order'
+import AddressForm from './components/pages/user/Cart/index'
+import AddressFormuser from './components/compoments/Addressuser'
+import AddressFormshop from './components/compoments/Addressshop'
+import VoucherForm from './components/pages/Voucher/VoucherForm';
+import VoucherList from './components/pages/Voucher/VoucherList';
+>>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
 
 import { AuthProvider } from "./config/Authenticated/index";
 import ProtectedRoute from "./config/Authenticated/protectedRoute";
 import User from "./components/userpage";
 import Loginpage from "./components/loginpage";
 ///import { startTokenRefreshInterval } from "./components/pages/Refresh";
+<<<<<<< HEAD
 
+=======
+import Order from "./components/compoments/Order";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+// import 'bootstrap-icons/font/bootstrap-icons.css';
+>>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
 export default function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
@@ -67,6 +86,7 @@ export default function App() {
           <Route path="listtaikhoan" element={<Listtk />} />
           <Route path="updateuser" element={<Updateuser2 />} />
           <Route path="quanlykhuyenmai" element={<QuanLykhuyenMai />} />
+<<<<<<< HEAD
           <Route
             path="quanlykhuyenmai/:idKhuyenMai"
             element={<QuanLykhuyenMai />}
@@ -95,6 +115,23 @@ export default function App() {
           <Route path="/voucher" element={<VoucherModal />} />
           <Route path="/transaction-result" element={<TransactionResult />} />
           <Route path="/bill" element={<Bill />} />
+=======
+          <Route path='quanlykhuyenmai/:idKhuyenMai' element={<QuanLykhuyenMai />} />
+          <Route path='danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
+          <Route path='quanlysanpham' element={<QuanlySanPham />} />
+          <Route path='sanpham/:idSanPham' element={<QuanlySanPham />} />
+          <Route path='danhsachsanpham' element={<DanhSachSanPham />} />
+          <Route path='danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
+          <Route path='sanphamkhuyenmai' element={<QuanLySanPhamKhuyenMai />} />
+          <Route path='sanphamkhuyenmai/:idSanPhamKhuyenMai' element={<QuanLySanPhamKhuyenMai />} />
+
+          <Route path="cart" element={<CartPage/>} />
+          <Route path="cartitem" element={<CartItem />} />
+          <Route path="order" element={<Order />} />
+          <Route path="address" element={<AddressForm />} />
+          <Route path="addressshop" element={<AddressFormshop />} />
+          <Route path="order" element={<Order/>} />
+>>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
           <Route path="voucherform" element={<VoucherForm />} />
           <Route path="voucherlist" element={<VoucherList />} />
 
@@ -105,7 +142,8 @@ export default function App() {
           >
             <Route path="user" element={<User />}>
               <Route path="updateuser" element={<Updateuser2 />} />
-              <Route path="profile" element={<Profile />} />
+              <Route path="profile" element={<Profile />} />             
+              <Route path="addressuser" element={<AddressFormuser />} />
               <Route path="shop-user" element={<ShopUser />} />
               <Route path="shop-register" element={<ShopRegistration />} />
             </Route>
@@ -136,6 +174,6 @@ export default function App() {
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
-    //<RouterProvider router={router} />
+    // <RouterProvider router={router} />
   );
 }

@@ -7,8 +7,13 @@ const AdminLayout = () => {
     <div className="admin-layout">
       {/* Sidebar */}
       <div className="admin-sidebar">
-         but
-        <div style={{ padding: '20px', fontWeight: 'bold', textAlign: 'center' }}>Admin</div>
+        
+        {/* Home Button */}
+        <div className="home-button">
+          <Link to="/"><i class="fa-solid fa-right-from-bracket"></i> Trang Chủ</Link>
+        </div>
+
+        <div className="admin-title mt-5">Admin</div>
         <ul>
           <li>
             <Link to="/admin/category-management">Danh Mục</Link>

@@ -16,7 +16,6 @@ const QuanlySanPham = () => {
     tenSanPham: '',
     moTa: '',
     weight: '', // Cân nặng (mặc định là chuỗi rỗng)
-
     shop: { id: parseInt('') },
     danhMuc: { idDanhMuc: parseInt('') }
   }
@@ -35,6 +34,7 @@ const QuanlySanPham = () => {
   }]);
 
   const [skusList, setSkusList] = useState([]);
+
   const { idSanPham } = useParams();
 
   const [giaSanPham, setGiaSanPham] = useState(0);
@@ -611,6 +611,7 @@ const QuanlySanPham = () => {
         return;
       }
       
+      
       if (!sku.hinhanh) {
         Swal.fire({
           icon: 'warning',
@@ -687,7 +688,7 @@ const QuanlySanPham = () => {
           <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
             <h2>Thêm Sản Phẩm</h2>
 
-            <a href='/shop-user' type="button" className="btn btn-primary ms-auto">
+            <a href='/user/shop-user' type="button" className="btn btn-primary ms-auto">
               Trở Về Quản Lý Shop
             </a>
           </div>
@@ -746,7 +747,7 @@ const QuanlySanPham = () => {
                   ))}
                 </select>
               </div>
-              {edit === true ? (
+             
                 <>
                   <h4 className="mt-4">Danh Sách Thuộc Tính</h4>
                   <div className="border p-3 mb-4 rounded shadow-sm">
@@ -821,11 +822,7 @@ const QuanlySanPham = () => {
                   </div>
                 </>
 
-              ) : (
-                <p></p>
-              )
-
-              }
+          
               <h4 className="mt-4">Danh Sách SKU</h4>
 
 

@@ -9,8 +9,8 @@ const Logout = () => {
     console.log(typeof removeCookie);
     const navigator = useNavigate();
     const handleRemoveCookie= ()=> {
-        // Cookies.remove("token")
-        // Cookies.remove("refreshToken")
+        Cookies.remove("token")
+        Cookies.remove("refreshToken")
         // removeCookie('user',
         //      { path: 'http://localhost:3000/' }
         //     );
@@ -18,7 +18,7 @@ const Logout = () => {
             //     { path: 'http://localhost:3000/' }
             //    );
         
-               navigator('/')
+               navigator('/buyer/login')
     }
     return (
         <button className="btn btn-secondary dropdown-item" type="button" onClick={handleRemoveCookie}>

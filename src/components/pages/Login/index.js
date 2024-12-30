@@ -18,7 +18,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [cookies, setCookie] = useCookies(["user"]);
+  const [cookies, setCookie] = useCookies([]);
 
   useEffect(() => {
     const savedEmail = localStorage.getItem("email");
@@ -41,10 +41,20 @@ const Login = () => {
       const { token, refreshToken } = response.data;
 
       const date = new Date();
-      date.setHours(date.getHours() + 1);
-
-      setCookie("token", token, { expires: date });
-      setCookie("refreshToken", refreshToken, { expires: date });
+      // date.setHours(date.getHours() + 1);
+      setCookie("token", token, { 
+        path: "/", 
+        // expires: date, 
+        secure: true, // Chỉ bật trong môi trường production
+        sameSite: "Strict" 
+      });
+      setCookie("refreshToken", refreshToken, { 
+        path: "/", 
+        // expires: date, 
+        secure: true, 
+        sameSite: "Strict" 
+      });
+      
 
       if (rememberMe) {
         localStorage.setItem("email", email);

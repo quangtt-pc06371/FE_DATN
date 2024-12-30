@@ -4,6 +4,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
 import { format } from "date-fns";
+import { getProfile } from "../../../../config/Auth";
+import AddressFormshop from "../../../compoments/Addressshop";
 const ShopUser = () => {
   const [shop, setShop] = useState(null);
   const [isApproved, setIsApproved] = useState(false);
@@ -13,7 +15,8 @@ const ShopUser = () => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  const [profile, setProfile] = useState(null);
+  const [error, setError] = useState("");
   console.log(shop)
   const [data, setData] = useState([]);
   const [dataKhuyenMai, setDataKhuyenMai] = useState([]);
@@ -63,7 +66,7 @@ const ShopUser = () => {
       confirmButtonText: "Xóa",
       cancelButtonText: "Hủy",
     });
-  
+
     // Nếu người dùng xác nhận, thực hiện xóa
     if (result.isConfirmed) {
       const apiSanPham = "http://localhost:8080/api/sanpham/updatetrangthai";
@@ -83,12 +86,12 @@ const ShopUser = () => {
       }
     }
   }
-  
+
 
   async function handleDeleteKhuyenMaiHetHan(id) {
     const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai/updatetrangthai';
     await axios.put(apiKhuyenMai + '/' + id);
-   
+
   }
   async function handleDeleteSanPhamKhuyenMaiHetHan(id) {
     const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai';
@@ -107,7 +110,7 @@ const ShopUser = () => {
       confirmButtonText: "Xóa",
       cancelButtonText: "Hủy",
     });
-  
+
     // Nếu người dùng xác nhận, thực hiện xóa
     if (result.isConfirmed) {
       const apiKhuyenMai = "http://localhost:8080/api/khuyenmai/updatetrangthai";
@@ -127,7 +130,7 @@ const ShopUser = () => {
       }
     }
   }
-  
+
   async function handleDeleteSanPhamKhuyenMai(id) {
     // Hiển thị thông báo xác nhận trước khi xóa
     const result = await Swal.fire({
@@ -139,7 +142,7 @@ const ShopUser = () => {
       confirmButtonText: "Xóa",
       cancelButtonText: "Hủy",
     });
-  
+
     // Nếu người dùng xác nhận, thực hiện xóa
     if (result.isConfirmed) {
       const apiSanPhamKhuyenMai = "http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai";
@@ -159,20 +162,35 @@ const ShopUser = () => {
       }
     }
   }
-  
 
+  const fetchProfile = async () => {
+    try {
+      const res = await getProfile();
+      setProfile(res); // Lưu dữ liệu profile vào state
+    } catch (err) {
+      if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else {
+        setError('Không thể lấy dữ liệu profile.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
   useEffect(() => {
     if (shop && shop.id) {
       hienThiSanPham();
       hienThiKhuyenMai();
       hienThiSanPhamKhuyenMai();
+
     }
   }, [shop]);
 
   // Tải thông tin cửa hàng
   useEffect(() => {
-
+    fetchProfile();
     const token = Cookies.get("token");
+    console.log(token)
     if (!token) {
       Swal.fire("Thông báo", "Bạn cần đăng nhập để truy cập trang này", "warning");
       navigate("/login");
@@ -375,6 +393,49 @@ const ShopUser = () => {
                   )}
                 </div>
               </div>
+              <div className="card shadow-sm w-100 mb-5">
+  <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
+    <h2>Địa chỉ</h2>
+    <button
+      className="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#addressModal"
+    >
+      Thêm Địa Chỉ
+    </button>
+    <AddressFormshop />
+  </div>
+  <div className="card-body">
+    <table className="table table-hover">
+      <thead className="table-dark">
+        <tr>
+          <th>STT</th>
+          <th>Địa chỉ chi tiết</th>
+          <th>Tỉnh/Thành phố</th>
+          <th>Quận/Huyện</th>
+          <th>Phường/Xã</th>
+        </tr>
+      </thead>
+      <tbody>
+        {profile.diachi.map((address, index) => {
+          if (address.shop === null) {
+            return null; // Bỏ qua địa chỉ có shop không null
+          }
+          return (
+            <tr key={index}>
+              <td>{index + 1}</td>
+              <td>{address.diachiDetail}</td>
+              <td>{address.nameProvince} (ID: {address.provinceId})</td>
+              <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
+              <td>{address.nameWard} (ID: {address.idWard})</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</div>
+
 
               <div className="card shadow-sm w-100 mb-5">
                 <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
@@ -465,7 +526,7 @@ const ShopUser = () => {
                         const khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
 
 
-                        if(!khuyenMaiConHieuLuc){
+                        if (!khuyenMaiConHieuLuc) {
                           handleDeleteKhuyenMaiHetHan(khuyenMai.idKhuyenMai)
                         }
 
@@ -479,7 +540,7 @@ const ShopUser = () => {
                               <td>{getFormatDate(khuyenMai.ngayKetThuc)}</td>
                               <td>{khuyenMai.ghiChu}</td>
                               <td>{khuyenMai.shop.shopName}</td>
-                              <td>{khuyenMai.active ? "Còn hạn" : "Hết hạn"}</td> 
+                              <td>{khuyenMai.active ? "Còn hạn" : "Hết hạn"}</td>
                               <td className="text-center">
                                 <a className="btn btn-warning me-2" href={`/quanlykhuyenmai/${khuyenMai.idKhuyenMai}`}>Sửa</a>
                                 <button className="btn btn-danger" onClick={() => handleDeleteKhuyenMai(khuyenMai.idKhuyenMai)}>Xóa</button>

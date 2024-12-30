@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
+<<<<<<< HEAD
 import { BASE_URL, API, CART } from "./api";
 import Cookies from "js-cookie";
+=======
+import { BASE_URL, API, SKU } from "../../../../config/ApiCart/api";
+import Cookies from 'js-cookie';  // Import thư viện js-cookie
+>>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
 
 const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
+  console.log(product)
   const [quantity, setQuantity] = useState(product.soLuongMua || 1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [skuList, setSkuList] = useState(product.sanPhamEntity.skuEntities);
@@ -12,10 +18,27 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+<<<<<<< HEAD
   // Xử lý khi chọn SKU
   const handleSkuSelect = (sku) => {
     setSelectedSku(sku.idSku); // Cập nhật SKU đã chọn
   };
+=======
+  // Lấy danh sách SKU
+  const fetchSkuList = useCallback(async () => {
+    try {
+      setError(null); // Đặt lại lỗi
+      const response = await axios.get(
+        `${BASE_URL}${API.Cart}${SKU.List}?idSanPham=${product.skuEntity.sanPham.idSanPham}`
+      );
+      setSkuList(response.data || []); // Đảm bảo luôn là mảng
+    } catch (err) {
+      console.error("Lỗi khi tải danh sách SKU:", err);
+      setError("Không thể tải danh sách SKU. Vui lòng thử lại sau.");
+      setSkuList([]); // Gán mảng rỗng khi gặp lỗi
+    }
+  }, [product.skuEntity.sanPham.idSanPham]);
+>>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
 
   // Xử lý khi thay đổi số lượng sản phẩm
   const handleSkuChange = (newQuantity) => {
@@ -116,7 +139,11 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
 
             {/* Tên Sản Phẩm */}
             <div className="col-md-1 d-flex align-items-center justify-content-center">
+<<<<<<< HEAD
               {product.sanPhamEntity.tenSanPham}
+=======
+              {product?.skuEntity?.sanPham?.tenSanPham}
+>>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
             </div>
 
             {/* Nút tùy chọn */}
@@ -127,12 +154,12 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
                 style={{ minWidth: "120px", height: "40px" }}
               >
                 {
-                  product.skuEntity.tuyChonThuocTinhSku[0].tuyChonThuocTinh
+                  product.skuEntity.tuyChonThuocTinhSkus[0].tuyChonThuocTinh
                     .giaTri
                 }{" "}
-                -
+                
                 {
-                  product.skuEntity.tuyChonThuocTinhSku[0].tuyChonThuocTinh
+                  product.skuEntity.tuyChonThuocTinhSkus[0].tuyChonThuocTinh
                     .thuocTinh.ten
                 }
               </button>

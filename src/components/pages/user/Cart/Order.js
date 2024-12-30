@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+<<<<<<< HEAD
 import { BASE_URL, API, ORDER, ADDRESS } from "./api";
+=======
+import { BASE_URL, API, ORDER } from "../../../../config/ApiCart/api"; // Cập nhật đường dẫn API theo dự án của bạn
+>>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
 import Cookies from "js-cookie"; // Import thư viện js-cookie
 import Voucher from "./Voucher"; // Import component Voucher
 import ShippingCalculator from "./Ship";
@@ -58,8 +62,25 @@ function Order() {
   const groupedByShop = cartData.reduce((acc, item) => {
     const shopName = item.sanPhamEntity.shop.shopName;
 
+<<<<<<< HEAD
     if (!acc[shopName]) {
       acc[shopName] = [];
+=======
+  const groupedByShop = orders.reduce((acc, order) => {
+    if (order.chiTietDonHangs && Array.isArray(order.chiTietDonHangs)) {
+      order.chiTietDonHangs.forEach((item) => {
+        console.log(item?.skuEntity?.sanPham?.shop?.shopName)
+        const shopName = item?.skuEntity?.sanPham?.shop?.shopName;
+
+        // Kiểm tra xem shopName đã có trong acc chưa, nếu chưa thì khởi tạo
+        if (!acc[shopName]) {
+          acc[shopName] = [];
+        }
+
+        // Thêm sản phẩm vào đúng shop
+        acc[shopName].push(item);
+      });
+>>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
     }
 
     acc[shopName].push(item);

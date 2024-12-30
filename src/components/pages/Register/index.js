@@ -46,7 +46,7 @@ const Addtaikhoan = () => {
       matKhau,
       sdt,
       cmnd,
-      vaitro: { id: 3 }
+      vaitro: { id: 2 }
     };
 
     try {

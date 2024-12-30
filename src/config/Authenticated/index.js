@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
       }
     } else {
       console.warn("Token không tồn tại hoặc không phải chuỗi");
-      setRole(null);
+      // setRole(null);
       setIsAuthenticated(false);
     }
 
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ role, isAuthenticated, loading }}>
+    <AuthContext.Provider value={{ role,  loading }}>
       {children}
     </AuthContext.Provider>
   );
