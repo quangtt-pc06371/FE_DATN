@@ -86,7 +86,6 @@ export default function App() {
          
           <Route path="/cart" element={<CartPage />} />
         <Route path="/payment" element={<PaymentPage/>} />
-        <Route path="/payment-status" element={<PaymentStatus/>}/>
         <Route path="/order" element={<OrderPage/>} />
         <Route path="/diachi" element={< AddressForm/>} />
         <Route path="/select" element={< SelectedAddress/>} />
