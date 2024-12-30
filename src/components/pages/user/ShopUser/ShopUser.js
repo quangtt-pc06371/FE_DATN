@@ -28,33 +28,47 @@ const ShopUser = () => {
 
 
   async function hienThiSanPhamKhuyenMai() {
-    const apiShop = 'http://localhost:8080/api/sanphamkhuyenmai/shop';
-    const response = await axios.get(apiShop + '/' + shop.id);
-    setDataSanPhamKhuyenMai(response.data);
+    try {
+      const apiShop = 'http://localhost:8080/api/sanphamkhuyenmai/shop';
+      const response = await axios.get(apiShop + '/' + shop.id);
+      setDataSanPhamKhuyenMai(response.data);
+    } catch (error) {
+      if (error.response && error.response.status === 403) {
+        console.log('Không có dữ liệu cho sản phẩm khuyến mãi.');
+      } else {
+        console.error('Lỗi khác:', error);
+      }
+    }
   }
-
+  
   async function hienThiKhuyenMai() {
     try {
       const apiShop = 'http://localhost:8080/api/khuyenmai/shop';
       const response = await axios.get(apiShop + '/' + shop.id);
       setDataKhuyenMai(response.data);
-
     } catch (error) {
-      console.log(error)
+      if (error.response && error.response.status === 403) {
+        console.log('Không có dữ liệu cho khuyến mãi.');
+      } else {
+        console.error('Lỗi khác:', error);
+      }
     }
   }
-
+  
   async function hienThiSanPham() {
     try {
       const apiShop = 'http://localhost:8080/api/sanpham/shop';
       const response = await axios.get(apiShop + '/' + shop.id);
       setData(response.data);
-
     } catch (error) {
-      console.log(error)
+      if (error.response && error.response.status === 403) {
+        console.log('Không có dữ liệu cho sản phẩm.');
+      } else {
+        console.error('Lỗi khác:', error);
+      }
     }
-
   }
+  
   async function handleDeleteSanPham(id) {
     // Hiển thị thông báo xác nhận trước khi xóa
     const result = await Swal.fire({
@@ -418,7 +432,7 @@ const ShopUser = () => {
       </thead>
       <tbody>
         {profile.diachi.map((address, index) => {
-          if (address.shop === null) {
+          if (address.id === null||address.id !== null) {
             return null; // Bỏ qua địa chỉ có shop không null
           }
           return (

@@ -85,10 +85,10 @@ const Profile = () => {
       </tr>
     </thead>
     <tbody>
-    {profile.diachi.map((address, index) => {
-          if (address.shop === null) {
-            return null; // Bỏ qua địa chỉ có shop không null
-          }
+    {profile.diachi 
+     .filter(address => address.shop !== null)
+    .map((address, index) => {
+        
           return (
             <tr key={index}>
               <td>{index + 1}</td>
