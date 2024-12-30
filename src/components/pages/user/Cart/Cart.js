@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CartItem from "./CartItem";
-import { BASE_URL, API, CART, ORDER } from "../assets/config/api";
+import { BASE_URL, API, CART } from './api';
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import Cookies from 'js-cookie';  // Import thư viện js-cookie
+import Cookies from "js-cookie"; // Import thư viện js-cookie
 
 const CartPage = () => {
   const [cart, setCart] = useState(null);
@@ -25,7 +25,7 @@ const CartPage = () => {
 
     chiTietGioHangList.forEach((item) => {
       // Kiểm tra cấu trúc dữ liệu của từng item
-      const shopId = item?.skuEntity?.sanPhamEntity?.shop?.id;
+      const shopId = item?.sanPhamEntity?.shop?.id;
       if (!shopId) {
         console.warn("Sản phẩm không có thông tin shop:", item);
         return; // Bỏ qua nếu không có thông tin shop
@@ -33,8 +33,7 @@ const CartPage = () => {
 
       if (!grouped[shopId]) {
         grouped[shopId] = {
-          shopName:
-            item.skuEntity.sanPhamEntity.shop.shopName || "Shop không tên",
+          shopName: item.sanPhamEntity.shop.shopName || "Shop không tên",
           products: [],
         };
       }
@@ -80,7 +79,6 @@ const CartPage = () => {
         setError("Vui lòng đăng nhập");
         return;
       }
-
       // Gửi yêu cầu xóa sản phẩm qua API với @RequestParam
       const response = await axios.delete(
         `${BASE_URL}${API.Cart}${CART.Delete}?idDetail=${idDetail}`,
@@ -109,7 +107,7 @@ const CartPage = () => {
   };
 
   // Gọi API để cập nhật giỏ hàng
-  const handleSkuChange = async (idDetail, newQuantity, idSku) => {
+  const handleSkuChange = async (detailId, newQuantity, newSkuId) => {
     try {
       const token = Cookies.get("token");
       if (!token) {
@@ -118,15 +116,17 @@ const CartPage = () => {
       }
 
       const payload = {
-        idDetail,
-        soLuongMua: newQuantity,
-        idSku,
+        detailId,
+        newQuantity,
+        newSkuId,
       };
 
-      console.log(payload);
+      console.log(payload)
 
       // Gửi yêu cầu cập nhật SKU và số lượng
-      await axios.put(`${BASE_URL}${API.Cart}${CART.Update}`, payload, {
+      await axios.put(`${BASE_URL}${API.Cart}${CART.Update}`, null, 
+      {
+        params: payload,
         headers: { Authorization: `${token}` },
       });
 
@@ -208,106 +208,33 @@ const CartPage = () => {
     setSelectAll(allSelected); // Cập nhật trạng thái "Chọn tất cả"
   };
 
-  // Hàm gửi yêu cầu tạo đơn hàng thanh toán
-  const handleCreateOrder = async () => {
-    try {
-      const token = Cookies.get("token");
-      if (!token) {
-        alert("Vui lòng đăng nhập.");
-        return;
-      }
-
-      const response = await axios.post(
-        `${BASE_URL}${API.Order}${ORDER.Add}`,
-        {},
-        {
-          headers: { Authorization: `${token}` },
-        }
-      );
-
-      if (response === 200) {
-        console.log(response);
-        alert("Tạo đơn hàng thành công!");
-      }
-    } catch (err) {
-      console.error("Lỗi khi tạo đơn hàng:", err.message);
-      alert("Không thể tạo đơn hàng. Vui lòng thử lại.");
-    }
+  const saveSelectedProductsToLocalStorage = () => {
+    if (!cartDetail) return;
+  
+    // Lọc ra sản phẩm được chọn
+    const selectedProducts = Object.values(cartDetail)
+      .flatMap((shop) => shop.products)
+      .filter((product) => product.isSelected);
+  
+    // Lưu vào localStorage
+    localStorage.setItem("cart", JSON.stringify(selectedProducts));
+  
+    console.log("Đã lưu sản phẩm vào localStorage:", selectedProducts);
   };
-
-  //Hàm Xử Lý Mua Hàng
-  const handlePlaceOrder = async () => {
-    try {
-      const token = Cookies.get("token");
-      if (!token) {
-        setError("Vui lòng đăng nhập");
-        return;
-      }
-
-      setIsSubmitting(true);
-
-      const selectedProducts = selectedIds;
-
-      if (selectedProducts.length === 0) {
-        alert("Vui lòng chọn sản phẩm để đặt hàng.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      const payload = {
-        idDetail: selectedProducts,
-      };
-
-      const response = await axios.put(
-        `${BASE_URL}${API.Cart}${CART.UpdateStatus}`,
-        payload,
-        {
-          headers: { Authorization: `${token}` },
-        }
-      );
-
-      if (response.status === 200) {
-        alert("Đặt hàng thành công!");
-
-        // Cách 1: Gọi lại API để lấy giỏ hàng cập nhật
-        const updatedCart = await axios.get(
-          `${BASE_URL}${API.Cart}${CART.List}`,
-          {
-            headers: { Authorization: `${token}` },
-          }
-        );
-
-        if (updatedCart.data.gioHang) {
-          setCart(updatedCart.data.gioHang);
-          setCartDetail(
-            groupByShop(updatedCart.data.gioHang.chiTietGioHangList)
-          );
-        } else {
-          setCartDetail({});
-        }
-
-        // Reset danh sách sản phẩm đã chọn
-        setSelectedIds([]);
-      }
-
-      setIsSubmitting(false);
-
-      // Gọi API tạo đơn hàng sau khi selectedIds được cập nhật
-      await handleCreateOrder();
-      navigate(`/order`, { state: { selectedIds } });
-    } catch (error) {
-      console.error("Lỗi khi đặt hàng:", error.message);
-      setError("Không thể đặt hàng. Vui lòng thử lại.");
-      setIsSubmitting(false);
-    }
+  
+  const handlePlaceOrder = () => {
+    saveSelectedProductsToLocalStorage();
+    navigate("/order"); // Điều hướng đến trang thanh toán
   };
+  
 
   // useEffect để thực hiện logic sau khi `selectedIds` thay đổi
   useEffect(() => {
-    if (selectedIds.length > 0) {
-      console.log("Danh sách sản phẩm đã chọn:", selectedIds);
-      // Sau khi cập nhật selectedIds, có thể gọi thêm các tác vụ như tạo đơn hàng
-    }
+    // if (selectedIds.length > 0) {
+    //   console.log("Danh sách sản phẩm đã chọn:", selectedIds);
+    //   // Sau khi cập nhật selectedIds, có thể gọi thêm các tác vụ như tạo đơn hàng
+    // }
+    saveSelectedProductsToLocalStorage();
   }, [selectedIds]); // Khi `selectedIds` thay đổi, useEffect sẽ được kích hoạt
 
   if (error) {
@@ -319,11 +246,12 @@ const CartPage = () => {
   }
 
   const totalAmount = Object.values(cartDetail || {}) // Duyệt qua từng shop
-  .flatMap((shop) => shop.products) // Trải phẳng danh sách sản phẩm từ tất cả các shop
-  .filter((item) => item.isSelected) // Lọc các sản phẩm được chọn
-  .reduce((sum, item) => sum + item.skuEntity.giaSanPham * item.soLuongMua, 0); // Tính tổng tiền
-
-
+    .flatMap((shop) => shop.products) // Trải phẳng danh sách sản phẩm từ tất cả các shop
+    .filter((item) => item.isSelected) // Lọc các sản phẩm được chọn
+    .reduce(
+      (sum, item) => sum + item.skuEntity.giaSanPham * item.soLuongMua,
+      0
+    ); // Tính tổng tiền
 
   return (
     <>

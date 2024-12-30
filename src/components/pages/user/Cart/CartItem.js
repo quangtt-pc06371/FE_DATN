@@ -1,31 +1,21 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { BASE_URL, API, SKU } from "../assets/config/api";
-import Cookies from 'js-cookie';  // Import thư viện js-cookie
+import { BASE_URL, API, CART } from "./api";
+import Cookies from "js-cookie";
 
 const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const [quantity, setQuantity] = useState(product.soLuongMua || 1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [skuList, setSkuList] = useState([]);
+  const [skuList, setSkuList] = useState(product.sanPhamEntity.skuEntities);
   const [selectedSku, setSelectedSku] = useState(product.skuEntity.idSku);
   const [modalQuantity, setModalQuantity] = useState(quantity);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Lấy danh sách SKU
-  const fetchSkuList = useCallback(async () => {
-    try {
-      setError(null); // Đặt lại lỗi
-      const response = await axios.get(
-        `${BASE_URL}${API.Cart}${SKU.List}?idSanPham=${product.skuEntity.sanPhamEntity.idSanPham}`
-      );
-      setSkuList(response.data || []); // Đảm bảo luôn là mảng
-    } catch (err) {
-      console.error("Lỗi khi tải danh sách SKU:", err);
-      setError("Không thể tải danh sách SKU. Vui lòng thử lại sau.");
-      setSkuList([]); // Gán mảng rỗng khi gặp lỗi
-    }
-  }, [product.skuEntity.sanPhamEntity.idSanPham]);
+  // Xử lý khi chọn SKU
+  const handleSkuSelect = (sku) => {
+    setSelectedSku(sku.idSku); // Cập nhật SKU đã chọn
+  };
 
   // Xử lý khi thay đổi số lượng sản phẩm
   const handleSkuChange = (newQuantity) => {
@@ -37,11 +27,6 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const handleIncrease = () => handleSkuChange(quantity + 1);
   const handleDecrease = () => handleSkuChange(quantity - 1);
 
-  // Xử lý khi chọn SKU
-  const handleSkuSelect = (sku) => {
-    setSelectedSku(sku.idSku);
-  };
-
   // Lưu SKU và số lượng
   const saveSku = async () => {
     if (!selectedSku || modalQuantity < 1) {
@@ -51,26 +36,27 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
     setQuantity(modalQuantity);
     setIsLoading(true);
 
-    const token = Cookies.get("token");
-    if (!token) {
-      alert("Vui lòng đăng nhập.");
-      setIsLoading(false);
-      return;
-    }
-
     const payload = {
-      idDetail: product.idDetail,
-      soLuongMua: modalQuantity,
-      skuDTO: { idSku: selectedSku },
+      detailId: product.idDetail,
+      newQuantity: modalQuantity,
+      newSkuId: selectedSku,
     };
 
     console.log(payload);
 
     try {
+      const token = Cookies.get("token");
+      if (!token) {
+        setError("Vui lòng đăng nhập");
+        return;
+      }
       const response = await axios.put(
-        `${BASE_URL}${API.Cart}${SKU.Update}`,
-        payload,
-        { headers: { Authorization: `${token}` } }
+        `${BASE_URL}${API.Cart}${CART.Update}`,
+        null,
+        {
+          params: payload,
+          headers: { Authorization: `${token}` },
+        }
       );
 
       console.log("Phản hồi từ Backend:", response.data);
@@ -87,7 +73,6 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   // Mở modal
   const openModal = () => {
     setIsModalOpen(true);
-    fetchSkuList();
   };
 
   // Đóng modal
@@ -101,7 +86,6 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
     const value = parseInt(e.target.value, 10);
     setModalQuantity(value > 0 ? value : 1); // Đảm bảo số lượng tối thiểu là 1
   };
-  
 
   return (
     <>
@@ -132,7 +116,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
 
             {/* Tên Sản Phẩm */}
             <div className="col-md-1 d-flex align-items-center justify-content-center">
-              {product.skuEntity.sanPhamEntity.tenSanPham}
+              {product.sanPhamEntity.tenSanPham}
             </div>
 
             {/* Nút tùy chọn */}
@@ -165,7 +149,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
             <div className="col-lg-2 d-flex align-items-center justify-content-center">
               <div className="d-flex align-items-center">
                 <button
-                  onClick={handleDecrease}
+                  onClick={handleDecrease} // Đảm bảo số lượng tối thiểu là 1
                   className="btn btn-outline-secondary btn-sm-1"
                 >
                   -
@@ -224,26 +208,33 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
               </div>
               <div className="modal-body">
                 {error && <p className="text-danger">{error}</p>}
-                <ul className="list-group">
-                  {skuList.map((sku) => (
-                    <li
-                      key={sku.idSku}
-                      className={`list-group-item ${
-                        sku.idSku === selectedSku ? "active" : ""
-                      }`}
-                      onClick={() => handleSkuSelect(sku)}
-                    >
-                      {sku.tuyChonThuocTinhSkus.map((tt) => (
-                        <span key={tt.idTuyChonTtSku}>
-                          {tt.tuyChonThuocTinhDTO.giaTri} -
-                          {tt.tuyChonThuocTinhDTO.thuocTinh.ten}
-                        </span>
-                      ))}
-                      <br />
-                      Giá: {sku.giaSanPham.toLocaleString()} VND
-                    </li>
-                  ))}
-                </ul>
+
+                {/* Kiểm tra nếu skuList có giá trị */}
+                {skuList && skuList.length > 0 ? (
+                  <ul className="list-group">
+                    {skuList.map((sku) => (
+                      <li
+                        key={sku.idSku}
+                        className={`list-group-item ${
+                          sku.idSku === selectedSku ? "active" : ""
+                        }`}
+                        onClick={() => handleSkuSelect(sku)}
+                      >
+                        {/* Hiển thị các tùy chọn thuộc tính SKU */}
+                        {sku.tuyChonThuocTinhSku.map((tt) => (
+                          <span key={tt.idTuyChonTtSku}>
+                            {tt.tuyChonThuocTinh.giaTri} -
+                            {tt.tuyChonThuocTinh.thuocTinh.ten}
+                          </span>
+                        ))}
+                        <br />
+                        Giá: {sku.giaSanPham.toLocaleString()} VND
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Không có SKU nào để chọn.</p>
+                )}
 
                 <div className="mt-3">
                   <label>Số lượng:</label>

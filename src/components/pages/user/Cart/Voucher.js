@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie"; // Import thư viện js-cookie
 
-function VoucherModal({ onVoucherSelect, totalDonHang, idDonHang, onTotalUpdate }) {
+function VoucherModal({ totalDonHang, onTotalUpdate }) {
   const [vouchers, setVouchers] = useState([]); // Lưu danh sách các voucher
   const [selectedVoucher, setSelectedVoucher] = useState(null); // Lưu voucher đã chọn
   const [showModal, setShowModal] = useState(false); // Quản lý trạng thái hiển thị modal
-  const [discount, setDiscount] = useState(0); // Giảm giá từ voucher
   const [isVoucherApplied, setIsVoucherApplied] = useState(false); // Trạng thái khi voucher đã được áp dụng
   const [updatedTotal, setUpdatedTotal] = useState(totalDonHang); // Tổng tiền sau khi áp dụng
 
@@ -27,7 +26,7 @@ function VoucherModal({ onVoucherSelect, totalDonHang, idDonHang, onTotalUpdate 
           }
         );
 
-        setVouchers(response.data); // Lưu danh sách voucher vào state
+        setVouchers(response.data.vouchers); // Lưu danh sách voucher vào state
       } catch (err) {
         console.error("Lỗi khi lấy danh sách voucher:", err.message);
         alert("Không thể tải danh sách khuyến mãi.");
@@ -39,7 +38,6 @@ function VoucherModal({ onVoucherSelect, totalDonHang, idDonHang, onTotalUpdate 
 
   // Xử lý khi chọn voucher
   const handleVoucherSelect = (voucher) => {
-    onVoucherSelect(voucher); // Gửi voucher đã chọn về component cha
     setSelectedVoucher(voucher);
   };
 
@@ -57,30 +55,28 @@ function VoucherModal({ onVoucherSelect, totalDonHang, idDonHang, onTotalUpdate 
     }
 
     try {
-      const token = Cookies.get("token");
-      const response = await axios.put(
-        `http://localhost:8080/api/order/apply-voucher?donHangId=${idDonHang[0].idDonHang}&voucherId=${selectedVoucher.idvoucher}`,
-        {},
-        {
-          headers: { Authorization: `${token}` },
-        }
-      );
-
-      const { discountAmount } = response.data;
-      setDiscount(discountAmount);
-
       // Cập nhật tổng tiền sau khi giảm giá
-      const discountedTotal = totalDonHang - discountAmount;
+      const discountedTotal = totalDonHang * (vouchers.giamGia / 100);
       setUpdatedTotal(discountedTotal > 0 ? discountedTotal : 0);
 
-      // Cập nhật lại tổng tiền cho component cha (onTotalUpdate)
-      if (onTotalUpdate) {
+      // Cập nhật lại tổng tiền cho component cha (updatedTotal)
+      if (updatedTotal) {
         onTotalUpdate(discountedTotal > 0 ? discountedTotal : 0);
       }
 
       // Đánh dấu voucher đã được áp dụng
       setIsVoucherApplied(true);
       setShowModal(false); // Đóng modal
+
+      // Lưu thông tin đơn hàng vào localStorage
+      const existingOrder = JSON.parse(localStorage.getItem("order")) || {};
+      const updatedOrder = {
+        ...existingOrder,
+        voucher: selectedVoucher.idvoucher, // Lưu thông tin voucher đã áp dụng
+      };
+      localStorage.setItem("order", JSON.stringify(updatedOrder));
+
+      alert("Voucher đã được áp dụng thành công!");
     } catch (err) {
       console.error("Lỗi khi áp dụng voucher:", err.message);
       alert("Voucher không hợp lệ hoặc đã hết hạn.");
