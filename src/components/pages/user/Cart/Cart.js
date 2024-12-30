@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CartItem from "./CartItem";
-<<<<<<< HEAD
 import { BASE_URL, API, CART } from './api';
-=======
-import { BASE_URL, API, CART, ORDER } from "../../../../config/ApiCart/api";
->>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Cookies from "js-cookie"; // Import thư viện js-cookie
 
@@ -29,13 +25,7 @@ const CartPage = () => {
 
     chiTietGioHangList.forEach((item) => {
       // Kiểm tra cấu trúc dữ liệu của từng item
-<<<<<<< HEAD
       const shopId = item?.sanPhamEntity?.shop?.id;
-=======
-      const shopId = item?.skuEntity?.sanPham?.shop?.id;
-      console.log(item?.skuEntity?.sanPham?.shop?.id)
-      console.log(item?.skuEntity)
->>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
       if (!shopId) {
         console.warn("Sản phẩm không có thông tin shop:", item);
         return; // Bỏ qua nếu không có thông tin shop
@@ -43,12 +33,7 @@ const CartPage = () => {
 
       if (!grouped[shopId]) {
         grouped[shopId] = {
-<<<<<<< HEAD
           shopName: item.sanPhamEntity.shop.shopName || "Shop không tên",
-=======
-          shopName:
-            item?.skuEntity?.sanPham?.shop?.shopName || "Shop không tên",
->>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
           products: [],
         };
       }
@@ -71,9 +56,7 @@ const CartPage = () => {
         const response = await axios.get(`${BASE_URL}${API.Cart}${CART.List}`, {
           headers: { Authorization: `${token}` },
         });
-       console.log(response.data)
-       console.log(response.data.gioHang)
-       console.log( response.data.gioHang.chiTietGioHangList)
+
         if (response.data.gioHang) {
           setCart(response.data.gioHang);
           setCartDetail(groupByShop(response.data.gioHang.chiTietGioHangList));
@@ -238,81 +221,10 @@ const CartPage = () => {
   
     console.log("Đã lưu sản phẩm vào localStorage:", selectedProducts);
   };
-<<<<<<< HEAD
   
   const handlePlaceOrder = () => {
     saveSelectedProductsToLocalStorage();
     navigate("/order"); // Điều hướng đến trang thanh toán
-=======
-
-  //Hàm Xử Lý Mua Hàng
-  const handlePlaceOrder = async () => {
-    try {
-      const token = Cookies.get("token");
-      if (!token) {
-        setError("Vui lòng đăng nhập");
-        return;
-      }
-
-      setIsSubmitting(true);
-
-      const selectedProducts = selectedIds;
-
-      if (selectedProducts.length === 0) {
-        alert("Vui lòng chọn sản phẩm để đặt hàng.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      const payload = {
-        idDetail: selectedProducts,
-      };
-      console.log(payload)
-      console.log(selectedProducts)
-
-      const response = await axios.put(
-        `${BASE_URL}${API.Cart}${CART.UpdateStatus}`,
-        payload,
-        {
-          headers: { Authorization: `${token}` },
-        }
-      );
-
-      if (response.status === 200) {
-        alert("Đặt hàng thành công!");
-
-        // Cách 1: Gọi lại API để lấy giỏ hàng cập nhật
-        const updatedCart = await axios.get(
-          `${BASE_URL}${API.Cart}${CART.List}`,
-          {
-            headers: { Authorization: `${token}` },
-          }
-        );
-
-        if (updatedCart.data.gioHang) {
-          setCart(updatedCart.data.gioHang);
-          setCartDetail(
-            groupByShop(updatedCart.data.gioHang.chiTietGioHangList)
-          );
-        } else {
-          setCartDetail({});
-        }
-
-        // Reset danh sách sản phẩm đã chọn
-        setSelectedIds([]);
-      }
-
-      setIsSubmitting(false);
-
-      // Gọi API tạo đơn hàng sau khi selectedIds được cập nhật
-      await handleCreateOrder();
-      navigate(`/order`, { state: { selectedIds } });
-    } catch (error) {
-      console.error("Lỗi khi đặt hàng:", error.message);
-      setError("Không thể đặt hàng. Vui lòng thử lại.");
-      setIsSubmitting(false);
-    }
->>>>>>> 064a3c89cd277ad883bdeb504655a1fd2913812c
   };
   
 
