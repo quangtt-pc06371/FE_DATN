@@ -14,6 +14,7 @@ export default function ChiTietSanPham() {
         danhMuc: {}
     });
 
+
     const [sanPhamShop, setSanPhamShop] = useState([]);
 
     const [skusList, setSkusList] = useState([]);
@@ -25,7 +26,9 @@ export default function ChiTietSanPham() {
     const [shopData, setShopData] = useState([]);
     const token = Cookies.get('token');
     async function layShop() {
+      
         try {
+            
             const response = await axios.get('http://localhost:8080/api/shop/nguoidung', {
                 headers: {
                     'Authorization': token,
@@ -35,12 +38,12 @@ export default function ChiTietSanPham() {
 
             setShopData(response.data);
         } catch (error) {
-            alert("Vui Lòng Đăng Nhập")
+           
         }
 
 
     }
-    console.log(shopData)
+
 
     const tangSoLuong = () => {
         setSoLuong(prev => prev + 1);
@@ -64,7 +67,6 @@ export default function ChiTietSanPham() {
         } catch (error) {
             console.log(error)
         }
-
     }
     async function getDataDisplayId() {
         const apiSanPham = 'http://localhost:8080/api/sanpham';
@@ -130,20 +132,20 @@ export default function ChiTietSanPham() {
             Swal.fire('Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.');
             return;
         }
+        
+     
 
         const dataToSent = {
             soLuongMua: soLuong,
-            // giaMua: soLuong * sku.giaSanPham,
-            // thanhTien;
-            // trangThai: false,
-            skuDTO: { idSku: sku.idSku }
+            giaMua: soLuong * sku.giaSanPham,
+            trangThai: true,
+            skuEntity: { idSku: sku.idSku }
         };
 
 
 
         try {
-console.log(dataToSent)
-            const addData = await axios.post('http://localhost:8080/api/cart/addDetail', dataToSent, {
+            const addData = await axios.post('http://localhost:8080/api/chitietgiohang', dataToSent, {
                 headers: {
                     'Authorization': token
                 }
@@ -162,7 +164,10 @@ console.log(dataToSent)
             getDataDisplayId();
 
         }
-        layShop();
+        if(token){
+            layShop();
+        }
+     
         getSanPhamKhuyenMai();
     }, [id]);
     useEffect(() => {
@@ -176,22 +181,29 @@ console.log(dataToSent)
 
     const giaGoc = skuGet ? skuGet.giaSanPham : skusList[0]?.giaSanPham || 0;
 
-    const khuyenMaiData = sanPhamKhuyenMaiForm.find(
-        (sanPhamKM) => sanPhamKM.sanPham.idSanPham === Number(id)
+
+    const findSanPhamKhuyenMai = sanPhamKhuyenMaiForm.filter(
+        (item) => item.sanPham.idSanPham === Number(id)
     );
+    const doiTuongSanPhamKM = findSanPhamKhuyenMai.find(
+        (promo) => promo.trangThai === true
+    );
+    console.log(findSanPhamKhuyenMai)
+    console.log(doiTuongSanPhamKM)
+
     const now = new Date();
 
     let giaSauKhuyenMai = 0;
-    let khuyenMaiConHieuLuc = false;
-    if (khuyenMaiData) {
-        const startDate = new Date(khuyenMaiData.khuyenMai.ngayBatDau);
-        const endDate = new Date(khuyenMaiData.khuyenMai.ngayKetThuc);
+    let khuyenMaiConHieuLuc = true;
+    if (doiTuongSanPhamKM) {
+        const startDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+        const endDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
 
 
-        giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMaiData.khuyenMai.giaTriKhuyenMai / 100));
+        giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
 
 
-        khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
+        khuyenMaiConHieuLuc = now > endDate;
     }
 
 
@@ -218,6 +230,9 @@ console.log(dataToSent)
             (sanPhamKhuyenMai) => sanPhamKhuyenMai.sanPham.idSanPham === sanPham.idSanPham
         );
     };
+    const findSanPhamKhuyenMaiShop = (sanPham) => sanPhamKhuyenMaiForm.filter(
+        (item) => item.sanPham.idSanPham === sanPham.idSanPham
+    );
 
     return (
         <main >
@@ -285,28 +300,26 @@ console.log(dataToSent)
                         <h3>{data.tenSanPham}</h3>
 
 
-                        {khuyenMaiConHieuLuc ? (
+                        {khuyenMaiConHieuLuc === false ? (
                             <h1 className="text-muted" style={{ textDecoration: 'line-through' }}>
-                                {`${giaGoc.toLocaleString()} VNĐ`}
+                             <td>{`${giaGoc.toLocaleString('vi-VN')} VNĐ`}</td>
                             </h1>
                         ) : (
                             <h1 className="text-danger" >
-                                {`${giaGoc.toLocaleString()} VNĐ`}
+                             <td>{`${giaGoc.toLocaleString('vi-VN')} VNĐ`}</td>
                             </h1>
                         )}
 
-
-
-                        {khuyenMaiConHieuLuc && (
+                        {khuyenMaiConHieuLuc === false && (
                             <h1 className='text-danger'>
-                                {`${giaSauKhuyenMai.toLocaleString()} VNĐ`}
+                                {`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}
                             </h1>
                         )}
 
                         <p>Số lượng còn: <strong>{tongSoLuong}</strong>  | <strong>14,2k</strong> Đã Bán</p>
                         <hr />
 
-                        <p>Vận Chuyển: Miễn phí vận chuyển</p>
+                     
 
                         {skusList.length > 0 ? (
                             <>
@@ -377,23 +390,29 @@ console.log(dataToSent)
                     <h3 className='my-3'>Các Sản Phẩm Khác Của Shop</h3>
                     {sanPhamShop.map((sanPham) => {
 
-                        const khuyenMaiData = findKhuyenMai(sanPham);
+                        const sanPhamKhuyenMaiDT = findSanPhamKhuyenMaiShop(sanPham)
+
+                        const doiTuongSanPhamKM = sanPhamKhuyenMaiDT.find(
+                            (promo) => promo.trangThai === true
+                        );
+
+                        console.log(doiTuongSanPhamKM)
+         
                         const now = new Date();
                         const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
                         let giaSauKhuyenMai = 0;
-                        let khuyenMaiConHieuLuc = false;
+                        let khuyenMaiConHieuLuc = true;
 
 
-                        if (khuyenMaiData) {
-                            const startDate = new Date(khuyenMaiData.khuyenMai.ngayBatDau);
-                            const endDate = new Date(khuyenMaiData.khuyenMai.ngayKetThuc);
+                        if (doiTuongSanPhamKM) {
+                            const startDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+                            const endDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
 
 
-                            giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMaiData.khuyenMai.giaTriKhuyenMai / 100));
+                            giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
 
-
-                            khuyenMaiConHieuLuc = now >= startDate && now <= endDate;
+                            khuyenMaiConHieuLuc = now > endDate;
                         }
                         const firstSku = sanPham.skus?.[0];
                         const firstImage = firstSku?.hinhanh;
@@ -401,8 +420,8 @@ console.log(dataToSent)
                             sanPham.trangThai === false ? null : (
                                 <div key={sanPham.idSanPham} className="col-md-2 mb-3">
                                     <a href={`/chitietsanpham/${sanPham.idSanPham}`} className='text-white'>
-                                        <div className="card border rounded-3 shadow-sm">
-                                            <div className="card-img">
+                                        <div className="card border rounded-3 shadow-sm h-100">
+                                            <div className="card-header">
                                                 {firstImage ? (
                                                     <img
                                                         src={firstImage.tenAnh}
@@ -416,16 +435,16 @@ console.log(dataToSent)
                                             <div className="card-body">
                                                 <p className='card-text'>{sanPham.tenSanPham}</p>
                                                 <p className="card-text text-danger fw-bold">
-                                                    {khuyenMaiConHieuLuc ? (
+                                                    {khuyenMaiConHieuLuc === false ? (
                                                         <>
                                                             <span className="text-muted" style={{ textDecoration: 'line-through' }}>
-                                                                {giaGoc} VNĐ
+                                                            {`${giaGoc.toLocaleString('vi-VN')} VNĐ`}
                                                             </span>
                                                             <br />
-                                                            {giaSauKhuyenMai.toFixed(2)} VNĐ
+                                                            {`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}
                                                         </>
                                                     ) : (
-                                                        `${giaGoc.toLocaleString()} VNĐ`
+                                                         `${giaGoc.toLocaleString('vi-VN')} VNĐ`
                                                     )}
                                                 </p>
                                             </div>
