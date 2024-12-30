@@ -31,9 +31,9 @@ const DanhSachSanPhamKM = () => {
 
     // Nếu người dùng xác nhận, thực hiện xóa
     if (result.isConfirmed) {
-      const apiSanPhamKhuyenMai = "http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai";
+      const apiSanPhamKhuyenMai = "http://localhost:8080/api/sanphamkhuyenmai";
       try {
-        await axios.put(`${apiSanPhamKhuyenMai}/${id}`);
+        await axios.delete(`${apiSanPhamKhuyenMai}/${id}`);
         Swal.fire({
           icon: "success",
           title: "Sản phẩm khuyến mãi đã được xóa",

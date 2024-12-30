@@ -30,7 +30,7 @@ const Profile = () => {
     };
 
     fetchProfile();
-  }, []); 
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -64,53 +64,53 @@ const Profile = () => {
           <div className="info-row">
             <label>Căn cước công dân:</label>
             <span>{profile.cmnd}</span>
-            
+
           </div>
         </div>
 
         {/* Bảng hiển thị thông tin địa chỉ */}
         <div className="address-container">
-  {/* <h5 className='mt-3'>Thông Tin Địa Chỉ</h5> */}
-  <div className="">
-            <label className=" mt-2 ">địa chỉ:</label>            
-            </div>
-  <table className="address-table-horizontal">
- 
-    <thead>
-      <tr>
-        <th>Địa chỉ chi tiết</th>
-        <th>Tỉnh/Thành phố</th>
-        <th>Quận/Huyện</th>
-        <th>Phường/Xã</th>
-      </tr>
-    </thead>
-    <tbody>
-    {profile.diachi 
-     .filter(address => address.shop !== null)
-    .map((address, index) => {
-        
-          return (
-            <tr key={index}>
-              <td>{index + 1}</td>
-              <td>{address.diachiDetail}</td>
-              <td>{address.nameProvince} (ID: {address.provinceId})</td>
-              <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
-              <td>{address.nameWard} (ID: {address.idWard})</td>
-            </tr>
-          );
-        })}
-    </tbody>
-  </table>
-  
-  <button
-    className="btn btn-primary"
-    data-bs-toggle="modal"
-    data-bs-target="#addressModal"
-  >
-    Thêm Địa Chỉ
-  </button>
-  <AddressForm />
-</div>
+          {/* <h5 className='mt-3'>Thông Tin Địa Chỉ</h5> */}
+          <div className="">
+            <label className=" mt-2 ">địa chỉ:</label>
+          </div>
+          {/* <table className="address-table-horizontal">
+
+            <thead>
+              <tr>
+                <th>Địa chỉ chi tiết</th>
+                <th>Tỉnh/Thành phố</th>
+                <th>Quận/Huyện</th>
+                <th>Phường/Xã</th>
+              </tr>
+            </thead>
+            <tbody>
+              {profile.diachi
+                .filter(address => address.shop !== null)
+                .map((address, index) => {
+
+                  return (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{address.diachiDetail}</td>
+                      <td>{address.nameProvince} (ID: {address.provinceId})</td>
+                      <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
+                      <td>{address.nameWard} (ID: {address.idWard})</td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table> */}
+
+          <button
+            className="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#addressModal"
+          >
+            Thêm Địa Chỉ
+          </button>
+          <AddressForm />
+        </div>
 
 
 

@@ -17,7 +17,7 @@ const QuanLySanPhamKhuyenMai = () => {
   const [sanPhamKhuyenMaiData, setSanPhamKhuyenMaiData] = useState([]);
   const [shopData, setShopData] = useState([]);
   const token = Cookies.get('token');
-  console.log(formData)
+  console.log(formData.sanPham)
   async function layShop() {
     try {
       const response = await axios.get('http://localhost:8080/api/shop/nguoidung', {

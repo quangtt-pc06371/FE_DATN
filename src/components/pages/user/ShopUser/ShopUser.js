@@ -297,7 +297,7 @@ const ShopUser = () => {
                   )}
                 </div>
               </div>
-              <div className="card shadow-sm w-100 mb-5">
+              {/* <div className="card shadow-sm w-100 mb-5">
                 <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
                   <h2>Địa chỉ</h2>
                   <button
@@ -338,7 +338,7 @@ const ShopUser = () => {
                     </tbody>
                   </table>
                 </div>
-              </div>
+              </div> */}
 
 
               
