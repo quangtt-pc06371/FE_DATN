@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const [quantity, setQuantity] = useState(product.soLuongMua || 1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [skuList, setSkuList] = useState(product.sanPhamEntity.skuEntities);
+  const [skuList, setSkuList] = useState(product.sanPhamEntity.skus);
   const [selectedSku, setSelectedSku] = useState(product.skuEntity.idSku);
   const [modalQuantity, setModalQuantity] = useState(quantity);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,8 +41,6 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
       newQuantity: modalQuantity,
       newSkuId: selectedSku,
     };
-
-    console.log(payload);
 
     try {
       const token = Cookies.get("token");
