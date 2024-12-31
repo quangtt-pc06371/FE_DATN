@@ -9,7 +9,7 @@ function Checkout() {
   const [paymentStatus, setPaymentStatus] = useState(null); // Trạng thái thanh toán
   const navigate = useNavigate();
   const orderData = JSON.parse(localStorage.getItem("order"));
-
+  console.log(orderData)
   const handlePaymentChange = (event) => {
     setSelectedPaymentMethod(event.target.value);
   };
@@ -37,9 +37,9 @@ function Checkout() {
             soLuong: item.soLuongMua,
             phiVanChuyen: phiVanChuyen,
             tongTien:
-              item.sanPhamEntity.skuEntities[0].giaSanPham * item.soLuongMua,
+              item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
             skuDTO: {
-              idSku: item.sanPhamEntity.skuEntities[0].idSku,
+              idSku: item.sanPhamEntity.skus[0].idSku,
             },
           };
         }),

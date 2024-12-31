@@ -162,7 +162,7 @@ const QuanLySanPhamKhuyenMai = () => {
     }
   
     Swal.fire('Thành công', 'Tất cả sản phẩm đã được xử lý!', 'success');
-    handleResetData();
+    // handleResetData();
   }
   
 

@@ -74,10 +74,11 @@ const Profile = () => {
           <div className="">
             <label className=" mt-2 ">địa chỉ:</label>
           </div>
-          {/* <table className="address-table-horizontal">
+          <table className="address-table-horizontal">
 
             <thead>
               <tr>
+                <th>Stt</th>
                 <th>Địa chỉ chi tiết</th>
                 <th>Tỉnh/Thành phố</th>
                 <th>Quận/Huyện</th>
@@ -86,7 +87,7 @@ const Profile = () => {
             </thead>
             <tbody>
               {profile.diachi
-                .filter(address => address.shop !== null)
+                // .filter(address => address.shop === null)
                 .map((address, index) => {
 
                   return (
@@ -100,7 +101,7 @@ const Profile = () => {
                   );
                 })}
             </tbody>
-          </table> */}
+          </table>
 
           <button
             className="btn btn-primary"

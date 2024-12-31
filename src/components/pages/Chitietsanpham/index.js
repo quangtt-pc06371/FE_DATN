@@ -27,9 +27,9 @@ export default function ChiTietSanPham() {
     const token = Cookies.get('token');
     console.log(selectedImage)
     async function layShop() {
-      
+
         try {
-            
+
             const response = await axios.get('http://localhost:8080/api/shop/nguoidung', {
                 headers: {
                     'Authorization': token,
@@ -39,7 +39,7 @@ export default function ChiTietSanPham() {
 
             setShopData(response.data);
         } catch (error) {
-           
+
         }
 
 
@@ -103,7 +103,7 @@ export default function ChiTietSanPham() {
         ) {
             setSelectedImage(response.data.skus[0].hinhAnh.tenAnh); // Chọn ảnh đầu tiên của SKU đầu tiên
         }
-        
+
 
     }
     console.log(skusList)
@@ -120,7 +120,7 @@ export default function ChiTietSanPham() {
     async function handleAddGioHang() {
         const sku = getSku();
         const token = Cookies.get('token');
-
+        
 
         if (!sku) {
             Swal.fire('Vui lòng chọn đầy đủ các tùy chọn thuộc tính trước khi thêm vào giỏ hàng.');
@@ -133,29 +133,30 @@ export default function ChiTietSanPham() {
             Swal.fire('Bạn cần đăng nhập trước khi thêm sản phẩm vào giỏ hàng.');
             return;
         }
-        
-     
 
-        const dataToSent = {
-            soLuongMua: soLuong,
-            giaMua: soLuong * sku.giaSanPham,
-            trangThai: true,
-            skuEntity: { idSku: sku.idSku }
-        };
+        console.log("Token được gửi:", token);
 
-
+        const dataToSent = new URLSearchParams();
+        dataToSent.append('idSku', sku.idSku);
+        dataToSent.append('quantity', soLuong);
 
         try {
-            const addData = await axios.post('http://localhost:8080/api/chitietgiohang', dataToSent, {
-                headers: {
-                    'Authorization': token
+            const addData = await axios.post(
+                'http://localhost:8080/api/cart/addDetail',
+                dataToSent,
+                {
+                    headers: {
+                        Authorization: `${token}`,
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
                 }
-            });
-            Swal.fire('Thêm vào giỏ hàng thành công !');
+            );
+            Swal.fire('Thêm vào giỏ hàng thành công!');
         } catch (error) {
-            Swal.fire('Có lỗi xảy ra khi thêm vào giỏ hàng !');
+            Swal.fire('Có lỗi xảy ra khi thêm vào giỏ hàng!');
             console.error(error);
         }
+
     }
 
 
@@ -165,10 +166,10 @@ export default function ChiTietSanPham() {
             getDataDisplayId();
 
         }
-        if(token){
+        if (token) {
             layShop();
         }
-     
+
         getSanPhamKhuyenMai();
     }, [id]);
     useEffect(() => {
@@ -303,11 +304,11 @@ export default function ChiTietSanPham() {
 
                         {khuyenMaiConHieuLuc === false ? (
                             <h1 className="text-muted" style={{ textDecoration: 'line-through' }}>
-                             <td>{`${giaGoc.toLocaleString('vi-VN')} VNĐ`}</td>
+                                <td>{`${giaGoc.toLocaleString('vi-VN')} VNĐ`}</td>
                             </h1>
                         ) : (
                             <h1 className="text-danger" >
-                             <td>{`${giaGoc.toLocaleString('vi-VN')} VNĐ`}</td>
+                                <td>{`${giaGoc.toLocaleString('vi-VN')} VNĐ`}</td>
                             </h1>
                         )}
 
@@ -320,7 +321,7 @@ export default function ChiTietSanPham() {
                         <p>Số lượng còn: <strong>{tongSoLuong}</strong>  | <strong>14,2k</strong> Đã Bán</p>
                         <hr />
 
-                     
+
 
                         {skusList.length > 0 ? (
                             <>
@@ -398,7 +399,7 @@ export default function ChiTietSanPham() {
                         );
 
                         console.log(doiTuongSanPhamKM)
-         
+
                         const now = new Date();
                         const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
@@ -440,13 +441,13 @@ export default function ChiTietSanPham() {
                                                     {khuyenMaiConHieuLuc === false ? (
                                                         <>
                                                             <span className="text-muted" style={{ textDecoration: 'line-through' }}>
-                                                            {`${giaGoc.toLocaleString('vi-VN')} VNĐ`}
+                                                                {`${giaGoc.toLocaleString('vi-VN')} VNĐ`}
                                                             </span>
                                                             <br />
                                                             {`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}
                                                         </>
                                                     ) : (
-                                                         `${giaGoc.toLocaleString('vi-VN')} VNĐ`
+                                                        `${giaGoc.toLocaleString('vi-VN')} VNĐ`
                                                     )}
                                                 </p>
                                             </div>

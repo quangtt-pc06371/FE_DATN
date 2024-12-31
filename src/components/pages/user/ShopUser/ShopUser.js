@@ -25,7 +25,7 @@ const ShopUser = () => {
   const [dataSanPhamKhuyenMai, setDataSanPhamKhuyenMai] = useState([]);
   console.log(data)
 
-
+  console.log(profile)
 
 
 
@@ -297,7 +297,7 @@ const ShopUser = () => {
                   )}
                 </div>
               </div>
-              {/* <div className="card shadow-sm w-100 mb-5">
+              <div className="card shadow-sm w-100 mb-5">
                 <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
                   <h2>Địa chỉ</h2>
                   <button
@@ -321,27 +321,27 @@ const ShopUser = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {profile.diachi.map((address, index) => {
-                        if (address.id === null || address.id !== null) {
-                          return null; // Bỏ qua địa chỉ có shop không null
-                        }
-                        return (
-                          <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>{address.diachiDetail}</td>
-                            <td>{address.nameProvince} (ID: {address.provinceId})</td>
-                            <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
-                            <td>{address.nameWard} (ID: {address.idWard})</td>
-                          </tr>
-                        );
-                      })}
+                      {profile.diachi
+                        .filter(address => address.shop !== null)
+                        .map((address, index) => {
+
+                          return (
+                            <tr key={index}>
+                              <td>{index + 1}</td>
+                              <td>{address.diachiDetail}</td>
+                              <td>{address.nameProvince} (ID: {address.provinceId})</td>
+                              <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
+                              <td>{address.nameWard} (ID: {address.idWard})</td>
+                            </tr>
+                          );
+                        })}
                     </tbody>
                   </table>
                 </div>
-              </div> */}
+              </div>
 
 
-              
+
 
               <Link to="/user/shop-user/danhsachsanpham" className="btn btn-danger">
                 Danh sách sản phẩm

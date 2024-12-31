@@ -27,7 +27,7 @@ function Order() {
             headers: { Authorization: `${token}` },
           }
         );
-
+        console.log(response)
         if (response.data && response.data.diaChi) {
           const addresses = response.data.diaChi;
 
@@ -66,6 +66,7 @@ function Order() {
 
     return acc;
   }, {});
+  console.log(groupedByShop)
 
   // Lấy dữ liệu đơn hàng hiện tại từ localStorage
   const existingOrder = JSON.parse(localStorage.getItem("order")) || [];
@@ -108,7 +109,7 @@ function Order() {
       const totalShopAmount = groupedByShop[shopName].reduce(
         (total, item) =>
           total +
-          item.sanPhamEntity.skuEntities[0].giaSanPham * item.soLuongMua,
+          item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
         0
       );
       const shippingFee =
@@ -158,13 +159,13 @@ function Order() {
                     <p>{item.sanPhamEntity.moTa}</p>
                   </div>
                   <div className="col-md-2">
-                    {item.sanPhamEntity.skuEntities[0].giaSanPham.toLocaleString()}{" "}
+                    {item.sanPhamEntity.skus[0].giaSanPham.toLocaleString()}{" "}
                     VND
                   </div>
                   <div className="col-md-2">x{item.soLuongMua}</div>
                   <div className="col-md-2">
                     {(
-                      item.sanPhamEntity.skuEntities[0].giaSanPham *
+                      item.sanPhamEntity.skus[0].giaSanPham *
                       item.soLuongMua
                     ).toLocaleString()}{" "}
                     VND
@@ -184,7 +185,7 @@ function Order() {
                   .reduce(
                     (total, item) =>
                       total +
-                      item.sanPhamEntity.skuEntities[0].giaSanPham *
+                      item.sanPhamEntity.skus[0].giaSanPham *
                         item.soLuongMua,
                     0
                   )

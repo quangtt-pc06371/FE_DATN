@@ -10,7 +10,7 @@ const DanhSachSanPhamKM = () => {
   const [shop, setShop] = useState(null);
   const [dataSanPhamKhuyenMai, setDataSanPhamKhuyenMai] = useState([]);
  
-
+  
   async function hienThiSanPhamKhuyenMai() {
     const apiShop = 'http://localhost:8080/api/sanphamkhuyenmai/shop';
     const response = await axios.get(apiShop + '/' + shop.id);

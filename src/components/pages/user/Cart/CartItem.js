@@ -11,7 +11,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const [modalQuantity, setModalQuantity] = useState(quantity);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  console.log(product)
   // Xử lý khi chọn SKU
   const handleSkuSelect = (sku) => {
     setSelectedSku(sku.idSku); // Cập nhật SKU đã chọn
@@ -125,12 +125,12 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
                 style={{ minWidth: "120px", height: "40px" }}
               >
                 {
-                  product.skuEntity.tuyChonThuocTinhSku[0].tuyChonThuocTinh
+                  product.skuEntity.tuyChonThuocTinhSkus[0].tuyChonThuocTinh
                     .giaTri
                 }{" "}
                 -
                 {
-                  product.skuEntity.tuyChonThuocTinhSku[0].tuyChonThuocTinh
+                  product.skuEntity.tuyChonThuocTinhSkus[0].tuyChonThuocTinh
                     .thuocTinh.ten
                 }
               </button>
