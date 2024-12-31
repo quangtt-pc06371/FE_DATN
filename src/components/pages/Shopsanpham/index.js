@@ -237,7 +237,7 @@ export default function ShopSanPham() {
                                 khuyenMaiConHieuLuc = now > endDate;
                             }
                             const firstSku = sanPham.skus?.[0];
-                            const firstImage = firstSku?.hinhanh;
+                            const firstImage = firstSku?.hinhAnh;
                             return (
                                 sanPham.trangThai === false ? null : (
                                     <div key={sanPham.idSanPham} className="col-md-3 mb-3">

@@ -25,6 +25,7 @@ export default function ChiTietSanPham() {
     const [giaTriDaChon, setGiaTriDaChon] = useState({});
     const [shopData, setShopData] = useState([]);
     const token = Cookies.get('token');
+    console.log(selectedImage)
     async function layShop() {
       
         try {
@@ -71,7 +72,7 @@ export default function ChiTietSanPham() {
     async function getDataDisplayId() {
         const apiSanPham = 'http://localhost:8080/api/sanpham';
         const response = await axios.get(`${apiSanPham}/${id}`, data);
-
+        console.log(response)
         setData({
             tenSanPham: response.data.tenSanPham,
             moTa: response.data.moTa,
@@ -88,24 +89,24 @@ export default function ChiTietSanPham() {
                     tieuDe: tuyChon.tuyChonThuocTinh.thuocTinh.ten,
                     noiDungTieuDe: tuyChon.tuyChonThuocTinh.giaTri,
                 })),
-                hinhanh: sku.hinhanh // Lấy một hình ảnh duy nhất
+                hinhanh: sku.hinhAnh // Lấy một hình ảnh duy nhất
                     ? {
-                        idHinhAnh: sku.hinhanh.idHinhAnh,
-                        tenAnh: sku.hinhanh.tenAnh,
+                        idHinhAnh: sku.hinhAnh.idHinhAnh,
+                        tenAnh: sku.hinhAnh.tenAnh,
                     }
                     : null,
             }))
         );
         if (
             response.data.skus.length > 0 && // Có ít nhất 1 SKU
-            response.data.skus[0].hinhanh // SKU đầu tiên có hình ảnh
+            response.data.skus[0].hinhAnh // SKU đầu tiên có hình ảnh
         ) {
-            setSelectedImage(response.data.skus[0].hinhanh.tenAnh); // Chọn ảnh đầu tiên của SKU đầu tiên
+            setSelectedImage(response.data.skus[0].hinhAnh.tenAnh); // Chọn ảnh đầu tiên của SKU đầu tiên
         }
-
+        
 
     }
-
+    console.log(skusList)
     const getSku = () => {
         return skusList.find(sku => {
             return sku.atributes.every(attr =>
@@ -233,7 +234,7 @@ export default function ChiTietSanPham() {
     const findSanPhamKhuyenMaiShop = (sanPham) => sanPhamKhuyenMaiForm.filter(
         (item) => item.sanPham.idSanPham === sanPham.idSanPham
     );
-
+    console.log(skusList)
     return (
         <main >
             <div className="container mt-5 " >
@@ -415,7 +416,8 @@ export default function ChiTietSanPham() {
                             khuyenMaiConHieuLuc = now > endDate;
                         }
                         const firstSku = sanPham.skus?.[0];
-                        const firstImage = firstSku?.hinhanh;
+                        const firstImage = firstSku?.hinhAnh;
+                        console.log(firstSku)
                         return (
                             sanPham.trangThai === false ? null : (
                                 <div key={sanPham.idSanPham} className="col-md-2 mb-3">

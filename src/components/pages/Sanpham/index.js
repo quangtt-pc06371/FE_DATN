@@ -255,7 +255,8 @@ const SanPham = () => {
 
 
                                 const firstSku = sanPham.skus?.[0];
-                                const firstImage = firstSku?.hinhanh;
+                                console.log(firstSku)
+                                const firstImage = firstSku?.hinhAnh;
                                 return (
                                     sanPham.trangThai === false || sanPham.shop.isActive == false ? null : (
                                         <div key={sanPham.idSanPham} className="col-md-3 mb-3">
