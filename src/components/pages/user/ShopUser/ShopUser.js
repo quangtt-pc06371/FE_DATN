@@ -23,7 +23,7 @@ const ShopUser = () => {
   const [data, setData] = useState([]);
   const [dataKhuyenMai, setDataKhuyenMai] = useState([]);
   const [dataSanPhamKhuyenMai, setDataSanPhamKhuyenMai] = useState([]);
-  console.log(isApproved)
+  console.log(profile)
 
 
   
@@ -72,20 +72,25 @@ const ShopUser = () => {
   }
 
 
-  const fetchProfile = async () => {
-    try {
-      const res = await getProfile();
-      setProfile(res); // Lưu dữ liệu profile vào state
-    } catch (err) {
-      if (err.response?.data?.error) {
-        setError(err.response.data.error);
-      } else {
-        setError('Không thể lấy dữ liệu profile.');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await getProfile();
+        setProfile(res); // Lưu dữ liệu profile vào state
+      } catch (err) {
+        if (err.response?.data?.error) {
+          setError(err.response.data.error);
+        } else {
+          setError('Không thể lấy dữ liệu profile.');
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
     }
-  }
+    fetchProfile();
+  },[getProfile])
+
   useEffect(() => {
     if (shop && shop.id) {
       hienThiSanPham();
@@ -97,7 +102,7 @@ const ShopUser = () => {
 
   // Tải thông tin cửa hàng
   useEffect(() => {
-    fetchProfile();
+
     const token = Cookies.get("token");
     console.log(token)
     if (!token) {
