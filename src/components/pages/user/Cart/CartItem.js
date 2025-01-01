@@ -11,7 +11,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const [modalQuantity, setModalQuantity] = useState(quantity);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  console.log(product)
+
   // Xử lý khi chọn SKU
   const handleSkuSelect = (sku) => {
     setSelectedSku(sku.idSku); // Cập nhật SKU đã chọn
@@ -104,8 +104,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
             {/* Hình ảnh sản phẩm */}
             <div className="col-md-1 d-flex justify-content-center align-items-center">
               <img
-                // src={product.skuEntity.hinhAnh[0]?.tenAnh}
-                src="https://dosi-in.com/images/detailed/42/CDL3_1.jpg"
+                src={product.skuEntity.hinhAnh?.tenAnh}
                 alt=""
                 className="img-fluid"
                 style={{ width: "80px", height: "80px" }} // Kích thước hình ảnh 80x80

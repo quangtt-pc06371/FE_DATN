@@ -8,8 +8,10 @@ function Checkout() {
   const [isLoading, setIsLoading] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null); // Trạng thái thanh toán
   const navigate = useNavigate();
+  const paymentSuccess = "tienMatSuccess";
+  const paymentFail = "failure";
   const orderData = JSON.parse(localStorage.getItem("order"));
-  console.log(orderData)
+
   const handlePaymentChange = (event) => {
     setSelectedPaymentMethod(event.target.value);
   };
@@ -29,15 +31,14 @@ function Checkout() {
             : "Chưa thanh toán",
         trangThaiDonHang: false,
         hinhThucThanhToan: selectedPaymentMethod === "chuyenKhoan",
-        idVoucher: 2,
+        idVoucher: null,
         chiTietDonHangs: orderData.cartData.map((item) => {
           const shopName = item.sanPhamEntity.shop.shopName;
           const phiVanChuyen = orderData.shippingFees[shopName] || 0;
           return {
             soLuong: item.soLuongMua,
             phiVanChuyen: phiVanChuyen,
-            tongTien:
-              item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
+            tongTien: item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
             skuDTO: {
               idSku: item.sanPhamEntity.skus[0].idSku,
             },
@@ -54,21 +55,13 @@ function Checkout() {
       );
 
       if (response.status === 200) {
-        // Chuyển hướng ngay lập tức sau khi đơn hàng được tạo thành công
-        setPaymentStatus("success");
-        // Trước khi điều hướng, đảm bảo paymentStatus không phải là null
-        if (paymentStatus) {
-          navigate(`/transaction-result?status=${paymentStatus}`);
-        } else {
-          console.log("paymentStatus không hợp lệ");
-          // Có thể điều hướng đến trang khác nếu cần, ví dụ trang lỗi.
-        }
+        navigate(`/transaction-result?status=${paymentSuccess}`);
       } else {
         setPaymentStatus("failure");
       }
     } catch (error) {
       console.error("Lỗi khi gửi đơn hàng:", error);
-      setPaymentStatus("failure");
+      navigate(`/transaction-result?status=${paymentFail}`);
     }
   };
 

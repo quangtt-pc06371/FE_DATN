@@ -66,7 +66,6 @@ function Order() {
 
     return acc;
   }, {});
-  console.log(groupedByShop)
 
   // Lấy dữ liệu đơn hàng hiện tại từ localStorage
   const existingOrder = JSON.parse(localStorage.getItem("order")) || [];
@@ -148,7 +147,7 @@ function Order() {
                 >
                   <div className="col-md-2">
                     <img
-                      src="https://dosi-in.com/images/detailed/42/CDL3_1.jpg"
+                      src={item.skuEntity.hinhAnh?.tenAnh}
                       alt={item.sanPhamEntity.tenSanPham}
                       className="img-fluid"
                       style={{ width: "80px", height: "80px" }}

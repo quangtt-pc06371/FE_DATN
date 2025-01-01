@@ -46,9 +46,9 @@ const TransactionResult = () => {
             soLuong: item.soLuongMua,
             phiVanChuyen: phiVanChuyen,
             tongTien:
-              item.sanPhamEntity.skuEntities[0].giaSanPham * item.soLuongMua,
+              item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
             skuDTO: {
-              idSku: item.sanPhamEntity.skuEntities[0].idSku,
+              idSku: item.sanPhamEntity.skus[0].idSku,
             },
           };
         }),
@@ -78,7 +78,7 @@ const TransactionResult = () => {
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
       <div className="card shadow-sm p-4 w-75 w-md-50 w-lg-25">
         <div className="text-center mb-4">
-          {paymentStatus === "success" ? (
+          {paymentStatus === "success"  || paymentStatus === "tienMatSuccess" ? (
             <i
               className="bi bi-check-circle text-success"
               style={{ fontSize: "50px" }}
@@ -91,7 +91,7 @@ const TransactionResult = () => {
           )}
         </div>
         <div className="text-center">
-          {paymentStatus === "success" ? (
+          {paymentStatus === "success" || paymentStatus === "tienMatSuccess" ? (
             <>
               <h2 className="mb-3">Giao dịch thành công!</h2>
               <p>Đơn hàng của bạn đã được xử lý thành công.</p>
