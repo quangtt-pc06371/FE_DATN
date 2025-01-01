@@ -127,7 +127,7 @@ console.log(token)
   const indexOfLastShop = currentPage * shopsPerPage;
   const indexOfFirstShop = indexOfLastShop - shopsPerPage;
   const currentShops = filteredShops.slice(indexOfFirstShop, indexOfLastShop);
-
+  console.log(currentShops)
   // Tính số trang tổng cộng
   const totalPages = Math.ceil(filteredShops.length / shopsPerPage);
 
@@ -161,9 +161,11 @@ console.log(token)
                 <th>Thao Tác</th>
               </tr>
             </thead>
+         
+
             <tbody>
               {currentShops.length > 0 ? (
-                currentShops.map((shop, index) => (
+                currentShops.filter(shop => shop.isActive !== false).map((shop, index) => (
                   <tr key={shop.id}>
                     <td>{index + 1 + indexOfFirstShop}</td>
                     <td>{shop.shopName}</td>

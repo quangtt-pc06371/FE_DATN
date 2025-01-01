@@ -23,10 +23,10 @@ const ShopUser = () => {
   const [data, setData] = useState([]);
   const [dataKhuyenMai, setDataKhuyenMai] = useState([]);
   const [dataSanPhamKhuyenMai, setDataSanPhamKhuyenMai] = useState([]);
-  console.log(data)
+  console.log(isApproved)
 
-  console.log(profile)
 
+  
 
 
   async function hienThiSanPhamKhuyenMai() {
@@ -222,7 +222,7 @@ const ShopUser = () => {
         <div className="text-center">Đang tải thông tin cửa hàng...</div>
       ) : (
         <>
-          {shop ? (
+          {isApproved ? (
             <>
               {shop.isActive ? (
                 <div className="alert alert-success text-center">
