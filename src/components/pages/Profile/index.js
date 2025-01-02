@@ -43,7 +43,7 @@ const Profile = () => {
   if (!profile) {
     return <div>Không có dữ liệu profile.</div>;
   }
-
+console.log(profile)
   return (
     <div className="profile-container">
       <div className="profile-content">
@@ -87,7 +87,7 @@ const Profile = () => {
             </thead>
             <tbody>
               {profile.diachi
-                // .filter(address => address.shop === null)
+                .filter(address => address.shop === null)
                 .map((address, index) => {
 
                   return (
@@ -103,14 +103,23 @@ const Profile = () => {
             </tbody>
           </table>
 
-          <button
-            className="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#addressModal"
-          >
-            Thêm Địa Chỉ
-          </button>
-          <AddressForm />
+
+          {profile.sdt !== 'null'   ? (
+            <>
+              <button
+                className="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#addressModal"
+              >
+                Thêm Địa Chỉ
+              </button>
+              <AddressForm />
+            </>
+          ) : (
+            <div style={{ color: 'red', marginTop: '10px' }}>
+              Vui lòng cập nhật số điện thoại trước khi thêm địa chỉ.
+            </div>
+          )}
         </div>
 
 

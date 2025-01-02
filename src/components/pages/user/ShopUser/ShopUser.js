@@ -9,7 +9,7 @@ import AddressFormshop from "../../../compoments/Addressshop";
 import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 const ShopUser = () => {
-  const [shop, setShop] = useState(null);
+  const [shop, setShop] = useState([]);
   const [isApproved, setIsApproved] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [updatedShop, setUpdatedShop] = useState({});
@@ -17,7 +17,7 @@ const ShopUser = () => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState([]);
   const [error, setError] = useState("");
   console.log(shop)
   const [data, setData] = useState([]);
@@ -26,7 +26,7 @@ const ShopUser = () => {
   console.log(profile)
 
 
-  
+
 
 
   async function hienThiSanPhamKhuyenMai() {
@@ -71,25 +71,25 @@ const ShopUser = () => {
     }
   }
 
+  const fetchProfile = async () => {
+    try {
+      const res = await getProfile();
+      setProfile(res); // Lưu dữ liệu profile vào state
+    } catch (err) {
+      if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else {
+        setError('Không thể lấy dữ liệu profile.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
 
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await getProfile();
-        setProfile(res); // Lưu dữ liệu profile vào state
-      } catch (err) {
-        if (err.response?.data?.error) {
-          setError(err.response.data.error);
-        } else {
-          setError('Không thể lấy dữ liệu profile.');
-        }
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchProfile();
-  },[getProfile])
+  }, [])
 
   useEffect(() => {
     if (shop && shop.id) {
@@ -326,20 +326,18 @@ const ShopUser = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {profile.diachi
-                        .filter(address => address.shop !== null)
-                        .map((address, index) => {
+                      {profile.diachi.map((address, index) =>
+                        address.shop !== null ? (
+                          <tr key={index}>
+                            <td>{index }</td>
+                            <td>{address.diachiDetail}</td>
+                            <td>{address.nameProvince} (ID: {address.provinceId})</td>
+                            <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
+                            <td>{address.nameWard} (ID: {address.idWard})</td>
+                          </tr>
+                        ) : null
+                      )}
 
-                          return (
-                            <tr key={index}>
-                              <td>{index + 1}</td>
-                              <td>{address.diachiDetail}</td>
-                              <td>{address.nameProvince} (ID: {address.provinceId})</td>
-                              <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
-                              <td>{address.nameWard} (ID: {address.idWard})</td>
-                            </tr>
-                          );
-                        })}
                     </tbody>
                   </table>
                 </div>

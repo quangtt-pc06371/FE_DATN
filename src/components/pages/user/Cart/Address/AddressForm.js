@@ -51,18 +51,18 @@ function AddressForm() {
       alert("Vui lòng đăng nhập");
       return;
     }
-
+    console.log(idDiaChi)
     try {
       const response = await axios.put(
-        "http://localhost:8080/api/addresses/updateSelectAddress",
-        {
-          idDiaChi: idDiaChi,
-        },
+      `http://localhost:8080/api/addresses/updateSelectAddress/${idDiaChi}`,
+        // {
+        //   idDiaChi: idDiaChi,
+        // },
         {
           headers: { Authorization: `${token}` },
         }
       );
-
+      console(response.data)
       if (response.data) {
         setAddresses(response.data.diaChi);
       } else {
@@ -83,6 +83,7 @@ function AddressForm() {
           className="btn btn-primary ms-auto"
           data-bs-toggle="modal"
           data-bs-target="#exampleModal"
+        
         >
           Thay Đổi
         </button>
@@ -177,7 +178,7 @@ function AddressForm() {
               </div>
             </div>
 
-            <div className="modal-footer">
+            {/* <div className="modal-footer">
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -192,7 +193,7 @@ function AddressForm() {
               >
                 Lưu thay đổi
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

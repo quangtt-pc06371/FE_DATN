@@ -8,7 +8,7 @@ function SelectedAddress() {
   useEffect(() => {
     const fetchAddresses = async () => {
       const token = Cookies.get("token");
-
+console.log(token)
       if (!token) {
         alert("Vui lòng đăng nhập");
         return;
@@ -32,10 +32,41 @@ function SelectedAddress() {
         alert("Không thể tải địa chỉ.");
       }
     };
-
     fetchAddresses();
   }, []);
 
+  const saveSelectAddress = async (idDiaChi) => {
+    const token = Cookies.get("token");
+    console.log(token)
+    if (!token) {
+      alert("Vui lòng đăng nhập");
+      return;
+    }
+    console.log(idDiaChi)
+    try {
+      const response = await axios.put(
+      `http://localhost:8080/api/addresses/updateSelectAddress/${idDiaChi}`,
+    {},
+        {
+          headers: {
+            Authorization: `${token}`
+          
+          }
+        }
+      );
+      window.location.reload();
+
+      //  console(response.data)
+      //  if (response.data) {
+      //    setAddresses(response.data.diaChi);
+      //  } else {
+      //    alert("Không tìm thấy địa chỉ");
+      //  }
+    } catch (error) {
+      console.error("Lỗi khi lấy địa chỉ: ", error);
+      alert("Không thể tải địa chỉ.");
+    }
+  };
   return (
     <div>
       <div>
@@ -75,6 +106,22 @@ function SelectedAddress() {
                     </div>
                   </div>
                 </label>
+                   <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => saveSelectAddress(address.id)}
+              >
+                Lưu thay đổi
+              </button>
+            </div>
               </div>
             ))
           ) : (

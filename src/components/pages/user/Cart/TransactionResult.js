@@ -36,7 +36,7 @@ const TransactionResult = () => {
       const payload = {
         tongSoTien: orderData.totals.totalAmount,
         trangThaiThanhToan: "Đã thanh toán",
-        trangThaiDonHang: false, // Trạng thái đơn hàng, bạn có thể thay đổi nếu cần
+        trangThaiDonHang: 0, // Trạng thái đơn hàng, bạn có thể thay đổi nếu cần
         hinhThucThanhToan: true,
         idVoucher: 2, // ID voucher, nếu có
         chiTietDonHangs: orderData.cartData.map((item) => {

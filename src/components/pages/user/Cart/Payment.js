@@ -29,7 +29,7 @@ function Checkout() {
           selectedPaymentMethod === "chuyenKhoan"
             ? "Đã thanh toán"
             : "Chưa thanh toán",
-        trangThaiDonHang: false,
+        trangThaiDonHang: 0,
         hinhThucThanhToan: selectedPaymentMethod === "chuyenKhoan",
         idVoucher: null,
         chiTietDonHangs: orderData.cartData.map((item) => {
