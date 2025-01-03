@@ -188,10 +188,13 @@ const Login = () => {
   </Col>
 </Row>
 {/* </div> */}
-<button className=""onClick={() => navigate('/buyer/register')}>đăng kí </button>
             <Button type="submit" variant="primary" className="login-btn w-100" disabled={loading}>
               {loading ? <Spinner animation="border" size="sm" /> : "Đăng Nhập"}
             </Button>
+            <div className="mt-3 d-flex align-items-center">
+    <h6 className="mb-0 me-2 ms-5 ">Bạn chưa có tài khoản :</h6>     
+    <button className="btn btn-link" onClick={() => navigate('/buyer/register')}>Đăng kí</button>
+</div>
           </Form>
         </Card>
       {/* </Container> */}

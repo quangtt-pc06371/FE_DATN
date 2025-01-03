@@ -5,12 +5,12 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import './register.css';
-
+import Swal from 'sweetalert2';
 const Addtaikhoan = () => {
   const [hoTen, setHoTen] = useState('');
   const [email, setEmail] = useState('');
   const [matKhau, setMatKhau] = useState('');
-  const [sdt, setSdt] = useState('null');
+  const [sdt, setSdt] = useState('');
   const [diachi, setDiachi] = useState('');
   const [cmnd, setCmnd] = useState('');
   const [file, setFile] = useState(null);
@@ -32,13 +32,16 @@ const Addtaikhoan = () => {
     if (!hoTen) newErrors.hoTen = "Họ tên là bắt buộc";
     if (!email ) newErrors.email = "Email là bắt buộc";
     if (!matKhau) newErrors.matKhau = "Mật khẩu là bắt buộc";
-    // if (!sdt) newErrors.sdt = "Số điện thoại là bắt buộc";
+    if (!sdt) newErrors.sdt = "Số điện thoại là bắt buộc";
     // if (!diachi) newErrors.diachi = "Địa chỉ là bắt buộc";
     // if (!cmnd) newErrors.cmnd = "CMND là bắt buộc";
     // if (!file) newErrors.file = "Vui lòng chọn ảnh đại diện";
 
     // Nếu có lỗi, cập nhật state và không gửi form
-    
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     const taiKhoan = {
       hoTen,
@@ -66,15 +69,46 @@ const Addtaikhoan = () => {
             // }
           )
           console.log(taiKhoanResponse)
-          alert("Tài khoản được tạo thành công!");
+          // alert("Tài khoản được tạo thành công!");
+          Swal.fire({
+            title: "Đăng ký thành công!",
+            text: "Bạn có muốn trở về trang login không?",
+            icon: "success",
+            showCancelButton: true,
+            confirmButtonText: "Có",
+            cancelButtonText: "Không",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Điều hướng về trang login
+              window.location.href = "/buyer/login"; // Thay đổi đường dẫn nếu cần
+            }else{
+              window.location.reload();
+            }
+          });
+          
           if (taiKhoanResponse.status === 200) {
             alert("Tài khoản được tạo thành công!");
           }
         } catch (error) {
           console.error(error);
+          console.error(error.response.data);
           // setErrors()
-          // newErrors.email = "Email bị trungg";
-          newErrors.email= error.response.data;
+          if( error.response.data =="Email đã tồn tại."){
+            newErrors.email= error.response.data;
+
+          } if( error.response.data =="Số điện thoại đã tồn tại."){
+            newErrors.sdt = error.response.data;
+          }
+          if( error.response.data =="Tên chứa từ không phù hợp."){
+            newErrors.hoTen = error.response.data;
+          }
+          if( error.response.data =="Tên không được chứa ký tự đặc biệt."){
+            newErrors.hoTen = error.response.data;
+          }
+         if( error.response.data =="sdt: Số điện thoại không đúng định dạng"){
+          newErrors.sdt = error.response.data;
+        }
+        
         }
       } else {
         const taiKhoanResponse = await axios.post(
@@ -134,11 +168,11 @@ const Addtaikhoan = () => {
           <input type="password" className="form-control" value={matKhau} onChange={(e) => setMatKhau(e.target.value)} />
           {errors.matKhau && <p className="text-danger">{errors.matKhau}</p>}
         </div>
-        {/* <div className="mb-3">
+        <div className="mb-3">
           <label className="form-label">Số điện thoại</label>
           <input type="text" className="form-control" value={sdt} onChange={(e) => setSdt(e.target.value)}  />
           {errors.sdt && <p className="text-danger">{errors.sdt}</p>}
-        </div> */}
+        </div>
         {/* <div className="mb-3">
           <label className="form-label">Địa chỉ</label>
           <input type="text" className="form-control" value={diachi} onChange={(e) => setDiachi(e.target.value)}  />

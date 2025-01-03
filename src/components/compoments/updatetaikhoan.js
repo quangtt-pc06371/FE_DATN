@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from "react-cookie";
 import Swal from 'sweetalert2';
+import { getProfile, loginApi } from "../../config//Auth";
 const Updataikhoan = () => {
     const [hoTen, sethoTen] = useState('');
     const [email, setemail] = useState('');
@@ -11,9 +12,10 @@ const Updataikhoan = () => {
     const [cmnd, setcccd] = useState('');
     const navigate = useNavigate();
     const [cookies] = useCookies(['user']);
-    const [error, seterror] = useState({ cmnd: '', hoTen: '', sdt: '' });
+    // const [error, seterror] = useState({ cmnd: '', hoTen: '', sdt: '' });
     const [file, setFile] = useState(null);
     const [id, setid] = useState('');
+      const [error, setErrors] = useState({});
     const handleFileChange = (event) => {
         setFile(event.target.files[0]);
     };
@@ -40,32 +42,37 @@ const Updataikhoan = () => {
         fetchData();
     }, [cookies.token]);
 
-    const validateForm = () => {
-        let valid = true;
-        const errorcopy = { cmnd: '', hoTen: '', sdt: '' };
+    // const validateForm = () => {
+    //     let valid = true;
+    //     const errorcopy = { cmnd: '', hoTen: '', sdt: '' };
 
-        // if (!hoTen.trim()) {
-        //     errorcopy.hoTen = 'Không được để trống';
-        //     valid = false;
-        // }
-        // if (!sdt.trim()) {
-        //     errorcopy.sdt = 'Không được để trống';
-        //     valid = false;
-        // }
-        // if (!cmnd.trim()) {
-        //     errorcopy.cmnd = 'Không được để trống';
-        //     valid = false;
-        // }
+    //     // if (!hoTen.trim()) {
+    //     //     errorcopy.hoTen = 'Không được để trống';
+    //     //     valid = false;
+    //     // }
+    //     // if (!sdt.trim()) {
+    //     //     errorcopy.sdt = 'Không được để trống';
+    //     //     valid = false;
+    //     // }
+    //     // if (!cmnd.trim()) {
+    //     //     errorcopy.cmnd = 'Không được để trống';
+    //     //     valid = false;
+    //     // }
 
-        seterror(errorcopy);
-        return valid;
-    };
+    //     seterror(errorcopy);
+    //     return valid;
+    // };
 
     const savetaikhoan = async (e) => {
         e.preventDefault();
         const taikhoan = { hoTen, sdt, cmnd };
-
-        if (validateForm()) {
+        const newErrors = {};
+        if (!sdt) newErrors.sdt = "Số điện thoại là bắt buộc";
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+          }
+        // if (validateForm()) {
             if(file==null){
                 try {
                     console.log(id)
@@ -81,11 +88,44 @@ const Updataikhoan = () => {
                         timer: 2000,
                         showConfirmButton: false,
                       });
-                      setTimeout(() => {
-                        window.location.reload();
-                      }, 2000); 
+                   
+                    const fetchData = async () => {
+                        const token = cookies?.token;
+                        if (!token) return;
+            
+                        try {
+                            const response = await axios.get(`http://localhost:8080/api/taikhoan/userid`, {
+                                headers: { Authorization: ` ${token}` },
+                            });
+                            setemail(response.data.email);
+                            sethoTen(response.data.hoTen);
+                            setsdt(response.data.sdt);
+                            setcccd(response.data.cmnd);
+                            setid(response.data.id)
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    };
+                  
+                    fetchData();
+                    setErrors("");
+
                 } catch (error) {
                     console.error(error);
+                    if( error.response.data =="Số điện thoại đã tồn tại"){
+                        newErrors.sdt = error.response.data;
+                      }
+                      if( error.response.data =="Tên chứa từ không phù hợp."){
+                        newErrors.hoTen = error.response.data;
+                      }
+                                         
+                      if( error.response.data =="Tên không được chứa ký tự đặc biệt."){
+                        newErrors.hoTen = error.response.data;
+                      }
+                     if( error.response.data =="sdt: Số điện thoại không đúng định dạng"){
+                      newErrors.sdt = error.response.data;
+                    }
+                    
                 }
             }else{
                 try {
@@ -118,14 +158,54 @@ const Updataikhoan = () => {
                       });
                       setTimeout(() => {
                         window.location.reload();
-                      }, 2000); 
+                      },1000); 
+                      const fetchData = async () => {
+                        const token = cookies?.token;
+                        if (!token) return;
+            
+                        try {
+                            const response = await axios.get(`http://localhost:8080/api/taikhoan/userid`, {
+                                headers: { Authorization: ` ${token}` },
+                            });
+                            setemail(response.data.email);
+                            sethoTen(response.data.hoTen);
+                            setsdt(response.data.sdt);
+                            setcccd(response.data.cmnd);
+                            setid(response.data.id)
+                        } catch (error) {
+                            console.error(error);
+                        }
+                    };
+                    //   const res = await getProfile({
+
+                    // })
+                    fetchData();
+                    setErrors("");
                 } catch (error) {
                     console.error(error);
+                    if( error.response.data =="Số điện thoại đã tồn tại"){
+                        newErrors.sdt = error.response.data;
+                      }
+                      if( error.response.data =="Tên chứa từ không phù hợp."){
+                        newErrors.hoTen = error.response.data;
+                      }
+                                         
+                      if( error.response.data =="Tên không được chứa ký tự đặc biệt."){
+                        newErrors.hoTen = error.response.data;
+                      }
+                     if( error.response.data =="sdt: Số điện thoại không đúng định dạng"){
+                      newErrors.sdt = error.response.data;
+                    }
+                    
                 }
                
             }
            
-        }
+        // }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+          }
     };
 
     const imagePreviewUrl = file ? URL.createObjectURL(file) : 'https://static.vecteezy.com/system/resources/previews/000/420/681/original/picture-icon-vector-illustration.jpg';
