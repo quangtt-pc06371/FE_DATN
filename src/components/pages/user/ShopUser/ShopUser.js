@@ -348,16 +348,22 @@ const ShopUser = () => {
 
 
 
-              <Link to="/user/shop-user/danhsachsanpham" className="btn btn-danger">
+              <Link to="/user/shop-user/danhsachsanpham" className="btn btn-primary">
                 Danh sách sản phẩm
               </Link>
-              <Link to="/user/shop-user/danhsachsanphamkhuyenmai" className="btn btn-success mx-3">
+              <Link to="/user/shop-user/danhsachsanphamkhuyenmai" className="btn btn-primary mx-3">
                 Danh sách sản phẩm khuyến mãi
               </Link>
-              <Link to="/user/shop-user/danhsachkhuyenmai" className="btn btn-info me-3">
+              <Link to="/user/shop-user/danhsachkhuyenmai" className="btn btn-primary">
                 Danh sách khuyến mãi
               </Link>
-              <Link to="/user/shop-user/doanhthushop" className=" btn btn-primary ">
+              <Link to="/user/shop-user/danhsachvoucher" className="btn btn-primary mx-3">
+                Doanh sách voucher
+              </Link>
+              <Link to="/user/shop-user/bill" className="btn btn-primary">
+                Quản lý hóa đơn
+              </Link>
+              <Link to="/user/shop-user/doanhthushop" className=" btn btn-primary mt-3">
                 Doanh thu của shop
               </Link>
               <Outlet />
