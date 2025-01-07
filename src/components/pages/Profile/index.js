@@ -7,7 +7,7 @@ import { getProfile } from "../../../config/Auth";
 import AddressForm from "../../compoments/Addressuser";
 
 const Profile = () => {
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const [cookies] = useCookies(['user']);

@@ -318,7 +318,7 @@ export default function ChiTietSanPham() {
                             </h1>
                         )}
 
-                        <p>Số lượng còn: <strong>{tongSoLuong}</strong>  | <strong>14,2k</strong> Đã Bán</p>
+                        <p>Số lượng còn: <strong>{tongSoLuong}</strong> </p>
                         <hr />
 
 

@@ -13,8 +13,8 @@ const ShopUser = () => {
   const [isApproved, setIsApproved] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [updatedShop, setUpdatedShop] = useState({});
-  const [shopImage, setShopImage] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+  const [shopImage, setShopImage] = useState([]);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [profile, setProfile] = useState([]);
@@ -305,14 +305,14 @@ const ShopUser = () => {
               <div className="card shadow-sm w-100 mb-5">
                 <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
                   <h2>Địa chỉ</h2>
-                  <button
+                  {/* <button
                     className="btn btn-primary"
                     data-bs-toggle="modal"
                     data-bs-target="#addressModal"
                   >
                     Thêm Địa Chỉ
                   </button>
-                  <AddressFormshop />
+                  <AddressFormshop /> */}
                 </div>
                 <div className="card-body">
                   <table className="table table-hover">
@@ -335,7 +335,9 @@ const ShopUser = () => {
                             <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
                             <td>{address.nameWard} (ID: {address.idWard})</td>
                           </tr>
-                        ) : null
+                        ) : (
+                          <p></p>
+                        )
                       )}
 
                     </tbody>
@@ -352,10 +354,12 @@ const ShopUser = () => {
               <Link to="/user/shop-user/danhsachsanphamkhuyenmai" className="btn btn-success mx-3">
                 Danh sách sản phẩm khuyến mãi
               </Link>
-              <Link to="/user/shop-user/danhsachkhuyenmai" className="btn btn-info ">
+              <Link to="/user/shop-user/danhsachkhuyenmai" className="btn btn-info me-3">
                 Danh sách khuyến mãi
               </Link>
-
+              <Link to="/user/shop-user/doanhthushop" className=" btn btn-primary ">
+                Doanh thu của shop
+              </Link>
               <Outlet />
             </>
           ) : (

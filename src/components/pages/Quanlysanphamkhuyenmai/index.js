@@ -142,28 +142,26 @@ const QuanLySanPhamKhuyenMai = () => {
       return;
     }
   
-    for (const sp of formData.sanPham) {
-      const dataToSent = {
-        trangThai: true,
-        sanPham: { idSanPham: sp.idSanPham },
-        khuyenMai: { idKhuyenMai: parseInt(idSanPhamKhuyenMai) },
-      };
-      
-      try {
-        await axios.post('http://localhost:8080/api/sanphamkhuyenmai', dataToSent, {
-          headers: {
-            Authorization: token,
-          },
-        });
-      } catch (error) {
-        console.error(`Lỗi khi thêm sản phẩm ${sp.tenSanPham}:`, error);
-        Swal.fire('Lỗi', `Có lỗi xảy ra khi thêm sản phẩm: ${sp.tenSanPham}`, 'error');
-      }
+    const dataToSent = {
+      sanPhams: formData.sanPham.map((sp) => ( sp.idSanPham )),
+      idKhuyenMai:  parseInt(idSanPhamKhuyenMai) ,
+    };
+  console.log(dataToSent)
+    try {
+      const response = await axios.post('http://localhost:8080/api/sanphamkhuyenmai', dataToSent, {
+        headers: {
+          Authorization: token,
+        },
+      });
+      console.log(response)
+      Swal.fire('Thành công', 'Tất cả sản phẩm đã được xử lý!', 'success');
+      handleResetData();
+    } catch (error) {
+      console.error('Lỗi khi thêm sản phẩm khuyến mãi:', error);
+      Swal.fire('Lỗi', 'Có lỗi xảy ra khi thêm sản phẩm khuyến mãi', 'error');
     }
-  
-    Swal.fire('Thành công', 'Tất cả sản phẩm đã được xử lý!', 'success');
-    // handleResetData();
   }
+  
   
 
 

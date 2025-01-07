@@ -81,7 +81,7 @@ const OrderTabs = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="text-center">Quản Lý Hóa Đơn</h2>
+      <h2 className="text-center">Đơn Hàng</h2>
 
       {/* Navigation Tab */}
       <ul className="nav nav-pills justify-content-center mt-4">

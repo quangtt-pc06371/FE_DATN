@@ -87,15 +87,16 @@ const User = () => {
           {/* <a href="/user/profile"> <li className="menu-item"> thông tin cá nhân</li></a> */}
           {/* <li className="menu-item">Đơn hàng</li>
          <li className="menu-item">Địa chỉ</li> */}
-          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/updateuser')}>Chỉnh sửa hồ sơ</button> </li>
+         
           <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/profile')}>Thông tin cá nhân</button> </li>
-          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('')}>Đơn hàng</button> </li>
-          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/addressuser')}>Địa chỉ</button> </li>
+          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/bill')}>Đơn hàng</button> </li>
+      
 
           {/* <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('/user/shop-user')}>địa chỉ</button> </li> */}
           <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/shop-user')}>Shop</button> </li>
 
           <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/shop-register')}>Đăng ký shop</button> </li>
+
           {/* <a href="/user/shop-user"><li className="menu-item"> shop</li></a>
          <a href="/user/shop-register"><li className="menu-item">Đăng ký shop</li></a> */}
 

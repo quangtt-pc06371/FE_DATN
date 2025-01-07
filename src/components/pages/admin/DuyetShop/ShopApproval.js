@@ -12,7 +12,6 @@ const ShopApproval = () => {
   const token = Cookies.get('token'); 
   const shopsPerPage = 5;
   const navigate = useNavigate();
-
   useEffect(() => {
     fetchShops();
   }, []);

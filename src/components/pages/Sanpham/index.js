@@ -26,8 +26,8 @@ const SanPham = () => {
         await axios.put(apiKhuyenMai + '/' + id);
     }
     async function handleDeleteSanPhamKhuyenMai(id) {
-        const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai';
-        await axios.put(apiSanPhamKhuyenMai + '/' + id);
+        const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai';
+        await axios.delete(apiSanPhamKhuyenMai + '/' + id);
     }
 
     async function getSanPhamKhuyenMai() {

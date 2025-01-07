@@ -42,7 +42,7 @@ const QuanlySanPham = () => {
   const [edit, setEdit] = useState(true);
   const [hienThiHinhAnhList, setHienThiHinhAnhList] = useState([]);
 
-
+  console.log(hienThiHinhAnhList)
   function handleAddInput() {
 
     setInputs((prevState => (
@@ -243,11 +243,12 @@ const QuanlySanPham = () => {
     const response = await axios.get('http://localhost:8080/api/danhmuc');
     setDanhMucForm(response.data);
   }
+  
   async function getSanPhamId() {
 
     const apiSanPham = 'http://localhost:8080/api/sanpham';
     const response = await axios.get(apiSanPham + '/' + idSanPham, formData);
-
+    console.log(response.data.skus)
     setFormData({
       tenSanPham: response.data.tenSanPham,
       moTa: response.data.moTa,
@@ -266,10 +267,10 @@ const QuanlySanPham = () => {
           tieuDe: tuyChon.tuyChonThuocTinh.thuocTinh.ten,
           noiDungTieuDe: tuyChon.tuyChonThuocTinh.giaTri,
         })),
-        hinhanh: sku.hinhanh // Lấy một hình ảnh duy nhất
+        hinhanh: sku.hinhAnh // Lấy một hình ảnh duy nhất
           ? {
-            idHinhAnh: sku.hinhanh.idHinhAnh,
-            tenAnh: sku.hinhanh.tenAnh,
+            idHinhAnh: sku.hinhAnh.idHinhAnh,
+            tenAnh: sku.hinhAnh.tenAnh,
           }
           : null,
       }))
@@ -307,6 +308,7 @@ const QuanlySanPham = () => {
       }]
     }]);
     setSkusList([]);
+    setHienThiHinhAnhList([])
     setEdit(true);
   }
 

@@ -103,6 +103,7 @@ function AddressForm() {
       .then(() => {
         alert("Địa chỉ đã được lưu thành công!");
         // closeModal();
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Lỗi khi lưu địa chỉ:", error);
