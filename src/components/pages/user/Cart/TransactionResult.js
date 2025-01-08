@@ -35,24 +35,27 @@ const TransactionResult = () => {
 
       const payload = {
         tongSoTien: orderData.totals.totalAmount,
-        trangThaiThanhToan: "Đã thanh toán",
-        trangThaiDonHang: 0, // Trạng thái đơn hàng, bạn có thể thay đổi nếu cần
+        trangThaiThanhToan: "Đã thanh toán",      
         hinhThucThanhToan: true,
-        idVoucher: 2, // ID voucher, nếu có
+        ngayXuatDon: new Date().toISOString(), // Thiết lập ngày giờ hiện tại
+        phiVanChuyen: orderData.shippingFees, // Lấy phí vận chuyển cho shop hiện tại
+        trangThaiDonHang: 0,
         chiTietDonHangs: orderData.cartData.map((item) => {
-          const shopName = item.sanPhamEntity.shop.shopName;
-          const phiVanChuyen = orderData.shippingFees[shopName] || 0;
           return {
+            idSku: item.skuEntity.idSku,
             soLuong: item.soLuongMua,
-            phiVanChuyen: phiVanChuyen,
+            idVoucher: 2,
             tongTien:
-              item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
-            skuDTO: {
-              idSku: item.sanPhamEntity.skus[0].idSku,
+              item.sanPhamEntity.skuEntities[0].giaSanPham * item.soLuongMua,
+            sanPhamDTO: {
+              idShop: item.sanPhamEntity.shop.id,
+              tenSanPham: item.sanPhamEntity.tenSanPham,
+              canNang: item.sanPhamEntity.canNang,
             },
           };
         }),
       };
+
 
       const response = await axios.post(
         "http://localhost:8080/api/order/create",

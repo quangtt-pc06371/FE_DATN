@@ -29,18 +29,23 @@ function Checkout() {
           selectedPaymentMethod === "chuyenKhoan"
             ? "Đã thanh toán"
             : "Chưa thanh toán",
-        trangThaiDonHang: 0,
         hinhThucThanhToan: selectedPaymentMethod === "chuyenKhoan",
-        idVoucher: null,
+
+        // Lấy phí vận chuyển từ orderData.shippingFees theo shopName
+        phiVanChuyen: orderData.shippingFees, // Lấy phí vận chuyển cho shop hiện tại
+        trangThaiDonHang: 0,
+        ngayXuatDon: new Date().toISOString(), // Thiết lập ngày giờ hiện tại
         chiTietDonHangs: orderData.cartData.map((item) => {
-          const shopName = item.sanPhamEntity.shop.shopName;
-          const phiVanChuyen = orderData.shippingFees[shopName] || 0;
           return {
+            idSku: item.skuEntity.idSku,
             soLuong: item.soLuongMua,
-            phiVanChuyen: phiVanChuyen,
-            tongTien: item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
-            skuDTO: {
-              idSku: item.sanPhamEntity.skus[0].idSku,
+            idVoucher: 2,
+            tongTien:
+              item.sanPhamEntity.skuEntities[0].giaSanPham * item.soLuongMua,
+            sanPhamDTO: {
+              idShop: item.sanPhamEntity.shop.id,
+              tenSanPham: item.sanPhamEntity.tenSanPham,
+              canNang: item.sanPhamEntity.canNang,
             },
           };
         }),

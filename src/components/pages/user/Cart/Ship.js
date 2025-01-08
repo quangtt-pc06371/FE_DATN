@@ -6,6 +6,8 @@ function ShippingCalculator({ shop, onChange }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
+  console.log(shop)
+
   const GHN_API_KEY = "170c2289-75de-11ef-8a64-e298e9300273"; // API Key GHN
   const GHN_SHOP_ID = 5332507; // Shop ID GHN
 
@@ -28,12 +30,11 @@ function ShippingCalculator({ shop, onChange }) {
       const toDistrictId = address.addresses[0]?.idDistrict;
       const toWardCode = address.addresses[0]?.idWard;
 
-
       const totalWeight = shop.reduce(
-        (acc, item) => acc + item.soLuongMua * item.sanPhamEntity.weight,
+        (acc, item) => acc + item.soLuongMua * item.sanPhamEntity.canNang,
         0
       );
-      console.log(totalWeight)
+
       if (
         !fromDistrictId ||
         !fromWardCode ||
@@ -83,14 +84,18 @@ function ShippingCalculator({ shop, onChange }) {
         // Cập nhật phí vận chuyển trong localStorage
         const updatedShippingFees = {
           ...existingShippingFees,
-          [shop[0]?.sanPhamEntity.shop.shopName]: fee,
+          [shop[0].sanPhamEntity.shop.id]: fee,
         };
 
         const updatedOrder = {
           ...existingOrder,
           shippingFees: updatedShippingFees,
         };
-
+        setShippingFee(fee)
+        setError(error);
+        if (onChange) {
+          onChange(fee);
+        }
         localStorage.setItem("order", JSON.stringify(updatedOrder));
       } else {
         setError("Không tìm thấy dữ liệu phí vận chuyển.");
