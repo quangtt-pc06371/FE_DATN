@@ -5,7 +5,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements
 } from 'react-router-dom';
-import './App.css'; 
+import './App.css';
 import TrangChu from "./components/pages/TrangChu";
 import Login from "./components/pages/Login";
 import Register from "./components/pages/Register";
@@ -51,11 +51,15 @@ import VoucherList from './components/pages/Voucher/VoucherList';
 import { AuthProvider } from "./config/Authenticated/index";
 import ProtectedRoute from "./config/Authenticated/protectedRoute";
 import User from "./components/userpage";
+import Shop from "./components/pageshop";
 import Loginpage from "./components/loginpage";
 ///import { startTokenRefreshInterval } from "./components/pages/Refresh";
 // import Order from "./components/compoments/Order";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import DoanhThu from './components/pages/Doanhthushop';
+import DanhSachVoucher from './components/pages/Danhsachvoucher';
+import QuanLyVoucher from './components/pages/Quanlyvoucher';
 // import 'bootstrap-icons/font/bootstrap-icons.css';
 export default function App() {
   const router = createBrowserRouter(
@@ -64,7 +68,7 @@ export default function App() {
         {/* Layout cho người dùng */}
         <Route element={<TrangChu />}>
           <Route path="/" element={<SanPham />} />
-          <Route path="shopsanpham/:idShopSanPham" element={<ShopSanPham/>} />
+          <Route path="shopsanpham/:idShopSanPham" element={<ShopSanPham />} />
           <Route path="register" element={<Register />} />
           <Route path="shop-register" element={<ShopRegistration />} />
           {/* <Route path="profile" element={<Profile />} /> */}
@@ -77,63 +81,91 @@ export default function App() {
           <Route path='quanlykhuyenmai/:idKhuyenMai' element={<QuanLykhuyenMai />} />
           <Route path='danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
           <Route path='quanlysanpham' element={<QuanlySanPham />} />
+          <Route path='quanlyvoucher' element={<QuanLyVoucher />} />
           <Route path='sanpham/:idSanPham' element={<QuanlySanPham />} />
           <Route path='danhsachsanpham' element={<DanhSachSanPham />} />
           <Route path='danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
           <Route path='sanphamkhuyenmai' element={<QuanLySanPhamKhuyenMai />} />
           <Route path='sanphamkhuyenmai/:idSanPhamKhuyenMai' element={<QuanLySanPhamKhuyenMai />} />
 
-         
+
           <Route path="/cart" element={<CartPage />} />
-        <Route path="/payment" element={<PaymentPage/>} />
-        <Route path="/order" element={<OrderPage/>} />
-        <Route path="/diachi" element={< AddressForm/>} />
-        <Route path="/select" element={< SelectedAddress/>} />
-        <Route path="/create" element={< CreateAddress/>} />
-        <Route path="/voucher" element={<VoucherModal/>}/>
-        <Route path="/transaction-result" element={<TransactionResult/>}/>
-        <Route path="/bill" element={<Bill/>}/>
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/order" element={<OrderPage />} />
+          <Route path="/diachi" element={< AddressForm />} />
+          <Route path="/select" element={< SelectedAddress />} />
+          <Route path="/create" element={< CreateAddress />} />
+          <Route path="/voucher" element={<VoucherModal />} />
+          <Route path="/transaction-result" element={<TransactionResult />} />
+          
 
 
 
           <Route path="order" element={<Order />} />
           <Route path="address" element={<AddressForm />} />
           <Route path="addressshop" element={<AddressFormshop />} />
-          <Route path="order" element={<Order/>} />
+          <Route path="order" element={<Order />} />
           <Route path="voucherform" element={<VoucherForm />} />
           <Route path="voucherlist" element={<VoucherList />} />*
          
-        <Route element={<ProtectedRoute requiredRoles={["ROLE_User", "ROLE_Staff"]} />} >
+          <Route element={<ProtectedRoute requiredRoles={["ROLE_User", "ROLE_Shop"]} />} >
             <Route path="user" element={<User />}>
               <Route path="updateuser" element={<Updateuser2 />} />
-              <Route path="profile" element={<Profile />} />             
+              <Route path="profile" element={<Profile />} />
+              <Route path="bill" element={<Bill />} />
               <Route path="addressuser" element={<AddressFormuser />} />
-              <Route path="shop-user" element={<ShopUser />}>
+              {/* <Route path="shop-user" element={<ShopUser />}> */}
+                {/* <Route path='danhsachsanpham' element={<DanhSachSanPham />} />
+                <Route path='danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
+                <Route path='danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
+                <Route path='danhsachvoucher' element={<DanhSachVoucher />} />
+                <Route path="bill" element={<Bill />} />
+                <Route path="doanhthushop" element={<DoanhThu />} />
+              </Route> */}
+              <Route element={<ProtectedRoute requiredRoles={["ROLE_User"]} />}>
+                <Route path="shop-register" element={<ShopRegistration />} />
+              </Route>
+
+            </Route>
+          </Route>
+
+          <Route element={<ProtectedRoute requiredRoles={["ROLE_User","ROLE_Shop"]} />} >
+            <Route path="shop" element={<Shop />}>
+          
+              {/* <Route path="bill" element={<Bill />} />           */}
+              <Route path="shop-user" element={<ShopUser />}/>
                 <Route path='danhsachsanpham' element={<DanhSachSanPham />} />
                 <Route path='danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
                 <Route path='danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
+                <Route path='danhsachvoucher' element={<DanhSachVoucher />} />
+                <Route path="bill" element={<Bill />} />
+                <Route path="doanhthushop" element={<DoanhThu />} />
+              {/* </Route> */}
+              <Route element={<ProtectedRoute requiredRoles={["ROLE_User"]} />}>
+                <Route path="shop-register" element={<ShopRegistration />} />
               </Route>
-              <Route path="shop-register" element={<ShopRegistration />} />
+
             </Route>
           </Route>
+
         </Route>
 
         {/* Layout riêng cho admin */}
         <Route element={<ProtectedRoute requiredRoles={"ROLE_Admin"} />} >
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route path="category-management" element={<CategoryManagement />} />
-          <Route path="shop-approval" element={<ShopApproval />} />
-          <Route path="shop-management" element={<ShopManagement />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="category-management" element={<CategoryManagement />} />
+            <Route path="shop-approval" element={<ShopApproval />} />
+            <Route path="shop-management" element={<ShopManagement />} />
           </Route>
 
         </Route>
 
         <Route path="buyer" element={<Loginpage />} >
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
         </Route>
 
-      
+
       </>
     )
   );
@@ -141,7 +173,7 @@ export default function App() {
   return (
     <AuthProvider>
       <RouterProvider router={router} />
-      </AuthProvider>
+    </AuthProvider>
     // <RouterProvider router={router} />
   );
 }
