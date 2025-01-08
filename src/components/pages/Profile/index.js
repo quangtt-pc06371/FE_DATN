@@ -86,7 +86,7 @@ console.log(profile)
               </tr>
             </thead>
             <tbody>
-              {profile.diachi
+              {profile?.diachi
                 .filter(address => address.shop === null)
                 .map((address, index) => {
 
@@ -94,9 +94,9 @@ console.log(profile)
                     <tr key={index}>
                       <td>{index + 1}</td>
                       <td>{address.diachiDetail}</td>
-                      <td>{address.nameProvince} (ID: {address.provinceId})</td>
-                      <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
-                      <td>{address.nameWard} (ID: {address.idWard})</td>
+                      <td>{address.nameProvince}</td>
+                      <td>{address.nameDistrict} </td>
+                      <td>{address.nameWard} </td>
                     </tr>
                   );
                 })}

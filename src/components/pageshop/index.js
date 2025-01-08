@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useCookies } from "react-cookie";
 import { Outlet, useNavigate } from "react-router-dom";
 import { getProfile, loginApi } from "../../config//Auth";
-import './Userpage.css';
+import './pageshop.css';
 const User = () => {
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState('');
@@ -12,47 +12,47 @@ const User = () => {
   const navigate = useNavigate();
   useEffect(() => {
     // Hàm để lấy dữ liệu profile từ API
-    const fetchProfile = async () => {
-      try {
+    // const fetchProfile = async () => {
+    //   try {
 
-        //  const token = cookies?.token;
+    //     //  const token = cookies?.token;
 
 
-        // Gửi yêu cầu đến API với token
-        const res = await getProfile({
+    //     // Gửi yêu cầu đến API với token
+    //     const res = await getProfile({
 
-        })
-        // console.log(res)
-        // Lưu dữ liệu profile vào state
+    //     })
+    //     // console.log(res)
+    //     // Lưu dữ liệu profile vào state
 
-        setProfile(res);
+    //     setProfile(res);
 
-      } catch (err) {
-        // Xử lý lỗi
-        if (err.response && err.response.data && err.response.data.error) {
-          setError(err.response.data.error);
-        } else {
-          setError('Không thể lấy dữ liệu profile.');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
+    //   } catch (err) {
+    //     // Xử lý lỗi
+    //     if (err.response && err.response.data && err.response.data.error) {
+    //       setError(err.response.data.error);
+    //     } else {
+    //       setError('Không thể lấy dữ liệu profile.');
+    //     }
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
 
-    fetchProfile();
+    // fetchProfile();
   }, []); // Chỉ chạy một lần khi component mount
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+//   if (loading) {
+//     return <div>Loading...</div>;
+//   }
 
-  if (error) {
-    return <div style={{ color: 'red' }}>{error}</div>;
-  }
+//   if (error) {
+//     return <div style={{ color: 'red' }}>{error}</div>;
+//   }
 
-  if (!profile) {
-    return <div>Không có dữ liệu profile.</div>;
-  }
+//   if (!profile) {
+//     return <div>Không có dữ liệu profile.</div>;
+//   }
 
   return (
 
@@ -73,18 +73,14 @@ const User = () => {
     //   </div>
     <div className="profile-container">
       <div className="profile-sidebar">
-      <img
-  src={
-    profile.anh ||
-    "https://cdn1.iconfinder.com/data/icons/rounded-black-basic-ui/139/Photo_Add-RoundedBlack-512.png"
-  }
-  alt="User Avatar"
-  className="rounded-circle border"
-  style={{ width: "120px", height: "120px", objectFit: "cover" }}
-/>
-
+        {/* <img
+          src={profile.anh}
+          alt="User Avatar"
+          className="rounded-circle border"
+          style={{ width: '120px', height: '120px', objectFit: 'cover' }}
+        />
         <h3 className="profile-name"> {profile.hoten}</h3>
-        <button className="edit-profile-button" onClick={() => navigate('/user/updateuser')}>Chỉnh sửa hồ sơ</button>
+        <button className="edit-profile-button" onClick={() => navigate('/shop/updateuser')}>chỉnh sửa shop</button> */}
 
         <ul className="profile-menu">
           {/* <a href="/user/profile"><li className="menu-item">Đăng ký shop</li></a> */}
@@ -92,14 +88,19 @@ const User = () => {
           {/* <li className="menu-item">Đơn hàng</li>
          <li className="menu-item">Địa chỉ</li> */}
          
-          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/profile')}>Thông tin cá nhân</button> </li>
+          {/* <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/profile')}>Thông tin cá nhân</button> </li>
           <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/bill')}>Đơn hàng</button> </li>
-      
+       */}
 
           {/* <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('/user/shop-user')}>địa chỉ</button> </li> */}
-          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/shop-user')}>Shop</button> </li>
-
-          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/shop-register')}>Đăng ký shop</button> </li>
+          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/shop-user')}>thông tin shop</button> </li>
+        
+          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/danhsachvoucher')}>danh sách voucher</button> </li>
+          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/bill')}>quản lí đơn hàng</button> </li>
+          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/danhsachsanpham')}>danh sách sản phẩm</button> </li>
+          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/doanhthushop')}>doanh thu shop</button> </li>
+          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/danhsachkhuyenmai')}>danh sách khuyến mãi</button> </li>
+          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/danhsachsanphamkhuyenmai')}>danh sách sản phảm khuyens mãi</button> </li>
 
           {/* <a href="/user/shop-user"><li className="menu-item"> shop</li></a>
          <a href="/user/shop-register"><li className="menu-item">Đăng ký shop</li></a> */}

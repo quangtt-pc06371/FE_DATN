@@ -97,7 +97,7 @@ const TransactionResult = () => {
               <p>Đơn hàng của bạn đã được xử lý thành công.</p>
               <button
                 className="btn btn-primary"
-                onClick={() => navigate("/bill")}
+                onClick={() => navigate("/user/bill")}
               >
                 Xem Hóa Đơn
               </button>

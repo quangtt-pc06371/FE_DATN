@@ -125,9 +125,9 @@ const OrderTabs = () => {
                 console.log(shop)
                 return (
                   <div key={shopId} className="card-body">
-                    <h6>{shop.shopName}</h6>
+                    <h6>{shop?.shopName}</h6>
                 
-                    {shop.products.map((item) => (
+                    {shop?.products.map((item) => (
                       <div
                         key={item.idSanPham}
                         className="row g-0 align-items-center mb-3 border-bottom"

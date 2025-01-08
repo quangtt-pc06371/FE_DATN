@@ -326,14 +326,14 @@ const ShopUser = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {profile.diachi.map((address, index) =>
+                      {profile?.diachi?.map((address, index) =>
                         address.shop !== null ? (
                           <tr key={index}>
                             <td>{index }</td>
                             <td>{address.diachiDetail}</td>
-                            <td>{address.nameProvince} (ID: {address.provinceId})</td>
-                            <td>{address.nameDistrict} (ID: {address.idDistrict})</td>
-                            <td>{address.nameWard} (ID: {address.idWard})</td>
+                            <td>{address.nameProvince}</td>
+                            <td>{address.nameDistrict}</td>
+                            <td>{address.nameWard} </td>
                           </tr>
                         ) : (
                           <p></p>
@@ -348,7 +348,7 @@ const ShopUser = () => {
 
 
 
-              <Link to="/user/shop-user/danhsachsanpham" className="btn btn-primary">
+              {/* <Link to="/user/shop-user/danhsachsanpham" className="btn btn-primary">
                 Danh sách sản phẩm
               </Link>
               <Link to="/user/shop-user/danhsachsanphamkhuyenmai" className="btn btn-primary mx-3">
@@ -366,7 +366,7 @@ const ShopUser = () => {
               <Link to="/user/shop-user/doanhthushop" className=" btn btn-primary mt-3">
                 Doanh thu của shop
               </Link>
-              <Outlet />
+              <Outlet /> */}
             </>
           ) : (
             <div className="alert alert-warning text-center">
