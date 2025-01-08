@@ -148,7 +148,8 @@ export default function DoanhThu() {
                             <p>
                                 Tổng doanh thu từ <strong>{startDate}</strong> đến{" "}
                                 <strong>{endDate}</strong>:{" "}
-                                <strong>{(totalRevenue || 0).toLocaleString()} VNĐ</strong>
+                                <p className="fs-5">{`${(totalRevenue || 0).toLocaleString('vi-VN')} VNĐ`}</p>
+
                             </p>
                         </div>
                     ) }
@@ -182,8 +183,9 @@ export default function DoanhThu() {
                     </form>
                     {result !== null && (
                         <div className="mt-4">
-                            <h2>Kết quả:</h2>
-                            <p className="fs-5">{result}</p>
+                             <h3 className="text-success">Kết quả thống kê</h3>
+                             <p className="fs-5">{`${(result || 0).toLocaleString('vi-VN')} VNĐ`}</p>
+
                         </div>
                     )}
                     {error && <p className="text-danger mt-3">{error}</p>}
@@ -230,8 +232,8 @@ export default function DoanhThu() {
                     </form>
                     {result2 !== null && (
                         <div className="mt-4">
-                            <h2>Kết quả:</h2>
-                            <p className="fs-5">{result2}</p>
+                            <h3 className="text-success">Kết quả thống kê</h3>
+                            <p className="fs-5">{`${(result2 || 0).toLocaleString('vi-VN')} VNĐ`}</p>
                         </div>
                     )}
                     {error && <p className="text-danger mt-3">{error}</p>}
