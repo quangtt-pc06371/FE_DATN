@@ -8,6 +8,7 @@ const TransactionResult = () => {
   const location = useLocation();
   const [paymentStatus, setPaymentStatus] = useState(null);
   const orderData = JSON.parse(localStorage.getItem("order"));
+  const shippingFeeID = JSON.parse(localStorage.getItem("shippingFeeID"))
 
   // Sử dụng useRef để tránh gọi API nhiều lần
   const isOrderSubmitted = useRef(false);
@@ -38,7 +39,7 @@ const TransactionResult = () => {
         trangThaiThanhToan: "Đã thanh toán",      
         hinhThucThanhToan: true,
         ngayXuatDon: new Date().toISOString(), // Thiết lập ngày giờ hiện tại
-        phiVanChuyen: orderData.shippingFees, // Lấy phí vận chuyển cho shop hiện tại
+        phiVanChuyen: shippingFeeID, // Lấy phí vận chuyển cho shop hiện tại
         trangThaiDonHang: 0,
         chiTietDonHangs: orderData.cartData.map((item) => {
           return {

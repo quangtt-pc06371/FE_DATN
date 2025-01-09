@@ -11,6 +11,7 @@ function Checkout() {
   const paymentSuccess = "tienMatSuccess";
   const paymentFail = "failure";
   const orderData = JSON.parse(localStorage.getItem("order"));
+  const shippingFeeID = JSON.parse(localStorage.getItem("shippingFeeID"))
 
   const handlePaymentChange = (event) => {
     setSelectedPaymentMethod(event.target.value);
@@ -32,7 +33,7 @@ function Checkout() {
         hinhThucThanhToan: selectedPaymentMethod === "chuyenKhoan",
 
         // Lấy phí vận chuyển từ orderData.shippingFees theo shopName
-        phiVanChuyen: orderData.shippingFees, // Lấy phí vận chuyển cho shop hiện tại
+        phiVanChuyen: shippingFeeID, // Lấy phí vận chuyển cho shop hiện tại
         trangThaiDonHang: 0,
         ngayXuatDon: new Date().toISOString(), // Thiết lập ngày giờ hiện tại
         chiTietDonHangs: orderData.cartData.map((item) => {

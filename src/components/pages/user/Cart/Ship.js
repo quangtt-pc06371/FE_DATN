@@ -6,8 +6,6 @@ function ShippingCalculator({ shop, onChange }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  console.log(shop)
-
   const GHN_API_KEY = "170c2289-75de-11ef-8a64-e298e9300273"; // API Key GHN
   const GHN_SHOP_ID = 5332507; // Shop ID GHN
 
@@ -96,6 +94,8 @@ function ShippingCalculator({ shop, onChange }) {
         if (onChange) {
           onChange(fee);
         }
+        // Sử dụng hàm createShippingFeeID
+        createShippingFeeID(shop[0].sanPhamEntity.shop.id, fee);
         localStorage.setItem("order", JSON.stringify(updatedOrder));
       } else {
         setError("Không tìm thấy dữ liệu phí vận chuyển.");
@@ -105,6 +105,28 @@ function ShippingCalculator({ shop, onChange }) {
       setError("Có lỗi xảy ra khi tính phí vận chuyển.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const createShippingFeeID = (shopId, fee) => {
+    try {
+      // Lấy dữ liệu hiện tại từ localStorage
+      const existingShippingFees =
+        JSON.parse(localStorage.getItem("shippingFeeID")) || {};
+
+      // Cập nhật dữ liệu mới
+      const updatedShippingFees = {
+        ...existingShippingFees,
+        [shopId]: fee,
+      };
+
+      // Lưu lại vào localStorage
+      localStorage.setItem(
+        "shippingFeeID",
+        JSON.stringify(updatedShippingFees)
+      );
+    } catch (error) {
+      console.error("Lỗi khi tạo shippingFeeID:", error);
     }
   };
 

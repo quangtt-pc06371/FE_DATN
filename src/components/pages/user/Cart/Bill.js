@@ -122,7 +122,6 @@ const OrderTabs = () => {
             {orders[key].length > 0 ? (
               Object.keys(groupedProducts).map((shopId) => {
                 const shop = groupedProducts[shopId];
-                console.log(shop)
                 return (
                   <div key={shopId} className="card-body">
                     <h6>{shop?.shopName}</h6>
