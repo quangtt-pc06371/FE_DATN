@@ -60,6 +60,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import DoanhThu from './components/pages/Doanhthushop';
 import DanhSachVoucher from './components/pages/Danhsachvoucher';
 import QuanLyVoucher from './components/pages/Quanlyvoucher';
+import DanhSachNguoiDung from './components/pages/admin/Danhsachnguoidung';
 // import 'bootstrap-icons/font/bootstrap-icons.css';
 export default function App() {
   const router = createBrowserRouter(
@@ -156,6 +157,7 @@ export default function App() {
             <Route path="category-management" element={<CategoryManagement />} />
             <Route path="shop-approval" element={<ShopApproval />} />
             <Route path="shop-management" element={<ShopManagement />} />
+            <Route path="user-management" element={<DanhSachNguoiDung />} />
           </Route>
 
         </Route>

@@ -100,7 +100,7 @@ const User = () => {
           <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/danhsachsanpham')}>danh sách sản phẩm</button> </li>
           <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/doanhthushop')}>doanh thu shop</button> </li>
           <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/danhsachkhuyenmai')}>danh sách khuyến mãi</button> </li>
-          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/danhsachsanphamkhuyenmai')}>danh sách sản phảm khuyens mãi</button> </li>
+          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/danhsachsanphamkhuyenmai')}>danh sách sản phẩm khuyến mãi</button> </li>
 
           {/* <a href="/user/shop-user"><li className="menu-item"> shop</li></a>
          <a href="/user/shop-register"><li className="menu-item">Đăng ký shop</li></a> */}

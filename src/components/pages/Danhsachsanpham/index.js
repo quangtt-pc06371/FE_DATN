@@ -77,15 +77,15 @@ const DanhSachSanPham = () => {
 
 
   return (
-    <div className="container-fluid my-5">
-      <div className="card shadow-sm w-100 mb-5">
-        <div className="card-header bg-body-secondary d-flex justify-content-between align-items-center">
+    <div className="container my-5 d-flex justify-content-center">
+    <div className="card shadow w-100 mb-5">
+        <div className="card-header bg-body-secondary  text-white d-flex justify-content-between align-items-center">
           <h2>Danh Sách Sản Phẩm</h2>
           <a href='/quanlysanpham' className="btn btn-success">Thêm Sản Phẩm</a>
         </div>
         <div className="card-body">
-          <table className="table table-hover">
-            <thead className="table-dark">
+        <table className="table table-bordered table-hover">
+                        <thead className="table-primary">
               <tr>
                 <th>STT</th>
                 <th>Tên Sản Phẩm</th>

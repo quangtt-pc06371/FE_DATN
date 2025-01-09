@@ -83,14 +83,14 @@ const DanhSachSanPhamKM = () => {
   
   return (
     <div className="container my-5 d-flex justify-content-center">
-      <div className="card shadow w-100 mb-3">
-        <div className="card-header  bg-body-secondary d-flex justify-content-between align-items-center" >
+    <div className="card shadow w-100 mb-5">
+        <div className="card-header bg-body-secondary  text-white d-flex justify-content-between align-items-center">
           <h2>Danh Sách Chương Trình Khuyến Mãi</h2>
           
         </div>
         <div className="card-body">
-          <table className="table table-hover">
-            <thead className="table-dark">
+        <table className="table table-bordered table-hover">
+        <thead className="table-primary">
               <tr>
                 <th>STT</th>
                 <th>Sản Phẩm</th>
