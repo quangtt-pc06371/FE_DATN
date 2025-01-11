@@ -190,7 +190,7 @@ const QuanLySanPhamKhuyenMai = () => {
           <div className="card shadow-sm">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h2 className="card-title mb-0">Quản Lý Sản Phẩm Khuyến Mãi</h2>
-              <a href='/user/shop-user' type="button" className="btn btn-primary ms-auto">
+              <a href='/shop/shop-user' type="button" className="btn btn-primary ms-auto">
                 Trở Về Quản Lý Shop
               </a>
             </div>

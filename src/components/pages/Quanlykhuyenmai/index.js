@@ -299,7 +299,7 @@ const QuanLyKhuyenMai = () => {
                                 <h2 className="card-title mb-0 text-primary">Quản lý Khuyến Mãi</h2>
                                 <a
                                     className="btn btn-primary"
-                                    href="/user/shop-user"
+                                    href="/shop/shop-user"
                                 >
                                     Trở Về Trang Shop
                                 </a>

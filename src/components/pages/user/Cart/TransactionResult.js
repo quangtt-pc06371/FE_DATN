@@ -25,7 +25,7 @@ const TransactionResult = () => {
       isOrderSubmitted.current = true; // Đánh dấu đã gửi yêu cầu
     }
   }, [location]);
-
+  console.log(orderData)
   const handleSubmitOrder = async () => {
     try {
       const token = Cookies.get("token");
@@ -47,7 +47,7 @@ const TransactionResult = () => {
             soLuong: item.soLuongMua,
             idVoucher: 2,
             tongTien:
-              item.sanPhamEntity.skuEntities[0].giaSanPham * item.soLuongMua,
+              item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
             sanPhamDTO: {
               idShop: item.sanPhamEntity.shop.id,
               tenSanPham: item.sanPhamEntity.tenSanPham,

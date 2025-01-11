@@ -12,7 +12,8 @@ function Order() {
   const [totalShippingFee, setTotalShippingFee] = useState(0);
   const [totalProduct, setTotalProduct] = useState(0);
   const [totalDiscount, setTotalDiscount] = useState(0);
-
+  console.log(totalShippingFee)
+  console.log(totalProduct)
   // Giỏ hàng từ localStorage
   const cartData = JSON.parse(localStorage.getItem("cart")) || [];
   
@@ -31,19 +32,22 @@ function Order() {
     let totalProductAmount = 0;
     let totalShippingAmount = 0;
     let totalAmount = 0;
-
+    console.log(groupedByShop)
     Object.keys(groupedByShop).forEach((shopName) => {
       const totalShopAmount = groupedByShop[shopName].reduce(
         (total, item) =>
           total +
-          item.sanPhamEntity.skuEntities[0].giaSanPham * item.soLuongMua,
+          item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
         0
       );
       const shippingFee =
         (existingOrder.shippingFees && existingOrder.shippingFees[shopName]) ||
         0;
 
+        
+      console.log(shippingFee)
       totalProductAmount += totalShopAmount;
+      console.log(totalProductAmount)
       totalShippingAmount += shippingFee;
       totalAmount += totalShopAmount + shippingFee;
     });
@@ -113,6 +117,9 @@ function Order() {
     setTotalShippingFee(totals.totalShippingAmount);
     setTotalDiscount(0); // Nếu có giảm giá, bạn có thể tính toán ở đây
   }, [totals]);
+
+
+  console.log(totals.totalShippingAmount)
 
   return (
     <div className="container my-5">

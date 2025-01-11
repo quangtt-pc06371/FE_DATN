@@ -16,7 +16,7 @@ function Checkout() {
   const handlePaymentChange = (event) => {
     setSelectedPaymentMethod(event.target.value);
   };
-
+  console.log(orderData)
   const handleSubmitOrder = async () => {
     try {
       const token = Cookies.get("token");
@@ -42,7 +42,7 @@ function Checkout() {
             soLuong: item.soLuongMua,
             idVoucher: 2,
             tongTien:
-              item.sanPhamEntity.skuEntities[0].giaSanPham * item.soLuongMua,
+              item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
             sanPhamDTO: {
               idShop: item.sanPhamEntity.shop.id,
               tenSanPham: item.sanPhamEntity.tenSanPham,

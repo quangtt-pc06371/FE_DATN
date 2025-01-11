@@ -314,12 +314,12 @@ const Bill = () => {
                             <strong>{detail.sanPhamEntity.tenSanPham}</strong>
                             <p>
                               {
-                                detail.skuEntity.tuyChonThuocTinhSku[0]
+                                detail.skuEntity.tuyChonThuocTinhSkus[0]
                                   .tuyChonThuocTinh.thuocTinh.ten
                               }{" "}
                               -{" "}
                               {
-                                detail.skuEntity.tuyChonThuocTinhSku[0]
+                                detail.skuEntity.tuyChonThuocTinhSkus[0]
                                   .tuyChonThuocTinh.giaTri
                               }
                             </p>

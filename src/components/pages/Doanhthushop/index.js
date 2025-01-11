@@ -26,7 +26,10 @@ export default function DoanhThu() {
             setError("Vui lòng nhập đầy đủ thông tin!");
             return;
         }
-
+        if (new Date(startDate) > new Date(endDate)) {
+            setError("Ngày bắt đầu không được lớn hơn ngày kết thúc!");  
+            return;  
+        }
         try {
             const response = await axios.get("http://localhost:8080/api/thong-ke", {
                 params: {
@@ -60,21 +63,6 @@ export default function DoanhThu() {
         fetchShop();
 
     }, []);
-
-    // useEffect(() => {
-    //     if (shop) {
-    //         const hienThiDoanhThu = async () => {
-    //             try {
-    //                 const apiDoanhThu = 'http://localhost:8080/api/shops/total-amount';
-    //                 const response = await axios.get(`${apiDoanhThu}/${shop.id}`);
-    //                 setDoanhThu(response.data);
-    //             } catch (err) {
-    //                 alert("Không hiển thị được doanh thu.");
-    //             }
-    //         };
-    //         hienThiDoanhThu();
-    //     }
-    // }, [shop]);
 
     const handleSubmit2 = async (e) => {
         e.preventDefault();
@@ -142,7 +130,7 @@ export default function DoanhThu() {
 
                     {error && <div className="alert alert-danger mt-3">{error}</div>}
 
-                    {totalRevenue !== null && (
+                    {error === "" && totalRevenue !== null  && (
                         <div className="mt-4">
                             <h3 className="text-success">Kết quả thống kê</h3>
                             <p>

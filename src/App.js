@@ -61,6 +61,7 @@ import DoanhThu from './components/pages/Doanhthushop';
 import DanhSachVoucher from './components/pages/Danhsachvoucher';
 import QuanLyVoucher from './components/pages/Quanlyvoucher';
 import DanhSachNguoiDung from './components/pages/admin/Danhsachnguoidung';
+import SellerPage from './components/pages/SellerPage';
 // import 'bootstrap-icons/font/bootstrap-icons.css';
 export default function App() {
   const router = createBrowserRouter(
@@ -139,7 +140,7 @@ export default function App() {
                 <Route path='danhsachsanphamkhuyenmai' element={<DanhSachSanPhamKM />} />
                 <Route path='danhsachkhuyenmai' element={<DanhSachkhuyenMai />} />
                 <Route path='danhsachvoucher' element={<DanhSachVoucher />} />
-                <Route path="bill" element={<Bill />} />
+                <Route path="sellerpage" element={<SellerPage />} />
                 <Route path="doanhthushop" element={<DoanhThu />} />
               {/* </Route> */}
               <Route element={<ProtectedRoute requiredRoles={["ROLE_User"]} />}>

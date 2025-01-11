@@ -29,9 +29,15 @@ function ShippingCalculator({ shop, onChange }) {
       const toWardCode = address.addresses[0]?.idWard;
 
       const totalWeight = shop.reduce(
-        (acc, item) => acc + item.soLuongMua * item.sanPhamEntity.canNang,
+        (acc, item) => acc + item.soLuongMua * item.sanPhamEntity.weight,
         0
       );
+      console.log(shop)
+      console.log(fromDistrictId)
+      console.log(fromWardCode)
+      console.log(toDistrictId)
+      console.log(toWardCode)
+      console.log(totalWeight)
 
       if (
         !fromDistrictId ||
@@ -82,7 +88,7 @@ function ShippingCalculator({ shop, onChange }) {
         // Cập nhật phí vận chuyển trong localStorage
         const updatedShippingFees = {
           ...existingShippingFees,
-          [shop[0].sanPhamEntity.shop.id]: fee,
+          [shop[0].sanPhamEntity.shop.shopName]: fee,
         };
 
         const updatedOrder = {
