@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { BASE_URL, API, CART } from "./api";
 import Cookies from "js-cookie";
@@ -11,7 +11,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const [modalQuantity, setModalQuantity] = useState(quantity);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
   // Xử lý khi chọn SKU
   const handleSkuSelect = (sku) => {
     setSelectedSku(sku.idSku); // Cập nhật SKU đã chọn
@@ -85,6 +85,38 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
     setModalQuantity(value > 0 ? value : 1); // Đảm bảo số lượng tối thiểu là 1
   };
 
+
+  async function getSanPhamKhuyenMai() {
+    try {
+      const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+      setSanPhamKhuyenMaiForm(response.data);
+    } catch (error) {
+
+    }
+  }
+  useEffect(() => {
+    getSanPhamKhuyenMai();
+
+  }, []);
+
+
+  const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find((item) => item.sanPham.idSanPham === product.sanPhamEntity.idSanPham);
+  console.log(doiTuongSanPhamKM)
+  const giaGoc = product.skuEntity.giaSanPham || 0;
+  console.log(giaGoc)
+  let giaSauKhuyenMai = 0;
+  let khuyenMaiConHieuLuc = true;
+
+  if (doiTuongSanPhamKM) {
+    giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+    console.log(giaSauKhuyenMai)
+  } else {
+    khuyenMaiConHieuLuc = false;
+    giaSauKhuyenMai = giaGoc;
+  }
+  console.log(product)
+
+
   return (
     <>
       {/* Dòng giỏ hàng chi tiết */}
@@ -136,11 +168,23 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
             </div>
 
             {/* Đơn giá */}
-            <div className="col-lg-3 d-flex align-items-center justify-content-center">
-              <strong>
-                {product.skuEntity.giaSanPham.toLocaleString()} VND{" "}
-              </strong>
+            <div className="col-lg-3 d-flex flex-column align-items-center justify-content-center">
+              {khuyenMaiConHieuLuc ? (
+                <div className="d-flex flex-column align-items-center">
+                  {/* Giá gốc */}
+                  <span className="text-muted text-decoration-line-through">
+                    {product.skuEntity.giaSanPham.toLocaleString()} VND
+                  </span>
+                  {/* Giá sau khuyến mãi */}
+                  <strong className="text-danger">
+                    {giaSauKhuyenMai.toLocaleString()} VND
+                  </strong>
+                </div>
+              ) : (
+                <strong>{product.skuEntity.giaSanPham.toLocaleString()} VND</strong>
+              )}
             </div>
+
 
             {/* Số lượng */}
             <div className="col-lg-2 d-flex align-items-center justify-content-center">
@@ -171,10 +215,17 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
 
             {/* Thành tiền */}
             <div className="col-lg-2 d-flex align-items-center justify-content-center">
-              <strong>
-                {(product.skuEntity.giaSanPham * quantity).toLocaleString()} VND
-              </strong>
+              {khuyenMaiConHieuLuc ? (
+                <strong>
+                  {(giaSauKhuyenMai * quantity).toLocaleString()} VND
+                </strong>
+              ) : (
+                <strong>
+                  {(product.skuEntity.giaSanPham * quantity).toLocaleString()} VND
+                </strong>
+              )}
             </div>
+
 
             {/*Xóa Detail*/}
             <div className="col-md-1 d-flex align-items-center justify-content-center">
@@ -188,83 +239,84 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       {/* Modal và các phần khác */}
-      {isModalOpen && (
-        <div className="modal show" tabIndex="-1" style={{ display: "block" }}>
-          <div className="modal-dialog">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Chọn SKU</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={closeModal}
-                ></button>
-              </div>
-              <div className="modal-body">
-                {error && <p className="text-danger">{error}</p>}
-
-                {/* Kiểm tra nếu skuList có giá trị */}
-                {skuList && skuList.length > 0 ? (
-                  <ul className="list-group">
-                    {skuList.map((sku) => (
-                      <li
-                        key={sku.idSku}
-                        className={`list-group-item ${
-                          sku.idSku === selectedSku ? "active" : ""
-                        }`}
-                        onClick={() => handleSkuSelect(sku)}
-                      >
-                        {/* Hiển thị các tùy chọn thuộc tính SKU */}
-                        {sku.tuyChonThuocTinhSku.map((tt) => (
-                          <span key={tt.idTuyChonTtSku}>
-                            {tt.tuyChonThuocTinh.giaTri} -
-                            {tt.tuyChonThuocTinh.thuocTinh.ten}
-                          </span>
-                        ))}
-                        <br />
-                        Giá: {sku.giaSanPham.toLocaleString()} VND
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>Không có SKU nào để chọn.</p>
-                )}
-
-                <div className="mt-3">
-                  <label>Số lượng:</label>
-                  <input
-                    type="number"
-                    value={modalQuantity}
-                    min="1"
-                    onChange={handleModalQuantityChange}
-                    className="form-control"
-                  />
+      {
+        isModalOpen && (
+          <div className="modal show" tabIndex="-1" style={{ display: "block" }}>
+            <div className="modal-dialog">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Chọn SKU</h5>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    onClick={closeModal}
+                  ></button>
                 </div>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={closeModal}
-                >
-                  Đóng
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={saveSku}
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Đang lưu..." : "Xác nhận"}
-                </button>
+                <div className="modal-body">
+                  {error && <p className="text-danger">{error}</p>}
+
+                  {/* Kiểm tra nếu skuList có giá trị */}
+                  {skuList && skuList.length > 0 ? (
+                    <ul className="list-group">
+                      {skuList.map((sku) => (
+                        <li
+                          key={sku.idSku}
+                          className={`list-group-item ${sku.idSku === selectedSku ? "active" : ""
+                            }`}
+                          onClick={() => handleSkuSelect(sku)}
+                        >
+                          {/* Hiển thị các tùy chọn thuộc tính SKU */}
+                          {sku.tuyChonThuocTinhSku.map((tt) => (
+                            <span key={tt.idTuyChonTtSku}>
+                              {tt.tuyChonThuocTinh.giaTri} -
+                              {tt.tuyChonThuocTinh.thuocTinh.ten}
+                            </span>
+                          ))}
+                          <br />
+                          Giá: {sku.giaSanPham.toLocaleString()} VND
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>Không có SKU nào để chọn.</p>
+                  )}
+
+                  <div className="mt-3">
+                    <label>Số lượng:</label>
+                    <input
+                      type="number"
+                      value={modalQuantity}
+                      min="1"
+                      onChange={handleModalQuantityChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={closeModal}
+                  >
+                    Đóng
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={saveSku}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? "Đang lưu..." : "Xác nhận"}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
     </>
   );
 };

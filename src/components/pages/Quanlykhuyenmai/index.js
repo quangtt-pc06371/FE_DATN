@@ -17,18 +17,15 @@ const QuanLyKhuyenMai = () => {
         ghiChu: '',
         shop: { id: '' },
     });
+    console.log(formData)
     function clearTime(date) {
         date.setHours(0, 0, 0, 0); // Đặt lại giờ, phút, giây và mili-giây về 0
         return date;
     }
-   
+
     const { idKhuyenMai } = useParams();
     const [edit, setEdit] = useState(true);
 
-    function getDefaultNgayBatDau() {
-        const now = new Date();
-        return format(now, "yyyy-MM-dd'T'HH:mm");
-    }
 
     function getDefaultNgayKetThuc(ngayKetThuc) {
         const now = new Date(ngayKetThuc);
@@ -36,13 +33,7 @@ const QuanLyKhuyenMai = () => {
         return format(now, "yyyy-MM-dd'T'HH:mm");
     }
 
-    function getFormatDateTime(date) {
-        const now = new Date(date);
-        return format(now, "dd/MM/yyyy");
-    }
-
     async function getDataDisplayId() {
-
         const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai';
         const response = await axios.get(apiKhuyenMai + '/' + idKhuyenMai, formData);
         setFormData(response.data);
@@ -60,6 +51,9 @@ const QuanLyKhuyenMai = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
     const token = Cookies.get('token');
+
+
+  
     async function handleAdd() {
         // Kiểm tra bỏ trống các trường
         if (
@@ -79,7 +73,7 @@ const QuanLyKhuyenMai = () => {
         }
 
         // Kiểm tra giá trị khuyến mãi nằm trong khoảng 0 - 100
-        if (formData.giaTriKhuyenMai <= 0 || formData.giaTriKhuyenMai > 100) {
+        if (formData.giaTriKhuyenMai <= 0 || formData.giaTriKhuyenMai > 80) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Giá trị khuyến mãi phải nằm trong khoảng từ 1% đến 100!',
@@ -131,7 +125,7 @@ const QuanLyKhuyenMai = () => {
                 tenKhuyenMai: formData.tenKhuyenMai,
                 giaTriKhuyenMai: formData.giaTriKhuyenMai,
                 ngayBatDau: formData.ngayBatDau,
-                ngayKetThuc: getDefaultNgayKetThuc(formData.ngayKetThuc),
+                ngayKetThuc: formData.ngayKetThuc,
                 active: true,
                 ghiChu: formData.ghiChu,
             };
@@ -162,7 +156,7 @@ const QuanLyKhuyenMai = () => {
     }
 
 
-   
+
     async function handleUpdate() {
         // Kiểm tra bỏ trống các trường
         if (
@@ -195,6 +189,10 @@ const QuanLyKhuyenMai = () => {
         const ngayHienTai = clearTime(new Date()); // Ngày hiện tại, đã clear giờ
         const ngayBatDau = clearTime(new Date(formData.ngayBatDau)); // Ngày bắt đầu, đã clear giờ
         const ngayKetThuc = clearTime(new Date(formData.ngayKetThuc)); // Ngày kết thúc, đã clear giờ
+
+        console.log(ngayBatDau)
+        console.log(ngayHienTai)
+        console.log(ngayKetThuc)
 
         if (ngayBatDau < ngayHienTai) {
             Swal.fire({
@@ -231,12 +229,12 @@ const QuanLyKhuyenMai = () => {
                 tenKhuyenMai: formData.tenKhuyenMai,
                 giaTriKhuyenMai: formData.giaTriKhuyenMai,
                 ngayBatDau: formData.ngayBatDau,
-                ngayKetThuc: getDefaultNgayKetThuc(formData.ngayKetThuc),
+                ngayKetThuc: formData.ngayKetThuc,
                 active: true,
                 ghiChu: formData.ghiChu,
                 shop: { id: parseInt(formData.shop.id) }, // Kiểm tra nếu cần đảm bảo `formData.shop.id` là số
             };
-
+            console.log(dataToUpdate)
             const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai';
             const response = await axios.put(`${apiKhuyenMai}/${idKhuyenMai}`, dataToUpdate, {
                 headers: {
@@ -356,7 +354,7 @@ const QuanLyKhuyenMai = () => {
                                         type="date"
                                         className="form-control"
                                         name="ngayBatDau"
-                                        value={formatDateForInput(formData.ngayBatDau)}
+                                        value={getFormatDate(formData.ngayBatDau)}
                                         onChange={handleChange}
                                     />
                                 </div>
@@ -366,7 +364,7 @@ const QuanLyKhuyenMai = () => {
                                         type="date"
                                         className="form-control"
                                         name="ngayKetThuc"
-                                        value={formatDateForInput(formData.ngayKetThuc)}
+                                        value={getFormatDate(formData.ngayKetThuc)}
                                         onChange={handleChange}
                                     />
                                 </div>

@@ -114,13 +114,20 @@ export default function ChiTietSanPham() {
             );
         });
     };
-
+    async function handleDeleteKhuyenMai(id) {
+        const apiKhuyenMai = 'http://localhost:8080/api/khuyenmai/updatetrangthai';
+        await axios.put(apiKhuyenMai + '/' + id);
+    }
+    async function handleDeleteSanPhamKhuyenMai(id) {
+        const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai';
+        await axios.delete(apiSanPhamKhuyenMai + '/' + id);
+    }
 
 
     async function handleAddGioHang() {
         const sku = getSku();
         const token = Cookies.get('token');
-        
+
 
         if (!sku) {
             Swal.fire('Vui lòng chọn đầy đủ các tùy chọn thuộc tính trước khi thêm vào giỏ hàng.');
@@ -177,35 +184,34 @@ export default function ChiTietSanPham() {
             hienThiSanPham();
         }
     }, [data.shop?.id]);
+    useEffect(() => {
+        sanPhamKhuyenMaiForm.forEach((doiTuong) => {
+            const now = clearTime(new Date());
+            const endDate = clearTime(new Date(doiTuong.khuyenMai.ngayKetThuc));
 
+            if (now > endDate) {
+                handleDeleteKhuyenMai(doiTuong.khuyenMai.idKhuyenMai);
+                handleDeleteSanPhamKhuyenMai(doiTuong.idSanPhamKM);
+            }
+        });
+    }, [sanPhamKhuyenMaiForm]);
 
     const skuGet = getSku();
 
     const giaGoc = skuGet ? skuGet.giaSanPham : skusList[0]?.giaSanPham || 0;
 
 
-    const findSanPhamKhuyenMai = sanPhamKhuyenMaiForm.filter(
-        (item) => item.sanPham.idSanPham === Number(id)
-    );
-    const doiTuongSanPhamKM = findSanPhamKhuyenMai.find(
-        (promo) => promo.trangThai === true
-    );
-    console.log(findSanPhamKhuyenMai)
-    console.log(doiTuongSanPhamKM)
+    const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find((item) => item.sanPham.idSanPham === Number(id));
 
-    const now = new Date();
+    console.log(doiTuongSanPhamKM)
 
     let giaSauKhuyenMai = 0;
     let khuyenMaiConHieuLuc = true;
     if (doiTuongSanPhamKM) {
-        const startDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
-        const endDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
-
-
         giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
-
-
-        khuyenMaiConHieuLuc = now > endDate;
+    } else {
+        khuyenMaiConHieuLuc = false;
+        giaSauKhuyenMai = giaGoc;
     }
 
 
@@ -227,15 +233,11 @@ export default function ChiTietSanPham() {
     const handleThumbnailClick = (image) => {
         setSelectedImage(image); // Cập nhật ảnh lớn khi người dùng click vào thumbnail
     };
-    const findKhuyenMai = (sanPham) => {
-        return sanPhamKhuyenMaiForm.find(
-            (sanPhamKhuyenMai) => sanPhamKhuyenMai.sanPham.idSanPham === sanPham.idSanPham
-        );
-    };
-    const findSanPhamKhuyenMaiShop = (sanPham) => sanPhamKhuyenMaiForm.filter(
-        (item) => item.sanPham.idSanPham === sanPham.idSanPham
-    );
-    console.log(skusList)
+    function clearTime(date) {
+        date.setHours(0, 0, 0, 0); // Đặt lại giờ, phút, giây và mili-giây về 0
+        return date;
+    }
+
     return (
         <main >
             <div className="container mt-5 " >
@@ -302,7 +304,7 @@ export default function ChiTietSanPham() {
                         <h3>{data.tenSanPham}</h3>
 
 
-                        {khuyenMaiConHieuLuc === false ? (
+                        {khuyenMaiConHieuLuc === true ? (
                             <h1 className="text-muted" style={{ textDecoration: 'line-through' }}>
                                 <td>{`${giaGoc.toLocaleString('vi-VN')} VNĐ`}</td>
                             </h1>
@@ -312,7 +314,7 @@ export default function ChiTietSanPham() {
                             </h1>
                         )}
 
-                        {khuyenMaiConHieuLuc === false && (
+                        {khuyenMaiConHieuLuc === true && (
                             <h1 className='text-danger'>
                                 {`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}
                             </h1>
@@ -392,15 +394,10 @@ export default function ChiTietSanPham() {
                     <h3 className='my-3'>Các Sản Phẩm Khác Của Shop</h3>
                     {sanPhamShop.map((sanPham) => {
 
-                        const sanPhamKhuyenMaiDT = findSanPhamKhuyenMaiShop(sanPham)
-
-                        const doiTuongSanPhamKM = sanPhamKhuyenMaiDT.find(
-                            (promo) => promo.trangThai === true
-                        );
+                        const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find((item) => item.sanPham.idSanPham === sanPham.idSanPham);
 
                         console.log(doiTuongSanPhamKM)
 
-                        const now = new Date();
                         const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
                         let giaSauKhuyenMai = 0;
@@ -408,13 +405,10 @@ export default function ChiTietSanPham() {
 
 
                         if (doiTuongSanPhamKM) {
-                            const startDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
-                            const endDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
-
-
                             giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
-
-                            khuyenMaiConHieuLuc = now > endDate;
+                        } else {
+                            khuyenMaiConHieuLuc = false;
+                            giaSauKhuyenMai = giaGoc;
                         }
                         const firstSku = sanPham.skus?.[0];
                         const firstImage = firstSku?.hinhAnh;
@@ -438,7 +432,7 @@ export default function ChiTietSanPham() {
                                             <div className="card-body">
                                                 <p className='card-text'>{sanPham.tenSanPham}</p>
                                                 <p className="card-text text-danger fw-bold">
-                                                    {khuyenMaiConHieuLuc === false ? (
+                                                    {khuyenMaiConHieuLuc === true ? (
                                                         <>
                                                             <span className="text-muted" style={{ textDecoration: 'line-through' }}>
                                                                 {`${giaGoc.toLocaleString('vi-VN')} VNĐ`}

@@ -4,13 +4,12 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
-import moment from 'moment';
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 const DanhSachSanPhamKM = () => {
   const [shop, setShop] = useState(null);
   const [dataSanPhamKhuyenMai, setDataSanPhamKhuyenMai] = useState([]);
- 
-  
+  const location = useLocation();
+
   async function hienThiSanPhamKhuyenMai() {
     const apiShop = 'http://localhost:8080/api/sanphamkhuyenmai/shop';
     const response = await axios.get(apiShop + '/' + shop.id);
@@ -50,8 +49,14 @@ const DanhSachSanPhamKM = () => {
   }
 
   async function handleDeleteSanPhamKhuyenMaiHetHan(id) {
-    const apiSanPhamKhuyenMai = 'http://localhost:8080/api/sanphamkhuyenmai/updatetrangthai';
-    await axios.put(apiSanPhamKhuyenMai + '/' + id);
+    const apiSanPhamKhuyenMai = "http://localhost:8080/api/sanphamkhuyenmai";
+    try {
+      await axios.delete(apiSanPhamKhuyenMai + '/' + id);
+      hienThiSanPhamKhuyenMai();
+    } catch (error) {
+      console.log(error)
+    }
+
 
   }
 
@@ -59,7 +64,7 @@ const DanhSachSanPhamKM = () => {
     if (shop && shop.id) {
       hienThiSanPhamKhuyenMai();
     }
-  }, [shop]);
+  }, [shop, location.pathname]);
 
   useEffect(() => {
     const fetchShop = async () => {
@@ -76,21 +81,58 @@ const DanhSachSanPhamKM = () => {
     fetchShop();
   }, []);
 
-
-  function formatDateKeepUTC(dateString) {
-    return moment.utc(dateString).format('DD/MM/YYYY');
-  }
   
+  useEffect(() => {
+    if (dataSanPhamKhuyenMai.length > 0) {
+      const now = clearTime(new Date());
+  
+      // Lọc danh sách các sản phẩm khuyến mãi hết hạn
+      const expiredIds = dataSanPhamKhuyenMai
+        .filter((sanPhamKhuyenMai) => {
+          const endDate = clearTime(new Date(sanPhamKhuyenMai.khuyenMai.ngayKetThuc));
+          const hieuLucKhuyenMai = sanPhamKhuyenMai.khuyenMai.active;
+          return now > endDate || hieuLucKhuyenMai === false;
+        })
+        .map((sanPhamKhuyenMai) => sanPhamKhuyenMai.idSanPhamKM);
+  
+      // Xóa từng sản phẩm theo thứ tự
+      const deleteExpiredPromotions = async () => {
+        for (const id of expiredIds) {
+          try {
+            await handleDeleteSanPhamKhuyenMaiHetHan(id);
+            console.log(`Đã xóa sản phẩm khuyến mãi với ID: ${id}`);
+          } catch (error) {
+            console.error(`Lỗi khi xóa sản phẩm khuyến mãi với ID: ${id}`, error);
+          }
+        }
+        console.log("Hoàn thành xử lý các sản phẩm khuyến mãi hết hạn.");
+      };
+  
+      deleteExpiredPromotions();
+    }
+  }, [dataSanPhamKhuyenMai]);
+
+  function getFormatDate(dateString) {
+    if (!dateString) return ""; // Kiểm tra nếu không có giá trị
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return ""; // Kiểm tra nếu không phải là ngày hợp lệ
+    return format(date, 'dd/MM/yyyy');
+  }
+  function clearTime(date) {
+    date.setHours(0, 0, 0, 0); // Đặt lại giờ, phút, giây và mili-giây về 0
+    return date;
+  }
+
   return (
     <div className="container my-5 d-flex justify-content-center">
-    <div className="card shadow w-100 mb-5">
+      <div className="card shadow w-100 mb-5">
         <div className="card-header bg-body-secondary  text-white d-flex justify-content-between align-items-center">
           <h2>Danh Sách Chương Trình Khuyến Mãi</h2>
-          
+
         </div>
         <div className="card-body">
-        <table className="table table-bordered table-hover">
-        <thead className="table-primary">
+          <table className="table table-bordered table-hover">
+            <thead className="table-primary">
               <tr>
                 <th>STT</th>
                 <th>Sản Phẩm</th>
@@ -103,25 +145,11 @@ const DanhSachSanPhamKM = () => {
               </tr>
             </thead>
             <tbody>
-              {dataSanPhamKhuyenMai.filter(sanPhamKhuyenMai => sanPhamKhuyenMai.trangThai !== false).map((sanPhamKhuyenMai, filteredIndex) => {
-                const now = new Date();
-
-                const endDate = new Date(sanPhamKhuyenMai.khuyenMai.ngayKetThuc);
-
-                console.log(now)
-                console.log(endDate)
+              {dataSanPhamKhuyenMai.map((sanPhamKhuyenMai, filteredIndex) => {
 
                 const giaGoc = sanPhamKhuyenMai.sanPham.skus[0]?.giaSanPham || 0;
                 const khuyenMai = sanPhamKhuyenMai.khuyenMai.giaTriKhuyenMai || 0;
                 const giaSauKhuyenMai = giaGoc - (giaGoc * (khuyenMai / 100));
-                const khuyenMaiConHieuLuc = now > endDate;
-                const hieuLucKhuyenMai = sanPhamKhuyenMai.khuyenMai.active;
-                const chuongTrinhKhuyenMai = sanPhamKhuyenMai.trangThai;
-
-                if (khuyenMaiConHieuLuc || hieuLucKhuyenMai === false) {
-                  // Gọi các hàm xóa trạng thái khi khuyến mãi hết hiệu lực
-                  handleDeleteSanPhamKhuyenMaiHetHan(sanPhamKhuyenMai.idSanPhamKM);
-                }
 
                 return (
                   <tr key={sanPhamKhuyenMai.idSanPhamKM}>
@@ -130,14 +158,12 @@ const DanhSachSanPhamKM = () => {
                     <td> {`${giaGoc.toLocaleString('vi-VN')} VNĐ`} </td>
                     <td>{sanPhamKhuyenMai.khuyenMai.tenKhuyenMai} ({khuyenMai}%)</td>
                     <td>
-                      {chuongTrinhKhuyenMai === true ? (
-                        <span className="text-danger fw-bold">{`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}</span>
-                      ) : (
-                        <span></span>
-                      )}
+
+                      <span className="text-danger fw-bold">{`${giaSauKhuyenMai.toLocaleString('vi-VN')} VNĐ`}</span>
+
                     </td>
-                    <td>{formatDateKeepUTC(sanPhamKhuyenMai.khuyenMai.ngayBatDau)}</td>
-                    <td>{formatDateKeepUTC(sanPhamKhuyenMai.khuyenMai.ngayKetThuc)}</td>
+                    <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayBatDau)}</td>
+                    <td>{getFormatDate(sanPhamKhuyenMai.khuyenMai.ngayKetThuc)}</td>
                     <td className="text-center">
                       <button className="btn btn-danger" onClick={() => handleDeleteSanPhamKhuyenMai(sanPhamKhuyenMai.idSanPhamKM)}>Xóa</button>
                     </td>

@@ -13,23 +13,22 @@ console.log(isAuthenticated)
 if (loading) {
   return <p>Đang kiểm tra quyền truy cập...</p>; // Hiển thị trạng thái loading
 }
-  // if (!isAuthenticated) {
-  //   Swal.fire({
-  //     title: "Yêu cầu đăng nhập",
-  //     text: "Vui lòng đăng nhập để thực hiện thao tác này!",
-  //     icon: "warning",
-  //     confirmButtonText: "Đăng nhập",
-  //   }).then(() => {
-  //     window.location.href = "/buyer/login"; // Chuyển hướng
-  //   });
-  //   return null; // Không render gì trong lúc xử lý
-  // }
 
-  if (requiredRoles && !requiredRoles.includes(role)) {
-    return <h2>Bạn không có quyền truy cập vào trang này.</h2>;
-  }
+if (!isAuthenticated) {
+  Swal.fire({
+    title: "Yêu cầu đăng nhập",
+    text: "Vui lòng đăng nhập để thực hiện thao tác này!",
+    icon: "warning",
+    confirmButtonText: "Đăng nhập",
+  });
+  // return <Navigate to="/buyer/login" replace />;
+}
 
-  return <Outlet />;
+if (requiredRoles && !requiredRoles.some((requiredRole) => role.includes(requiredRole))) {
+  return <h2>Bạn không có quyền truy cập vào trang này.</h2>;
+}
+
+return <Outlet />;
 };
 
 export default ProtectedRoute;

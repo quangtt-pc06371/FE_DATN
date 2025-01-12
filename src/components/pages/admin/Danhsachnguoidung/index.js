@@ -22,12 +22,12 @@ export default function DanhSachNguoiDung() {
     useEffect(() => {
         hienThiNguoiDung();
     }, []);
-
+    console.log(data)
     // Lọc dữ liệu
     const filteredNoShop = data
         .filter((user) => user.shop === null)
-        .filter((user) => user.hoTen.toLowerCase().includes(searchNoShop.toLowerCase()));
-
+        .filter((user) => user.hoTen.toLowerCase().includes(searchNoShop.toLowerCase()))
+        .filter((user) => !user.quyens.some((role) => role.name === 'ROLE_Admin'));
     const filteredHasShop = data
         .filter((user) => user.shop !== null)
         .filter((user) => user.hoTen.toLowerCase().includes(searchHasShop.toLowerCase()));

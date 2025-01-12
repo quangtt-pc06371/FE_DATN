@@ -73,15 +73,15 @@ const User = () => {
     //   </div>
     <div className="profile-container">
       <div className="profile-sidebar">
-      <img
-  src={
-    profile.anh ||
-    "https://cdn1.iconfinder.com/data/icons/rounded-black-basic-ui/139/Photo_Add-RoundedBlack-512.png"
-  }
-  alt="User Avatar"
-  className="rounded-circle border"
-  style={{ width: "120px", height: "120px", objectFit: "cover" }}
-/>
+        <img
+          src={
+            profile.anh ||
+            "https://cdn1.iconfinder.com/data/icons/rounded-black-basic-ui/139/Photo_Add-RoundedBlack-512.png"
+          }
+          alt="User Avatar"
+          className="rounded-circle border"
+          style={{ width: "120px", height: "120px", objectFit: "cover" }}
+        />
 
         <h3 className="profile-name"> {profile.hoten}</h3>
         <button className="edit-profile-button" onClick={() => navigate('/user/updateuser')}>Chỉnh sửa hồ sơ</button>
@@ -91,13 +91,22 @@ const User = () => {
           {/* <a href="/user/profile"> <li className="menu-item"> thông tin cá nhân</li></a> */}
           {/* <li className="menu-item">Đơn hàng</li>
          <li className="menu-item">Địa chỉ</li> */}
-         
+
           <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/profile')}>Thông tin cá nhân</button> </li>
           <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/bill')}>Đơn hàng</button> </li>
-      
+
 
           {/* <li className="menu-item"> <button className="edit-profile-button"onClick={() => navigate('/user/shop-user')}>địa chỉ</button> </li> */}
-          <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/shop/shop-user')}>Shop</button> </li>
+          <li className="menu-item">
+            {profile.quyen?.some((role) => role.name === "ROLE_Shop") && (
+              <button
+                className="edit-profile-button form-control"
+                onClick={() => navigate('/shop/shop-user')}
+              >
+                Shop
+              </button>
+            )}
+          </li>
 
           <li className="menu-item"> <button className="edit-profile-button form-control" onClick={() => navigate('/user/shop-register')}>Đăng ký shop</button> </li>
 

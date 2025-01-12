@@ -110,7 +110,7 @@ export default function App() {
           <Route path="voucherform" element={<VoucherForm />} />
           <Route path="voucherlist" element={<VoucherList />} />*
          
-          <Route element={<ProtectedRoute requiredRoles={["ROLE_User", "ROLE_Shop"]} />} >
+          <Route element={<ProtectedRoute requiredRoles={["ROLE_User"]} />} >
             <Route path="user" element={<User />}>
               <Route path="updateuser" element={<Updateuser2 />} />
               <Route path="profile" element={<Profile />} />
@@ -131,7 +131,7 @@ export default function App() {
             </Route>
           </Route>
 
-          <Route element={<ProtectedRoute requiredRoles={["ROLE_User","ROLE_Shop"]} />} >
+          <Route element={<ProtectedRoute requiredRoles={["ROLE_Shop"]} />} >
             <Route path="shop" element={<Shop />}>
           
               {/* <Route path="bill" element={<Bill />} />           */}
@@ -143,9 +143,9 @@ export default function App() {
                 <Route path="sellerpage" element={<SellerPage />} />
                 <Route path="doanhthushop" element={<DoanhThu />} />
               {/* </Route> */}
-              <Route element={<ProtectedRoute requiredRoles={["ROLE_User"]} />}>
+              {/* <Route element={<ProtectedRoute requiredRoles={["ROLE_User"]} />}>
                 <Route path="shop-register" element={<ShopRegistration />} />
-              </Route>
+              </Route> */}
 
             </Route>
           </Route>

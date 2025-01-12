@@ -111,10 +111,12 @@ const SanPham = () => {
     }
 
 
-
     useEffect(() => {
         getDanhMuc();
         getSanPhamKhuyenMai();
+    }, []);
+    useEffect(() => {
+
         if (noiDungTimKiem) {
             hienThiSanPhamTheoTen(noiDungTimKiem);
             setDataSanPhamTen(true);
@@ -130,17 +132,32 @@ const SanPham = () => {
         }
     }, [sapXep]);
 
+    useEffect(() => {
+        sanPhamKhuyenMaiForm.forEach((doiTuong) => {
+            const now = clearTime(new Date());
+            const endDate = clearTime(new Date(doiTuong.khuyenMai.ngayKetThuc));
+    
+            if (now > endDate) {
+                handleDeleteKhuyenMai(doiTuong.khuyenMai.idKhuyenMai);
+                handleDeleteSanPhamKhuyenMai(doiTuong.idSanPhamKM);
+            }
+        });
+    }, [sanPhamKhuyenMaiForm]);
+    
+
     const findKhuyenMai = (sanPham) => {
         return sanPhamKhuyenMaiForm.find(
             (sanPhamKhuyenMai) => sanPhamKhuyenMai.sanPham.idSanPham === sanPham.idSanPham
         );
     };
+    console.log(sanPhamKhuyenMaiForm)
+ 
+    
 
-    const findSanPhamKhuyenMai = (sanPham) => sanPhamKhuyenMaiForm.filter(
-        (item) => item.sanPham.idSanPham === sanPham.idSanPham
-    );
-
-
+    function clearTime(date) {
+        date.setHours(0, 0, 0, 0); // Đặt lại giờ, phút, giây và mili-giây về 0
+        return date;
+    }
     return (
         <main style={{ background: 'rgb(245,245,250)' }}>
             <div className='container' >
@@ -217,45 +234,27 @@ const SanPham = () => {
                         <div className="row">
                             {data.map((sanPham) => {
 
-                                const sanPhamKhuyenMaiDT = findSanPhamKhuyenMai(sanPham)
-
-                                const doiTuongSanPhamKM = sanPhamKhuyenMaiDT.find(
-                                    (promo) => promo.trangThai === true
-                                );
-                               
+                                console.log('sanPham.idSanPham:', sanPham.idSanPham);
+                                // const doiTuongSanPhamKM = findSanPhamKhuyenMai(sanPham)
+                                const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find((item) => item.sanPham.idSanPham === sanPham.idSanPham);
                                 console.log(doiTuongSanPhamKM)
-                                
-                                const now = new Date();
+
+                       
                                 const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
                                 let giaSauKhuyenMai = 0;
                                 let khuyenMaiConHieuLuc = true;
 
-
-                                // let giaTriChuongTrinhKhuyenMai =  khuyenMaiData.trangThai
-                                // console.log(giaTriChuongTrinhKhuyenMai)
-
                                 if (doiTuongSanPhamKM) {
-                                    const startDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
-                                    const endDate = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
-
                                     giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
-                                    console.log(endDate)
-
-                                    khuyenMaiConHieuLuc = now > endDate;
-                                    console.log(khuyenMaiConHieuLuc)
-                                    if (khuyenMaiConHieuLuc) {
-                                        // Gọi các hàm xóa trạng thái khi khuyến mãi hết hiệu lực
-                                        handleDeleteKhuyenMai(doiTuongSanPhamKM.khuyenMai.idKhuyenMai);
-                                        handleDeleteSanPhamKhuyenMai(doiTuongSanPhamKM.idSanPhamKM);
-                                    }
-
-
+                                }else{
+                                    khuyenMaiConHieuLuc = false;
+                                    giaSauKhuyenMai = giaGoc;
                                 }
 
 
                                 const firstSku = sanPham.skus?.[0];
-                                console.log(firstSku)
+
                                 const firstImage = firstSku?.hinhAnh;
                                 return (
                                     sanPham.trangThai === false || sanPham.shop.isActive == false ? null : (
@@ -276,10 +275,10 @@ const SanPham = () => {
                                                     <div className="card-body">
                                                         <p className='card-text'>{sanPham.tenSanPham}</p>
                                                         <p className="card-text text-danger fw-bold">
-                                                            {khuyenMaiConHieuLuc === false ? (
+                                                            {khuyenMaiConHieuLuc === true ? (
                                                                 <>
                                                                     <span className="text-muted" style={{ textDecoration: 'line-through' }}>
-                                                                    {`${giaGoc.toLocaleString('vi-VN')} VNĐ`}
+                                                                        {`${giaGoc.toLocaleString('vi-VN')} VNĐ`}
 
                                                                     </span>
                                                                     <br />

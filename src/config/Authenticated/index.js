@@ -5,7 +5,7 @@ import Cookies from "universal-cookie";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [role, setRole] = useState(null);
+  const [role, setRole] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const cookies = new Cookies();
@@ -19,6 +19,11 @@ export const AuthProvider = ({ children }) => {
         const decoded = jwtDecode(token);
         console.log("Payload của token:", decoded); // Log payload
         setRole(decoded.role[0]?.authority || null);
+      
+const roles = decoded.role?.map((r) => r.authority) || []; // Lấy tất cả các quyền
+console.log("Quyền người dùng:", roles);
+setRole(roles);
+          // console.log("quyenf nguoi dung:",   decoded.role[0]?.authority);
         setIsAuthenticated(true);
       } catch (error) {
         console.error("Token không hợp lệ:", error);
@@ -35,7 +40,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ role,  loading }}>
+    <AuthContext.Provider value={{ role,isAuthenticated,  loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -12,6 +12,7 @@ const CartPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectAll, setSelectAll] = useState(false); // Trạng thái chọn tất cả
   const [selectedIds, setSelectedIds] = useState([]); // Các ID được chọn
+   const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
   const navigate = useNavigate(); // Tạo navigate hook
 
   // Nhóm sản phẩm theo shop
@@ -237,6 +238,18 @@ const CartPage = () => {
     saveSelectedProductsToLocalStorage();
   }, [selectedIds]); // Khi `selectedIds` thay đổi, useEffect sẽ được kích hoạt
 
+  async function getSanPhamKhuyenMai() {
+    try {
+      const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+      setSanPhamKhuyenMaiForm(response.data);
+    } catch (error) {
+
+    }
+  }
+  useEffect(() => {
+    getSanPhamKhuyenMai();
+
+  }, []);
   if (error) {
     return <div className="error-message">{error}</div>;
   }
@@ -245,13 +258,29 @@ const CartPage = () => {
     return <div className="loading-message">Đang tải giỏ hàng...</div>;
   }
 
+  
+
   const totalAmount = Object.values(cartDetail || {}) // Duyệt qua từng shop
-    .flatMap((shop) => shop.products) // Trải phẳng danh sách sản phẩm từ tất cả các shop
-    .filter((item) => item.isSelected) // Lọc các sản phẩm được chọn
-    .reduce(
-      (sum, item) => sum + item.skuEntity.giaSanPham * item.soLuongMua,
-      0
-    ); // Tính tổng tiền
+  .flatMap((shop) => shop.products) // Trải phẳng danh sách sản phẩm từ tất cả các shop
+  .filter((item) => item.isSelected) // Lọc các sản phẩm được chọn
+  .reduce((sum, item) => {
+    const giaGoc = item.skuEntity.giaSanPham || 0;
+
+    // Tìm khuyến mãi liên quan đến sản phẩm
+    const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+      (km) => km.sanPham.idSanPham === item.sanPhamEntity.idSanPham
+    );
+
+    // Tính giá sau khuyến mãi
+    const giaSauKhuyenMai = doiTuongSanPhamKM
+      ? giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100
+      : giaGoc;
+
+    // Tính tổng tiền
+    return sum + giaSauKhuyenMai * item.soLuongMua;
+  }, 0); // Bắt đầu tổng từ 0
+
+
 
   return (
     <>
