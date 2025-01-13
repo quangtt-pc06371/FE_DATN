@@ -5,8 +5,16 @@ import Cookies from "js-cookie";
 const SellerPage = () => {
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("allOrders");
-  console.log(orders);
-
+ 
+  const reasonsCancel = [
+    "Thay đổi địa chỉ nhận hàng",
+    "Không muốn mua nữa",
+    "Đặt nhầm sản phẩm",
+    "Giá cao",
+    "Giao hàng quá lâu",
+    "Lý do khác",
+  ];
+  
   const fetchOrders = async () => {
     try {
       const token = Cookies.get("token");
@@ -124,15 +132,6 @@ const SellerPage = () => {
       <ul className="nav nav-pills justify-content-center mt-4">
         <li className="nav-item">
           <a
-            className={`nav-link ${activeTab === "allOrders" ? "active" : ""}`}
-            href="#allOrders"
-            onClick={() => setActiveTab("allOrders")}
-          >
-            Tất Cả Đơn Hàng
-          </a>
-        </li>
-        <li className="nav-item">
-          <a
             className={`nav-link ${activeTab === "choxacnhan" ? "active" : ""}`}
             href="#choxacnhan"
             onClick={() => setActiveTab("choxacnhan")}
@@ -183,7 +182,6 @@ const SellerPage = () => {
       {/* Tab Content */}
       <div className="tab-content mt-4">
         {[
-          "allOrders",
           "choxacnhan",
           "choguihang",
           "chogiaohang",
@@ -265,14 +263,14 @@ const SellerPage = () => {
                         <span>
                           Trạng thái:{" "}
                           {order.trangThaiDonHang === 0
-                            ? "Chờ xác nhận"
+                            ? "Người mua đang chờ xác nhận"
                             : order.trangThaiDonHang === 1
-                            ? "Chờ gửi hàng"
+                            ? "Phía vận chuyển đã đến lấy hàng"
                             : order.trangThaiDonHang === 2
                             ? "Chờ giao hàng"
                             : order.trangThaiDonHang === 3
                             ? "Đã giao"
-                            : "Đã hủy"}
+                            : "Đã hủy - Lý do: " + order.lyDo}
                         </span>
                       </div>
                       <div>

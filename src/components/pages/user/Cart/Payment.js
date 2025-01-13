@@ -58,7 +58,7 @@ function Checkout() {
           );
 
           let giaSauKhuyenMai = giaGoc;
-          let khuyenMaiConHieuLuc = false;
+          let khuyenMaiConHieuLuc = true;
 
           if (doiTuongSanPhamKM) {
             giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));

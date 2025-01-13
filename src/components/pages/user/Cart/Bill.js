@@ -174,7 +174,6 @@ const Bill = () => {
 
   // Filter orders based on the active tab
   const filteredOrders = orders.filter((order) => {
-    if (activeTab === "allOrders") return true;
     if (activeTab === "choxacnhan" && order.trangThaiDonHang === 0) return true;
     if (activeTab === "choguihang" && order.trangThaiDonHang === 1) return true;
     if (activeTab === "chogiaohang" && order.trangThaiDonHang === 2)
@@ -205,15 +204,14 @@ const Bill = () => {
   }, []);
   async function getSanPhamKhuyenMai() {
     try {
-      const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+      const response = await axios.get(
+        "http://localhost:8080/api/sanphamkhuyenmai"
+      );
       setSanPhamKhuyenMaiForm(response.data);
-    } catch (error) {
-
-    }
+    } catch (error) {}
   }
   useEffect(() => {
     getSanPhamKhuyenMai();
-
   }, []);
   return (
     <div className="container mt-4">
@@ -221,15 +219,6 @@ const Bill = () => {
 
       {/* Navigation Tab */}
       <ul className="nav nav-pills justify-content-center mt-4">
-        <li className="nav-item">
-          <a
-            className={`nav-link ${activeTab === "allOrders" ? "active" : ""}`}
-            href="#allOrders"
-            onClick={() => setActiveTab("allOrders")}
-          >
-            Tất Cả Đơn Hàng
-          </a>
-        </li>
         <li className="nav-item">
           <a
             className={`nav-link ${activeTab === "choxacnhan" ? "active" : ""}`}
@@ -250,8 +239,9 @@ const Bill = () => {
         </li>
         <li className="nav-item">
           <a
-            className={`nav-link ${activeTab === "chogiaohang" ? "active" : ""
-              }`}
+            className={`nav-link ${
+              activeTab === "chogiaohang" ? "active" : ""
+            }`}
             href="#chogiohang"
             onClick={() => setActiveTab("chogiaohang")}
           >
@@ -308,28 +298,31 @@ const Bill = () => {
                         <h6>{shop.shopName}</h6>
                       </div>
 
-
-
-
                       {shop.products.map((detail) => {
                         const giaGoc = detail.skuEntity.giaSanPham || 0;
 
                         const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
-                          (kmItem) => kmItem.sanPham.idSanPham === Number(detail.sanPhamEntity.idSanPham)
+                          (kmItem) =>
+                            kmItem.sanPham.idSanPham ===
+                            Number(detail.sanPhamEntity.idSanPham)
                         );
 
                         let giaSauKhuyenMai = giaGoc;
                         let khuyenMaiConHieuLuc = false;
 
                         if (doiTuongSanPhamKM) {
-                          giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+                          giaSauKhuyenMai =
+                            giaGoc -
+                            giaGoc *
+                              (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai /
+                                100);
                           khuyenMaiConHieuLuc = true;
                         }
-                        const giaHienThi = khuyenMaiConHieuLuc ? giaSauKhuyenMai : giaGoc;
+                        const giaHienThi = khuyenMaiConHieuLuc
+                          ? giaSauKhuyenMai
+                          : giaGoc;
                         const tongTien = giaHienThi * detail.soLuong;
                         return (
-
-
                           <div
                             key={detail.idChiTietDonHang}
                             className="row g-0 align-items-center mb-3 border-bottom"
@@ -357,7 +350,6 @@ const Bill = () => {
                               </p>
                             </div>
                             <div className="col-md-2">
-
                               {khuyenMaiConHieuLuc ? (
                                 <>
                                   <span className="text-decoration-line-through text-muted d-block">
@@ -368,24 +360,18 @@ const Bill = () => {
                                   </span>
                                 </>
                               ) : (
-                                <span className="fw-bold">{giaGoc.toLocaleString()} VND</span>
+                                <span className="fw-bold">
+                                  {giaGoc.toLocaleString()} VND
+                                </span>
                               )}
-
                             </div>
                             <div className="col-md-2">x{detail.soLuong}</div>
                             <div className="col-md-2  fw-bold">
-                              {(
-                                tongTien
-                              ).toLocaleString()}{" "}
-                              VND
+                              {tongTien.toLocaleString()} VND
                             </div>
                           </div>
-                        )
+                        );
                       })}
-
-
-
-
                     </div>
                   );
                 })}
@@ -397,29 +383,31 @@ const Bill = () => {
                     {order.trangThaiDonHang === 0
                       ? "Chờ xác nhận"
                       : order.trangThaiDonHang === 1
-                        ? "Đơn hàng đã được gửi"
-                        : order.trangThaiDonHang === 2
-                          ? "Đơn hàng đang trên đường giao đến bạn"
-                          : order.trangThaiDonHang === 3
-                            ? "Đã giao"
-                            : order.trangThaiDonHang === 4
-                              ? "Đã hủy"
-                              : "Trả hàng/Hoàn tiền"}
+                      ? "Đơn hàng đã được gửi"
+                      : order.trangThaiDonHang === 2
+                      ? "Đơn hàng đang trên đường giao đến bạn"
+                      : order.trangThaiDonHang === 3
+                      ? "Đã giao"
+                      : order.trangThaiDonHang === 4
+                      ? "Đã hủy - Lý do: " + order.lyDo
+                      :  "Đang chờ xét duyệt - Lý do Trả hàng/ Hoàn tiền " + order.lyDo}
                   </span>
 
                   {/* Thông báo cho đơn hàng đã chuyển khoản */}
-                  {order.hinhThucThanhToan === true && (
-                    <div className="alert alert-info mt-3">
-                      <h5 className="alert-heading">Thông báo quan trọng</h5>
-                      <p>
-                        Đơn hàng đã chuyển khoản, xin vui lòng liên hệ đến chúng
-                        tôi để nhận lại tiền.
-                      </p>
-                      <p className="mb-0 font-weight-bold">
-                        Hotline: <a href="tel:0942768652">0942768652</a>
-                      </p>
-                    </div>
-                  )}
+                  {order.hinhThucThanhToan === true &&
+                    (order.trangThaiThanhToan === "Trả hàng/Hoàn tiền" ||
+                      order.trangThaiThanhToan === "Hủy đơn") && (
+                      <div className="alert alert-info mt-3">
+                        <h5 className="alert-heading">Thông báo quan trọng</h5>
+                        <p>
+                          Đơn hàng đã chuyển khoản, xin vui lòng liên hệ đến
+                          chúng tôi để nhận lại tiền.
+                        </p>
+                        <p className="mb-0 font-weight-bold">
+                          Hotline: <a href="tel:0942768652">0942768652</a>
+                        </p>
+                      </div>
+                    )}
                 </div>
 
                 <div>
@@ -433,24 +421,24 @@ const Bill = () => {
                   )}
                   {(order.trangThaiDonHang === 1 ||
                     order.trangThaiDonHang === 0) && (
-                      <button
-                        className="btn btn-danger btn-sm ms-2"
-                        onClick={() => handleOpenModal(order.idDonHang, "cancel")}
-                      >
-                        Hủy đơn
-                      </button>
-                    )}
-                  {(order.trangThaiDonHang === 3 ||
+                    <button
+                      className="btn btn-danger btn-sm ms-2"
+                      onClick={() => handleOpenModal(order.idDonHang, "cancel")}
+                    >
+                      Hủy đơn
+                    </button>
+                  )}
+                  {(
                     order.trangThaiDonHang === 2) && (
-                      <button
-                        className="btn btn-warning btn-sm ms-2"
-                        onClick={() =>
-                          handleOpenModal(order.idDonHang, "hoantien")
-                        }
-                      >
-                        Trả hàng/Hoàn tiền
-                      </button>
-                    )}
+                    <button
+                      className="btn btn-warning btn-sm ms-2"
+                      onClick={() =>
+                        handleOpenModal(order.idDonHang, "hoantien")
+                      }
+                    >
+                      Trả hàng/Hoàn tiền
+                    </button>
+                  )}
                 </div>
                 {/* Modal */}
                 <div
@@ -514,8 +502,8 @@ const Bill = () => {
                           {isSubmitting
                             ? "Đang xử lý..."
                             : actionType === "cancel"
-                              ? "Hủy đơn"
-                              : "Trả hàng/Hoàn tiền"}
+                            ? "Hủy đơn"
+                            : "Trả hàng/Hoàn tiền"}
                         </button>
                       </div>
                     </div>

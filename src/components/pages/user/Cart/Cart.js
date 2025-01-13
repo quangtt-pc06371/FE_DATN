@@ -361,7 +361,7 @@ const CartPage = () => {
         </div>
 
         {/* Phần thanh toán */}
-        <div className="checkout-container position-fixed bottom-0 start-0 end-0 bg-white p-3 card border shadow-sm">
+        <div className="checkout-container bottom-0 start-0 end-0 bg-white p-3 card border shadow-sm">
           <div className="container">
             <div className="row justify-content-between align-items-center">
               <div className="col-6">
