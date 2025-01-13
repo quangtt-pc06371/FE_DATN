@@ -14,7 +14,7 @@ const CartPage = () => {
   const [selectedIds, setSelectedIds] = useState([]); // Các ID được chọn
    const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
   const navigate = useNavigate(); // Tạo navigate hook
-
+  console.log(cartDetail)
   // Nhóm sản phẩm theo shop
   const groupByShop = (chiTietGioHangList) => {
     if (!Array.isArray(chiTietGioHangList)) {
@@ -208,6 +208,10 @@ const CartPage = () => {
     setCartDetail(updatedCartDetail);
     setSelectAll(allSelected); // Cập nhật trạng thái "Chọn tất cả"
   };
+
+
+  
+ 
 
   const saveSelectedProductsToLocalStorage = () => {
     if (!cartDetail) return;

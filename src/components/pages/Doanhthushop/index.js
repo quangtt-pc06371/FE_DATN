@@ -9,14 +9,15 @@ export default function DoanhThu() {
 
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
-    const [totalRevenue, setTotalRevenue] = useState(null);
+    const [totalRevenue, setTotalRevenue] = useState("");
     const [error, setError] = useState("");
     const [year, setYear] = useState("");
-    const [result, setResult] = useState(null);
-    const [result2, setResult2] = useState(null);
+    const [result, setResult] = useState("");
+    const [result2, setResult2] = useState("");
     const [year2, setYear2] = useState("");
     const [month, setMonth] = useState("");
-
+    const [products, setProducts] = useState([]);
+    const [cthoadons, setcthoadon] = useState([]);
     const shopId = shop.id
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -44,10 +45,24 @@ export default function DoanhThu() {
             setError("Đã xảy ra lỗi khi lấy dữ liệu. Vui lòng thử lại!");
             console.error(err);
         }
+        try {
+            const responsee = await axios.get("http://localhost:8080/api/thong-ke/hoadon", {
+                params: {
+                    shopId,
+                    startDate,
+                    endDate,
+                },
+            });
+            console.log(responsee)
+            setProducts(responsee.data);
+        } catch (err) {
+            setError("Đã xảy ra lỗi khi lấy dữ liệu. Vui lòng thử lại!");
+            console.error(err);
+        }
     };
 
-    console.log(shop)
-    console.log(doanhThu)
+    // console.log(shop)
+    // console.log(doanhThu)
     useEffect(() => {
         const fetchShop = async () => {
             const token = Cookies.get("token");
@@ -64,31 +79,48 @@ export default function DoanhThu() {
 
     }, []);
 
-    const handleSubmit2 = async (e) => {
-        e.preventDefault();
-        setError("");
+    // const handleSubmit2 = async (e) => {
+    //     e.preventDefault();
+    //     setError("");
+    //     try {
+    //         const response = await axios.get("http://localhost:8080/api/thong-ke/nam", {
+    //             params: { shopId, year },
+    //         });
+    //         setResult(response.data);
+    //         console.log(response.data)
+    //     } catch (err) {
+    //         setError("Không thể lấy dữ liệu, vui lòng kiểm tra thông tin nhập vào.");
+    //     }
+    // };
+    // const handleSubmit3 = async (e) => {
+    //     e.preventDefault();
+    //     setError("");
+    //     try {
+    //         const response = await axios.get("http://localhost:8080/api/thong-ke/nam-thang", {
+    //             params: { shopId, year2, month },
+    //         });
+    //         setResult2(response.data);
+    //     } catch (err) {
+    //         setError("Không thể lấy dữ liệu, vui lòng kiểm tra thông tin nhập vào.");
+    //     }
+    // };
+     const handlechitiet = async (idDonHang) => {
+        // const token = Cookies.get('token');
         try {
-            const response = await axios.get("http://localhost:8080/api/thong-ke/nam", {
-                params: { shopId, year },
+            const responsee = await axios.get("http://localhost:8080/api/thong-ke/cthoadon", {
+                params: {
+                    idDonHang
+
+               
+                },
             });
-            setResult(response.data);
-            console.log(response)
+            console.log(responsee.data)
+            setcthoadon(responsee.data);
         } catch (err) {
-            setError("Không thể lấy dữ liệu, vui lòng kiểm tra thông tin nhập vào.");
+            setError("Đã xảy ra lỗi khi lấy dữ liệu. Vui lòng thử lại!");
+            console.error(err);
         }
-    };
-    const handleSubmit3 = async (e) => {
-        e.preventDefault();
-        setError("");
-        try {
-            const response = await axios.get("http://localhost:8080/api/thong-ke/nam-thang", {
-                params: { shopId, year2, month },
-            });
-            setResult2(response.data);
-        } catch (err) {
-            setError("Không thể lấy dữ liệu, vui lòng kiểm tra thông tin nhập vào.");
         }
-    };
     return (
         <div className="container my-5">
             <div className="card mt-3">
@@ -139,14 +171,83 @@ export default function DoanhThu() {
                                 <p className="fs-5">{`${(totalRevenue || 0).toLocaleString('vi-VN')} VNĐ`}</p>
 
                             </p>
+                            <div className="mt-4">
+                          <h4>Danh sách hóa dơn:</h4>
+                          <table className="table table-bordered mt-3">
+                              <thead>
+                                  <tr>
+                                      {/* {/* <th>Tên sản phẩm</th> */}
+                                      <th>Số thứ tự</th> 
+                                      <th>tổng đơn</th>
+                                      <th>tên khách hàng</th>
+                                      <th>chi tiết</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {products?.map((product, index) => (
+                                      <tr key={index}>
+                                          <td>{index +1}</td>
+                                          <td>{product.tongSoTien }</td>
+                                          <td>{product.taiKhoanEntity.hoTen }</td>
+                                          <td>
+                                          <button variant="success" className="me-2" onClick={() => handlechitiet(product.idDonHang)}>
+                        Duyệt
+                      </button>
+                                            </td>
+                                          {/* <td>{product.quantitySold}</td>
+                                          <td>{`${product.revenue.toLocaleString('vi-VN')} VNĐ`}</td> */}
+                                      </tr>
+                                  ))}
+                              </tbody>
+                          </table>
+                          </div>
+                          <div className="mt-4">
+                          <h4>Danh sách chi tiết hóa dơn:</h4>
+                          <table className="table table-bordered mt-3">
+                              <thead>
+                                  <tr>
+                                      {/* {/* <th>Tên sản phẩm</th> */}
+                                      <th>Số thứ tự</th> 
+                                      <th>số lượng </th>
+                                      <th> tên sản phẩm </th>
+                                      <th>đơn giá  </th>
+                                      <th>ảnh </th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {cthoadons?.map((cthoadon, index) => (
+                                      <tr key={index}>
+                                          <td>{index +1}</td>
+                                          <td>{cthoadon.soLuong }</td>
+                                          <td>{cthoadon.sanPhamEntity.tenSanPham }</td>
+                                          <td>{cthoadon.tongTien }</td>
+                                          <td>
+                                      
+                                          <img
+                src={cthoadon?.skuEntity?.hinhAnh?.tenAnh}
+                alt=""
+                className="img-fluid"
+                style={{ width: "80px", height: "80px" }} // Kích thước hình ảnh 80x80
+              />
+                                          
+                                            </td>
+                                           
+                                          {/* <td>{product.quantitySold}</td>
+                                          <td>{`${product.revenue.toLocaleString('vi-VN')} VNĐ`}</td> */}
+                                      </tr>
+                                  ))}
+                              </tbody>
+                          </table>
+                          </div>
                         </div>
+                       
                     ) }
                 </div>
             </div>
 
 
 
-            <div className="card mt-3">
+            {/* <div className="card mt-3">
                 <div className="card-header">
                     <h1 className="text-center">Thống Kê Theo Năm</h1>
                 </div>
@@ -226,7 +327,7 @@ export default function DoanhThu() {
                     )}
                     {error && <p className="text-danger mt-3">{error}</p>}
                 </div>
-            </div>
+            </div> */}
 
 
             {/* <div className="card shadow-sm border-1">

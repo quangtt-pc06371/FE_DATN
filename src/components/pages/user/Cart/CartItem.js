@@ -16,7 +16,8 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const handleSkuSelect = (sku) => {
     setSelectedSku(sku.idSku); // Cập nhật SKU đã chọn
   };
-
+  console.log(onSelect)
+  console.log(selectedSku)
   // Xử lý khi thay đổi số lượng sản phẩm
   const handleSkuChange = (newQuantity) => {
     if (newQuantity < 1) return;
@@ -101,9 +102,9 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
 
 
   const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find((item) => item.sanPham.idSanPham === product.sanPhamEntity.idSanPham);
-  console.log(doiTuongSanPhamKM)
+
   const giaGoc = product.skuEntity.giaSanPham || 0;
-  console.log(giaGoc)
+
   let giaSauKhuyenMai = 0;
   let khuyenMaiConHieuLuc = true;
 
@@ -114,7 +115,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
     khuyenMaiConHieuLuc = false;
     giaSauKhuyenMai = giaGoc;
   }
-  console.log(product)
+
 
 
   return (
@@ -269,7 +270,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
                           onClick={() => handleSkuSelect(sku)}
                         >
                           {/* Hiển thị các tùy chọn thuộc tính SKU */}
-                          {sku.tuyChonThuocTinhSku.map((tt) => (
+                          {sku.tuyChonThuocTinhSkus.map((tt) => (
                             <span key={tt.idTuyChonTtSku}>
                               {tt.tuyChonThuocTinh.giaTri} -
                               {tt.tuyChonThuocTinh.thuocTinh.ten}

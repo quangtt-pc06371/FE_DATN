@@ -18,6 +18,9 @@ const Profile = () => {
       try {
         const res = await getProfile();
         setProfile(res); // Lưu dữ liệu profile vào state
+        console.log("profile" ,res)
+        const roles = res.quyen?.map((r) => r.name ) || []; // Lấy tất cả các quyền
+        console.log("Quyền người dùng:", roles);
       } catch (err) {
         if (err.response?.data?.error) {
           setError(err.response.data.error);
@@ -43,7 +46,7 @@ const Profile = () => {
   if (!profile) {
     return <div>Không có dữ liệu profile.</div>;
   }
-console.log(profile)
+
   return (
     <div className="profile-container">
       <div className="profile-content">

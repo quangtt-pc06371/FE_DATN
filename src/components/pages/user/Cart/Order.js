@@ -12,11 +12,12 @@ function Order() {
   const [totalShippingFee, setTotalShippingFee] = useState(0);
   const [totalProduct, setTotalProduct] = useState(0);
   const [totalDiscount, setTotalDiscount] = useState(0);
+  const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
   console.log(totalShippingFee)
   console.log(totalProduct)
   // Giỏ hàng từ localStorage
   const cartData = JSON.parse(localStorage.getItem("cart")) || [];
-  
+
   // Lấy dữ liệu đơn hàng hiện tại từ localStorage
   const existingOrder = JSON.parse(localStorage.getItem("order")) || [];
 
@@ -35,16 +36,28 @@ function Order() {
     console.log(groupedByShop)
     Object.keys(groupedByShop).forEach((shopName) => {
       const totalShopAmount = groupedByShop[shopName].reduce(
-        (total, item) =>
-          total +
-          item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
+        (sum, item) => {
+          const giaGoc = item.skuEntity.giaSanPham || 0;
+
+          // Tìm khuyến mãi liên quan đến sản phẩm
+          const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+            (km) => km.sanPham.idSanPham === item.sanPhamEntity.idSanPham
+          );
+
+          // Tính giá sau khuyến mãi
+          const giaSauKhuyenMai = doiTuongSanPhamKM
+            ? giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100
+            : giaGoc;
+
+          return sum + giaSauKhuyenMai * item.soLuongMua;
+        },
         0
       );
       const shippingFee =
         (existingOrder.shippingFees && existingOrder.shippingFees[shopName]) ||
         0;
 
-        
+
       console.log(shippingFee)
       totalProductAmount += totalShopAmount;
       console.log(totalProductAmount)
@@ -118,9 +131,21 @@ function Order() {
     setTotalDiscount(0); // Nếu có giảm giá, bạn có thể tính toán ở đây
   }, [totals]);
 
+  async function getSanPhamKhuyenMai() {
+    try {
+      const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+      setSanPhamKhuyenMaiForm(response.data);
+    } catch (error) {
+
+    }
+  }
+  useEffect(() => {
+    getSanPhamKhuyenMai();
+
+  }, []);
 
   console.log(totals.totalShippingAmount)
-
+  console.log(groupedByShop)
   return (
     <div className="container my-5">
       <h1>Thanh Toán</h1>
@@ -136,39 +161,86 @@ function Order() {
               </h5>
             </div>
 
+
+
+
+
+
+
             <div className="card-body">
-              {groupedByShop[shopName].map((item) => (
-                <div
-                  key={item.idDetail}
-                  className="row g-0 align-items-center mb-3 border-bottom"
-                >
-                  <div className="col-md-2">
-                    <img
-                      src={item.skuEntity.hinhAnh?.tenAnh}
-                      alt={item.sanPhamEntity.tenSanPham}
-                      className="img-fluid"
-                      style={{ width: "80px", height: "80px" }}
-                    />
+              {groupedByShop[shopName].map((item) => {
+                const giaGoc = item.skuEntity.giaSanPham || 0;
+
+                const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+                  (kmItem) => kmItem.sanPham.idSanPham === Number(item.sanPhamEntity.idSanPham)
+                );
+
+                let giaSauKhuyenMai = giaGoc;
+                let khuyenMaiConHieuLuc = false;
+
+                if (doiTuongSanPhamKM) {
+                  giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+                  khuyenMaiConHieuLuc = true;
+                }
+
+                return (
+                  <div
+                    key={item.idDetail}
+                    className="row align-items-center mb-3 border-bottom pb-3"
+                  >
+                    {/* Hình ảnh sản phẩm */}
+                    <div className="col-md-2 text-center">
+                      <img
+                        src={item.skuEntity.hinhAnh?.tenAnh}
+                        alt={item.sanPhamEntity.tenSanPham}
+                        className="img-fluid rounded"
+                        style={{ maxWidth: "80px", height: "80px", objectFit: "cover" }}
+                      />
+                    </div>
+
+                    {/* Thông tin sản phẩm */}
+                    <div className="col-md-4">
+                      <strong className="d-block">{item.sanPhamEntity.tenSanPham}</strong>
+                      <p className="mb-0 text-muted small">{item.sanPhamEntity.moTa}</p>
+                    </div>
+
+                    {/* Giá sản phẩm */}
+                    <div className="col-md-2 text-center">
+                      {khuyenMaiConHieuLuc ? (
+                        <>
+                          <span className="text-decoration-line-through text-muted d-block">
+                            {giaGoc.toLocaleString()} VND
+                          </span>
+                          <span className="text-danger fw-bold">
+                            {giaSauKhuyenMai.toLocaleString()} VND
+                          </span>
+                        </>
+                      ) : (
+                        <span className="fw-bold">{giaGoc.toLocaleString()} VND</span>
+                      )}
+                    </div>
+
+                    {/* Số lượng */}
+                    <div className="col-md-2 text-center">
+                      <span>x{item.soLuongMua}</span>
+                    </div>
+
+                    {/* Tổng giá */}
+                    <div className="col-md-2 text-end">
+                      <span className="fw-bold">
+                        {(giaSauKhuyenMai * item.soLuongMua).toLocaleString()} VND
+                      </span>
+                    </div>
                   </div>
-                  <div className="col-md-4">
-                    <strong>{item.sanPhamEntity.tenSanPham}</strong>
-                    <p>{item.sanPhamEntity.moTa}</p>
-                  </div>
-                  <div className="col-md-2">
-                    {item.sanPhamEntity.skus[0].giaSanPham.toLocaleString()}{" "}
-                    VND
-                  </div>
-                  <div className="col-md-2">x{item.soLuongMua}</div>
-                  <div className="col-md-2">
-                    {(
-                      item.sanPhamEntity.skus[0].giaSanPham *
-                      item.soLuongMua
-                    ).toLocaleString()}{" "}
-                    VND
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
+
+
+
+
+
+
 
             <div className="card-footer">
               <ShippingCalculator
@@ -179,13 +251,21 @@ function Order() {
                 Tổng tiền sản phẩm:{" "}
                 {groupedByShop[shopName]
                   .reduce(
-                    (total, item) =>
-                      total +
-                      item.sanPhamEntity.skus[0].giaSanPham *
-                        item.soLuongMua,
-                    0
-                  )
-                  .toLocaleString()}{" "}
+                    (sum, item) => {
+                      const giaGoc = item.skuEntity.giaSanPham || 0;
+
+                      // Tìm khuyến mãi liên quan đến sản phẩm
+                      const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+                        (km) => km.sanPham.idSanPham === item.sanPhamEntity.idSanPham
+                      );
+
+                      // Tính giá sau khuyến mãi
+                      const giaSauKhuyenMai = doiTuongSanPhamKM
+                        ? giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100
+                        : giaGoc;
+
+                      return sum + giaSauKhuyenMai * item.soLuongMua;
+                    }, 0).toLocaleString()}{" "}
                 VND
               </strong>
             </div>

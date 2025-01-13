@@ -3,6 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../Authenticated/index";
 import Swal from "sweetalert2";
 
+import {refreshToken, startTokenRefreshInterval } from "../../components/pages/Refresh";
 const ProtectedRoute = ({ requiredRoles }) => {
   const { role, isAuthenticated,loading  } = useAuth();
  
@@ -13,8 +14,11 @@ console.log(isAuthenticated)
 if (loading) {
   return <p>Đang kiểm tra quyền truy cập...</p>; // Hiển thị trạng thái loading
 }
+// startTokenRefreshInterval();
 
+// refreshToken()
 if (!isAuthenticated) {
+
   Swal.fire({
     title: "Yêu cầu đăng nhập",
     text: "Vui lòng đăng nhập để thực hiện thao tác này!",

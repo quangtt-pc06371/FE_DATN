@@ -10,7 +10,7 @@ const Bill = () => {
   const [activeTab, setActiveTab] = useState("allOrders");
   const [actionType, setActionType] = useState(""); // New state to track action type
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-
+  const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
   const [orders, setOrders] = useState([]);
 
   const reasonsCancel = [
@@ -203,7 +203,18 @@ const Bill = () => {
   useEffect(() => {
     fetchOrders();
   }, []);
+  async function getSanPhamKhuyenMai() {
+    try {
+      const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+      setSanPhamKhuyenMaiForm(response.data);
+    } catch (error) {
 
+    }
+  }
+  useEffect(() => {
+    getSanPhamKhuyenMai();
+
+  }, []);
   return (
     <div className="container mt-4">
       <h2 className="text-center">Trang Quản Lý Đơn Hàng</h2>
@@ -239,9 +250,8 @@ const Bill = () => {
         </li>
         <li className="nav-item">
           <a
-            className={`nav-link ${
-              activeTab === "chogiaohang" ? "active" : ""
-            }`}
+            className={`nav-link ${activeTab === "chogiaohang" ? "active" : ""
+              }`}
             href="#chogiohang"
             onClick={() => setActiveTab("chogiaohang")}
           >
@@ -297,45 +307,85 @@ const Bill = () => {
                         <i class="bi bi-shop me-2"></i>
                         <h6>{shop.shopName}</h6>
                       </div>
-                      {shop.products.map((detail) => (
-                        <div
-                          key={detail.idChiTietDonHang}
-                          className="row g-0 align-items-center mb-3 border-bottom"
-                        >
-                          <div className="col-md-2">
-                            <img
-                              src={detail.skuEntity.hinhAnh.tenAnh}
-                              alt={detail.sanPhamEntity.tenSanPham}
-                              className="img-fluid"
-                              style={{ width: "80px", height: "80px" }}
-                            />
+
+
+
+
+                      {shop.products.map((detail) => {
+                        const giaGoc = detail.skuEntity.giaSanPham || 0;
+
+                        const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+                          (kmItem) => kmItem.sanPham.idSanPham === Number(detail.sanPhamEntity.idSanPham)
+                        );
+
+                        let giaSauKhuyenMai = giaGoc;
+                        let khuyenMaiConHieuLuc = false;
+
+                        if (doiTuongSanPhamKM) {
+                          giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+                          khuyenMaiConHieuLuc = true;
+                        }
+                        const giaHienThi = khuyenMaiConHieuLuc ? giaSauKhuyenMai : giaGoc;
+                        const tongTien = giaHienThi * detail.soLuong;
+                        return (
+
+
+                          <div
+                            key={detail.idChiTietDonHang}
+                            className="row g-0 align-items-center mb-3 border-bottom"
+                          >
+                            <div className="col-md-2">
+                              <img
+                                src={detail.skuEntity.hinhAnh.tenAnh}
+                                alt={detail.sanPhamEntity.tenSanPham}
+                                className="img-fluid"
+                                style={{ width: "80px", height: "80px" }}
+                              />
+                            </div>
+                            <div className="col-md-4">
+                              <strong>{detail.sanPhamEntity.tenSanPham}</strong>
+                              <p>
+                                {
+                                  detail.skuEntity.tuyChonThuocTinhSkus[0]
+                                    .tuyChonThuocTinh.thuocTinh.ten
+                                }{" "}
+                                -{" "}
+                                {
+                                  detail.skuEntity.tuyChonThuocTinhSkus[0]
+                                    .tuyChonThuocTinh.giaTri
+                                }
+                              </p>
+                            </div>
+                            <div className="col-md-2">
+
+                              {khuyenMaiConHieuLuc ? (
+                                <>
+                                  <span className="text-decoration-line-through text-muted d-block">
+                                    {giaGoc.toLocaleString()} VND
+                                  </span>
+                                  <span className="text-danger fw-bold">
+                                    {giaHienThi.toLocaleString()} VND
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="fw-bold">{giaGoc.toLocaleString()} VND</span>
+                              )}
+
+                            </div>
+                            <div className="col-md-2">x{detail.soLuong}</div>
+                            <div className="col-md-2  fw-bold">
+                              {(
+                                tongTien
+                              ).toLocaleString()}{" "}
+                              VND
+                            </div>
                           </div>
-                          <div className="col-md-4">
-                            <strong>{detail.sanPhamEntity.tenSanPham}</strong>
-                            <p>
-                              {
-                                detail.skuEntity.tuyChonThuocTinhSkus[0]
-                                  .tuyChonThuocTinh.thuocTinh.ten
-                              }{" "}
-                              -{" "}
-                              {
-                                detail.skuEntity.tuyChonThuocTinhSkus[0]
-                                  .tuyChonThuocTinh.giaTri
-                              }
-                            </p>
-                          </div>
-                          <div className="col-md-2">
-                            {detail.skuEntity.giaSanPham.toLocaleString()} VND
-                          </div>
-                          <div className="col-md-2">x{detail.soLuong}</div>
-                          <div className="col-md-2">
-                            {(
-                              detail.skuEntity.giaSanPham * detail.soLuong
-                            ).toLocaleString()}{" "}
-                            VND
-                          </div>
-                        </div>
-                      ))}
+                        )
+                      })}
+
+
+
+
                     </div>
                   );
                 })}
@@ -347,14 +397,14 @@ const Bill = () => {
                     {order.trangThaiDonHang === 0
                       ? "Chờ xác nhận"
                       : order.trangThaiDonHang === 1
-                      ? "Đơn hàng đã được gửi"
-                      : order.trangThaiDonHang === 2
-                      ? "Đơn hàng đang trên đường giao đến bạn"
-                      : order.trangThaiDonHang === 3
-                      ? "Đã giao"
-                      : order.trangThaiDonHang === 4
-                      ? "Đã hủy"
-                      : "Trả hàng/Hoàn tiền"}
+                        ? "Đơn hàng đã được gửi"
+                        : order.trangThaiDonHang === 2
+                          ? "Đơn hàng đang trên đường giao đến bạn"
+                          : order.trangThaiDonHang === 3
+                            ? "Đã giao"
+                            : order.trangThaiDonHang === 4
+                              ? "Đã hủy"
+                              : "Trả hàng/Hoàn tiền"}
                   </span>
 
                   {/* Thông báo cho đơn hàng đã chuyển khoản */}
@@ -383,24 +433,24 @@ const Bill = () => {
                   )}
                   {(order.trangThaiDonHang === 1 ||
                     order.trangThaiDonHang === 0) && (
-                    <button
-                      className="btn btn-danger btn-sm ms-2"
-                      onClick={() => handleOpenModal(order.idDonHang, "cancel")}
-                    >
-                      Hủy đơn
-                    </button>
-                  )}
+                      <button
+                        className="btn btn-danger btn-sm ms-2"
+                        onClick={() => handleOpenModal(order.idDonHang, "cancel")}
+                      >
+                        Hủy đơn
+                      </button>
+                    )}
                   {(order.trangThaiDonHang === 3 ||
                     order.trangThaiDonHang === 2) && (
-                    <button
-                      className="btn btn-warning btn-sm ms-2"
-                      onClick={() =>
-                        handleOpenModal(order.idDonHang, "hoantien")
-                      }
-                    >
-                      Trả hàng/Hoàn tiền
-                    </button>
-                  )}
+                      <button
+                        className="btn btn-warning btn-sm ms-2"
+                        onClick={() =>
+                          handleOpenModal(order.idDonHang, "hoantien")
+                        }
+                      >
+                        Trả hàng/Hoàn tiền
+                      </button>
+                    )}
                 </div>
                 {/* Modal */}
                 <div
@@ -464,8 +514,8 @@ const Bill = () => {
                           {isSubmitting
                             ? "Đang xử lý..."
                             : actionType === "cancel"
-                            ? "Hủy đơn"
-                            : "Trả hàng/Hoàn tiền"}
+                              ? "Hủy đơn"
+                              : "Trả hàng/Hoàn tiền"}
                         </button>
                       </div>
                     </div>

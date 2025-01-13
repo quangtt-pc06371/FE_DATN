@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
@@ -12,10 +12,23 @@ function Checkout() {
   const paymentFail = "failure";
   const orderData = JSON.parse(localStorage.getItem("order"));
   const shippingFeeID = JSON.parse(localStorage.getItem("shippingFeeID"))
-
+  const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
   const handlePaymentChange = (event) => {
     setSelectedPaymentMethod(event.target.value);
   };
+
+  async function getSanPhamKhuyenMai() {
+    try {
+      const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+      setSanPhamKhuyenMaiForm(response.data);
+    } catch (error) {
+
+    }
+  }
+  useEffect(() => {
+    getSanPhamKhuyenMai();
+
+  }, []);
   console.log(orderData)
   const handleSubmitOrder = async () => {
     try {
@@ -37,12 +50,29 @@ function Checkout() {
         trangThaiDonHang: 0,
         ngayXuatDon: new Date().toISOString(), // Thiết lập ngày giờ hiện tại
         chiTietDonHangs: orderData.cartData.map((item) => {
+
+          const giaGoc = item.skuEntity.giaSanPham || 0;
+
+          const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+            (kmItem) => kmItem.sanPham.idSanPham === item.sanPhamEntity.idSanPham
+          );
+
+          let giaSauKhuyenMai = giaGoc;
+          let khuyenMaiConHieuLuc = false;
+
+          if (doiTuongSanPhamKM) {
+            giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+            khuyenMaiConHieuLuc = true;
+          }
+
+          const tongTien = khuyenMaiConHieuLuc
+            ? giaSauKhuyenMai * item.soLuongMua
+            : giaGoc * item.soLuongMua;
           return {
             idSku: item.skuEntity.idSku,
             soLuong: item.soLuongMua,
             idVoucher: 2,
-            tongTien:
-              item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
+            tongTien: tongTien,
             sanPhamDTO: {
               idShop: item.sanPhamEntity.shop.id,
               tenSanPham: item.sanPhamEntity.tenSanPham,
@@ -51,7 +81,7 @@ function Checkout() {
           };
         }),
       };
-
+      console.log(payload)
       const response = await axios.post(
         "http://localhost:8080/api/order/create",
         payload,

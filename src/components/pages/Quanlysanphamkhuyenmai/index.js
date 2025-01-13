@@ -4,184 +4,105 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
-import Select from 'react-select'
+import Select from 'react-select';
+
 const QuanLySanPhamKhuyenMai = () => {
   const [formData, setFormData] = useState({
     sanPham: [], // Lưu danh sách các sản phẩm được chọn
-    khuyenMai: { idKhuyenMai: parseInt('') },
   });
   const [sanPhamData, setSanPhamData] = useState([]);
   const [khuyenMaiData, setKhuyenMaiData] = useState([]);
-  const { idSanPhamKhuyenMai } = useParams();
-  const [edit, setEdit] = useState(true);
-  const [sanPhamKhuyenMaiData, setSanPhamKhuyenMaiData] = useState([]);
-  const [shopData, setShopData] = useState([]);
+  const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
+  const [shopData, setShopData] = useState({});
   const token = Cookies.get('token');
-  console.log(formData.sanPham)
-  async function layShop() {
-    try {
-      const response = await axios.get('http://localhost:8080/api/shop/nguoidung', {
-        headers: {
-          'Authorization': token,
-        },
-      }
-      );
-
-      setShopData(response.data);
-    } catch (error) {
-      alert("Vui Lòng Đăng Nhập")
-    }
-  }
-
-  async function laySanPham() {
-
-    const apiShop = 'http://localhost:8080/api/sanpham/shop';
-    const response = await axios.get(apiShop + '/' + shopData.id);
-    setSanPhamData(response.data);
-
-
-  }
-
-  async function layKhuyenMai() {
-
-    const apiShop = 'http://localhost:8080/api/khuyenmai/shop';
-    const response = await axios.get(apiShop + '/' + shopData.id);
-    setKhuyenMaiData(response.data);
-
-
-  }
-
-
-  async function laySanPhamKhuyenMai() {
-    const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
-    setSanPhamKhuyenMaiData(response.data);
-  }
+  const { idSanPhamKhuyenMai } = useParams();
 
   useEffect(() => {
-    // if (idSanPhamKhuyenMai) {
-    //   getDataDisplayId();
-    //   setEdit(false);
-    // }
-
-
     layShop();
-
     laySanPhamKhuyenMai();
   }, []);
+
   useEffect(() => {
-    if (shopData && shopData.id) {
+    if (shopData.id) {
       laySanPham();
       layKhuyenMai();
     }
   }, [shopData]);
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-
-    if (name === "sanPham") {
-      setFormData({
-        ...formData,
-        sanPham: { idSanPham: parseInt(value) }
+  async function layShop() {
+    try {
+      const response = await axios.get('http://localhost:8080/api/shop/nguoidung', {
+        headers: { 'Authorization': token },
       });
-    } else {
-      setFormData({
-        ...formData,
-        [name]: value
-      });
+      setShopData(response.data);
+    } catch (error) {
+      Swal.fire("Lỗi", "Vui lòng đăng nhập!", "error");
     }
   }
 
+  async function laySanPham() {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/sanpham/shop/${shopData.id}`);
+      setSanPhamData(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách sản phẩm:", error);
+    }
+  }
 
-  // async function handleAdd() {
-  //   if (!formData.sanPham.idSanPham) {
-  //     Swal.fire('Lỗi', 'Vui lòng chọn sản phẩm trước khi thêm!', 'warning');
-  //     return;
-  //   }
+  async function layKhuyenMai() {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/khuyenmai/shop/${shopData.id}`);
+      setKhuyenMaiData(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách khuyến mãi:", error);
+    }
+  }
 
+  async function laySanPhamKhuyenMai() {
+    try {
+      const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+      setSanPhamKhuyenMaiForm(response.data);
+    } catch (error) {
+      console.error("Lỗi khi lấy danh sách sản phẩm khuyến mãi:", error);
+    }
+  }
 
-  //   const existingPromotions = sanPhamKhuyenMaiData.filter(
-  //     (item) => item.sanPham.idSanPham === formData.sanPham.idSanPham
-  //   );
-
-  //   // Kiểm tra nếu bất kỳ khuyến mãi nào đang hoạt động
-  //   const hasActivePromotion = existingPromotions.some(
-  //     (promo) => promo.trangThai === true
-  //   );
-
-  //   console.log(existingPromotions)
-  //   console.log(hasActivePromotion)
-  //   if (hasActivePromotion) {
-  //     Swal.fire('Lỗi', 'Sản phẩm này đã có khuyến mãi đang hoạt động!', 'warning');
-  //     return;
-  //   }
-
-  //   const dataToSent = {
-  //     trangThai: true,
-  //     sanPham: { idSanPham: parseInt(formData.sanPham.idSanPham) },
-  //     khuyenMai: { idKhuyenMai: parseInt(idSanPhamKhuyenMai) },
-  //   };
-  //   console.log(dataToSent)
-
-  //   try {
-  //     const addData = await axios.post('http://localhost:8080/api/sanphamkhuyenmai', dataToSent, {
-  //       headers: {
-  //         Authorization: token,
-  //       },
-  //     });
-  //     Swal.fire('Thành công', 'Đã thêm sản phẩm vào chương trình khuyến mãi!', 'success');
-  //     handleResetData();
-  //   } catch (error) {
-  //     console.error('Lỗi khi thêm sản phẩm khuyến mãi:', error);
-  //     Swal.fire('Lỗi', 'Có lỗi xảy ra khi thêm sản phẩm khuyến mãi', 'error');
-  //   }
-  // }
+  function handleResetData() {
+    setFormData({ sanPham: [] }); // Làm trống danh sách sản phẩm
+  }
 
   async function handleAdd() {
     if (!formData.sanPham || formData.sanPham.length === 0) {
       Swal.fire('Lỗi', 'Vui lòng chọn ít nhất một sản phẩm!', 'warning');
       return;
     }
-  
+
     const dataToSent = {
-      sanPhams: formData.sanPham.map((sp) => ( sp.idSanPham )),
-      idKhuyenMai:  parseInt(idSanPhamKhuyenMai) ,
+      sanPhams: formData.sanPham.map((sp) => sp.idSanPham),
+      idKhuyenMai: parseInt(idSanPhamKhuyenMai),
     };
-  console.log(dataToSent)
+
     try {
-      const response = await axios.post('http://localhost:8080/api/sanphamkhuyenmai', dataToSent, {
-        headers: {
-          Authorization: token,
-        },
+      await axios.post('http://localhost:8080/api/sanphamkhuyenmai', dataToSent, {
+        headers: { Authorization: token },
       });
-      console.log(response)
-      Swal.fire('Thành công', 'Tất cả sản phẩm đã được xử lý!', 'success');
+      Swal.fire('Thành công', 'Tất cả sản phẩm đã được thêm khuyến mãi!', 'success');
       handleResetData();
     } catch (error) {
       console.error('Lỗi khi thêm sản phẩm khuyến mãi:', error);
-      Swal.fire('Lỗi', 'Có lỗi xảy ra khi thêm sản phẩm khuyến mãi', 'error');
+      Swal.fire('Lỗi', 'Có lỗi xảy ra khi thêm sản phẩm khuyến mãi!', 'error');
     }
-  }
-  
-  
-
-
-
-
-
-  function handleResetData() {
-    setFormData({
-      sanPham:  [],
-    });
-    setEdit(true);
   }
 
   const sanPhamOptions = sanPhamData
-    .filter((s) => s.trangThai !== false) // Lọc các sản phẩm không hợp lệ
+    .filter((s) => 
+      s.trangThai !== false &&
+      !sanPhamKhuyenMaiForm.some((kmItem) => kmItem.sanPham.idSanPham === s.idSanPham)
+    )
     .map((s) => ({
       value: s.idSanPham,
       label: s.tenSanPham,
     }));
-
 
   return (
     <div className="container my-4">
@@ -190,7 +111,7 @@ const QuanLySanPhamKhuyenMai = () => {
           <div className="card shadow-sm">
             <div className="card-header d-flex justify-content-between align-items-center">
               <h2 className="card-title mb-0">Quản Lý Sản Phẩm Khuyến Mãi</h2>
-              <a href='/shop/shop-user' type="button" className="btn btn-primary ms-auto">
+              <a href='/shop/shop-user' className="btn btn-primary ms-auto">
                 Trở Về Quản Lý Shop
               </a>
             </div>
@@ -201,40 +122,29 @@ const QuanLySanPhamKhuyenMai = () => {
                   <Select
                     name="sanPham"
                     options={sanPhamOptions}
-                    value={sanPhamOptions.find((option) => option.value === formData.sanPham?.idSanPham)}
+                    value={sanPhamOptions.filter((option) =>
+                      formData.sanPham.some((sp) => sp.idSanPham === option.value)
+                    )}
                     onChange={(selectedOptions) =>
                       setFormData({
                         ...formData,
                         sanPham: selectedOptions.map(option => ({
                           idSanPham: option.value,
                           tenSanPham: option.label,
-                        })), // Lưu danh sách các sản phẩm được chọn
+                        })),
                       })
                     }
-                    
                     isMulti
                     placeholder="Chọn Sản Phẩm"
                     className="react-select-container"
                     classNamePrefix="react-select"
                   />
-             
-
-
                 </div>
-
-
-
-                <div className="">
-                  {/* {edit ? ( */}
+                <div>
                   <button type="button" className="btn btn-primary me-2 form-control" onClick={handleAdd}>
                     Thêm Mới
                   </button>
-                  {/* ) : ( 
-                  {/* <button type="button" className="btn btn-primary me-2 form-control" onClick={handleUpdate}>
-                      Cập Nhật
-                    </button>
-                  )} */}
-                  <button type="button" className="btn btn-secondary form-control mt-2 " onClick={handleResetData}>
+                  <button type="button" className="btn btn-secondary form-control mt-2" onClick={handleResetData}>
                     Hủy
                   </button>
                 </div>

@@ -175,7 +175,7 @@ function AddressForm() {
                   disabled={!selectedDistrict}
                 >
                   <option value="">Chọn phường/xã</option>
-                  {wards.map((ward) => (
+                  {wards?.map((ward) => (
                     <option key={ward.WardCode} value={ward.WardCode}>
                       {ward.WardName}
                     </option>

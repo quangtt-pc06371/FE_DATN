@@ -41,7 +41,7 @@ import VoucherModal from './components/pages/user/Cart/Voucher';
 import OrderPage from './components/pages/user/Cart/Order'
 import Bill from './components/pages/user/Cart/Bill';
 import PaymentPage from './components/pages/user/Cart/Payment';
-
+import ForgotPassword from './components/pages/Quenmk';
 
 import AddressFormuser from './components/compoments/Addressuser'
 import AddressFormshop from './components/compoments/Addressshop'
@@ -153,7 +153,7 @@ export default function App() {
         </Route>
 
         {/* Layout riêng cho admin */}
-        <Route element={<ProtectedRoute requiredRoles={"ROLE_Admin"} />} >
+        <Route element={<ProtectedRoute requiredRoles={["ROLE_Admin"]} />} >
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="category-management" element={<CategoryManagement />} />
             <Route path="shop-approval" element={<ShopApproval />} />
@@ -166,6 +166,8 @@ export default function App() {
         <Route path="buyer" element={<Loginpage />} >
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
+          <Route path="ForgotPassword" element={<ForgotPassword />} />
+          
         </Route>
 
 

@@ -57,10 +57,10 @@ const startTokenRefreshInterval = () => {
     if (checkTokenExpiry()) {
       refreshToken().catch(error => console.error('Lỗi làm mới token:', error));
     }
-    // if(!checkTokenExpiry()){
-    //   refreshToken().catch(error => console.error('Lỗi làm mới token:', error));
-    // }
-  }, 2*10* 1000);
+    if(!checkTokenExpiry()){
+      refreshToken().catch(error => console.error('Lỗi làm mới token:', error));
+    }
+  }, 10* 1000);
   
 };
 
