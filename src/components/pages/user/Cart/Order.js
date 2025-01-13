@@ -275,22 +275,7 @@ function Order() {
         <p>Giỏ hàng của bạn đang trống.</p>
       )}
 
-      <div
-        className="border border-secondary rounded-3 mt-1"
-        style={{ width: "auto", height: "5rem" }}
-      >
-        <div className="d-flex">
-          {" "}
-          <i class="bi bi-ticket-perforated ms-3"></i>{" "}
-          <i class="bi bi-ticket-perforated-fill ms-3"></i>{" "}
-          <h5 className="ms-3">Voucher Bill</h5>
-          <div className="ms-auto">
-            <Voucher totalDonHang={existingOrder.totalAmount} />
-          </div>
-        </div>
-      </div>
-
-      <div className="sticky-bottom bg-light text-dark p-3 mt-3 border border-secondary rounded-3">
+      <div className="bg-light text-dark p-3 mt-3 border border-secondary rounded-3">
         <h6>Tổng tiền sản phẩm: {totalProduct.toLocaleString()} VND</h6>
         <h6>Tổng phí vận chuyển: {totalShippingFee.toLocaleString()} VND</h6>
         <h6>
