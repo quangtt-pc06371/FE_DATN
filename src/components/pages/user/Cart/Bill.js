@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { format } from "date-fns";
 
 const Bill = () => {
   const [showModal, setShowModal] = useState(false);
@@ -199,6 +200,13 @@ const Bill = () => {
     }, {});
   };
 
+  function getFormatDate(dateString) {
+          if (!dateString) return ""; // Kiểm tra nếu không có giá trị
+          const date = new Date(dateString);
+          if (isNaN(date.getTime())) return ""; // Kiểm tra nếu không phải là ngày hợp lệ
+          return format(date, 'dd/MM/yyyy');
+      }
+
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -285,7 +293,7 @@ const Bill = () => {
             <div key={order.idDonHang} className="card mb-4">
               <div className="card-header">
                 <h5>Đơn Hàng #{order.idDonHang}</h5>
-                <p>{order.ngayXuatDon}</p>
+                <p>{getFormatDate(order.ngayXuatDon)}</p>
               </div>
               <div className="card-body">
                 {/* Render products grouped by shop */}

@@ -61,7 +61,7 @@ const TrangChu = () => {
                             <span className="rounded-circle border border-2 border-white d-flex justify-content-center align-items-center" style={{ width: '40px', height: '40px' }}>
                                 <i className="fa-solid fa-phone"></i>
                             </span>
-                            <span className="ms-2">1800-56-78-9012</span>
+                            <span className="ms-2">036-362-5853</span>
                         </span>
                         <div className="dropdown me-5">
                             <button
@@ -140,7 +140,7 @@ const TrangChu = () => {
                             >
                                 <i className="fa fa-envelope"></i>
                             </span>
-                            <span>info@janus.com</span>
+                            <span>nguyentronghieu25122004@gmail.com</span>
                         </span>
 
                         <form
@@ -211,16 +211,7 @@ const TrangChu = () => {
                                     <a className="nav-link text-white fs-5 fw-bold" href="/ListHoaDonadmin">Hóa đơn admin</a>
                                 </li> */}
 
-                                <li className="nav-item dropdown mx-3">
-                                    <a className="nav-link dropdown-toggle text-white fs-5 fw-bold" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        Manager
-                                    </a>
-                                    <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><a className="dropdown-item" href="/manager">Thông tin</a></li>
-                                        <li><hr className="dropdown-divider" /></li>
-                                        <li><a className="dropdown-item" href="/thongke">Thống kê</a></li>
-                                    </ul>
-                                </li>
+                              
 
                             </ul>
                             <span className="navbar-text text-white">

@@ -58,10 +58,12 @@ import Loginpage from "./components/loginpage";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import DoanhThu from './components/pages/Doanhthushop';
+import DoanhThuadmin from './components/pages/Doanhthuadmin';
 import DanhSachVoucher from './components/pages/Danhsachvoucher';
 import QuanLyVoucher from './components/pages/Quanlyvoucher';
 import DanhSachNguoiDung from './components/pages/admin/Danhsachnguoidung';
 import SellerPage from './components/pages/SellerPage';
+import AdminBill from './components/layouts/DonHang';
 // import 'bootstrap-icons/font/bootstrap-icons.css';
 export default function App() {
   const router = createBrowserRouter(
@@ -100,8 +102,6 @@ export default function App() {
           <Route path="/voucher" element={<VoucherModal />} />
           <Route path="/transaction-result" element={<TransactionResult />} />
           
-
-
 
           <Route path="order" element={<Order />} />
           <Route path="address" element={<AddressForm />} />
@@ -159,6 +159,9 @@ export default function App() {
             <Route path="shop-approval" element={<ShopApproval />} />
             <Route path="shop-management" element={<ShopManagement />} />
             <Route path="user-management" element={<DanhSachNguoiDung />} />
+            <Route path="DoanhThuadmin" element={<DoanhThuadmin />} />
+            <Route path="admin-bill" element={<AdminBill />} />
+            
           </Route>
 
         </Route>

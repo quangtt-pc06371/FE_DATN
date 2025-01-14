@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const SellerPage = () => {
+const AdminBill = () => {
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("allOrders");
   const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
@@ -18,12 +18,13 @@ const SellerPage = () => {
   const fetchOrders = async () => {
     try {
       const token = Cookies.get("token");
+      console.log(token)
       if (!token) {
         alert("Vui lòng đăng nhập.");
         return;
       }
 
-      const response = await axios.get("http://localhost:8080/api/order/list/shop", {
+      const response = await axios.get("http://localhost:8080/api/order/list", {
         headers: { Authorization: `${token}` },
       });
 
@@ -153,39 +154,11 @@ const SellerPage = () => {
         </li>
         <li className="nav-item">
           <a
-            className={`nav-link ${activeTab === "choguihang" ? "active" : ""}`}
-            href="#choguihang"
-            onClick={() => setActiveTab("choguihang")}
-          >
-            Chờ Gửi Hàng
-          </a>
-        </li>
-        <li className="nav-item">
-          <a
-            className={`nav-link ${activeTab === "chogiaohang" ? "active" : ""
-              }`}
-            href="#chogiohang"
-            onClick={() => setActiveTab("chogiaohang")}
-          >
-            Chờ Giao Hàng
-          </a>
-        </li>
-        <li className="nav-item">
-          <a
             className={`nav-link ${activeTab === "dagiao" ? "active" : ""}`}
             href="#dagiao"
             onClick={() => setActiveTab("dagiao")}
           >
-            Đã Nhận Hàng
-          </a>
-        </li>
-        <li className="nav-item">
-          <a
-            className={`nav-link ${activeTab === "dahuy" ? "active" : ""}`}
-            href="#dahuy"
-            onClick={() => setActiveTab("dahuy")}
-          >
-            Đã Hủy
+            Đã Duyệt
           </a>
         </li>
       </ul>
@@ -194,10 +167,7 @@ const SellerPage = () => {
       <div className="tab-content mt-4">
         {[
           "choxacnhan",
-          "choguihang",
-          "chogiaohang",
-          "dagiao",
-          "dahuy",
+          "dagiao",      
         ].map((tab) => (
           <div
             key={tab}
@@ -208,16 +178,10 @@ const SellerPage = () => {
             {orders.length > 0 ? (
               orders
                 .filter((order) => {
-                  if (tab === "choxacnhan" && order.trangThaiDonHang === 0)
-                    return true;
-                  if (tab === "choguihang" && order.trangThaiDonHang === 1)
-                    return true;
-                  if (tab === "chogiaohang" && order.trangThaiDonHang === 2)
-                    return true;
-                  if (tab === "dagiao" && order.trangThaiDonHang === 3)
-                    return true;
-                  if (tab === "dahuy" && order.trangThaiDonHang === 4)
-                    return true;
+                  if (tab === "choxacnhan" && order.trangThaiDonHang === 5)
+                    return true;                
+                  if (tab === "dagiao" && order.trangThaiDonHang === 6)
+                    return true;                 
                   return false;
                 })
                 .map((order) => (
@@ -231,10 +195,6 @@ const SellerPage = () => {
                     </div>
                     <div className="card-body">
                       <h6>Sản phẩm</h6>
-
-
-
-
                       {order.chiTietDonHangs.map((item) => {
                         const giaGoc = item.skuEntity.giaSanPham || 0;
 
@@ -316,43 +276,22 @@ const SellerPage = () => {
                       <div>
                         <span>
                           Trạng thái:{" "}
-                          {order.trangThaiDonHang === 0
-                            ? "Người mua đang chờ xác nhận"
-                            : order.trangThaiDonHang === 1
-                              ? "Phía vận chuyển đang đến lấy hàng"
-                              : order.trangThaiDonHang === 2
-                                ? "Chờ giao hàng"
-                                : order.trangThaiDonHang === 3
-                                  ? "Giao hàng thành công"
+                          {order.trangThaiDonHang === 5
+                            ? "Đơn hàng đang chờ hoàn tiền"
+                            : order.trangThaiDonHang === 6
+                              ? "Đã hoàn tiền"                             
                                   : "Đã hủy - Lý do: " + order.lyDo}
                         </span>
                       </div>
                       <div>
-                        {order.trangThaiDonHang === 0 && (
+                        {order.trangThaiDonHang === 5 && (
                           <button
                             className="btn btn-success btn-sm"
-                            onClick={() => XacNhanDon(order.idDonHang, 1)}
+                            onClick={() => XacNhanDon(order.idDonHang, 6)}
                           >
-                            Xác nhận
+                            Xác nhận Hoàn Tiền
                           </button>
                         )}
-                        {order.trangThaiDonHang === 1 && (
-                          <button
-                            className="btn btn-success btn-sm"
-                            onClick={() => GuiDonHang(order.idDonHang, 2)}
-                          >
-                            Đã gửi hàng
-                          </button>
-                        )}
-                        {(order.trangThaiDonHang === 1 ||
-                          order.trangThaiDonHang === 0) && (
-                            <button
-                              className="btn btn-danger btn-sm ms-2"
-                              onClick={() => HuyDon(order.idDonHang, 4)}
-                            >
-                              Hủy đơn
-                            </button>
-                          )}
                       </div>
                     </div>
                   </div>
@@ -367,4 +306,4 @@ const SellerPage = () => {
   );
 };
 
-export default SellerPage;
+export default AdminBill;
