@@ -177,6 +177,15 @@ const SellerPage = () => {
             Đã Hủy
           </a>
         </li>
+        <li className="nav-item">
+          <a
+            className={`nav-link ${activeTab === "yeucauhuydon" ? "active" : ""}`}
+            href="#yeucauhuydon"
+            onClick={() => setActiveTab("yeucauhuydon")}
+          >
+            Yêu Cầu Trả Hàng
+          </a>
+        </li>
       </ul>
 
       {/* Tab Content */}
@@ -187,6 +196,7 @@ const SellerPage = () => {
           "chogiaohang",
           "dagiao",
           "dahuy",
+          "yeucauhuydon"
         ].map((tab) => (
           <div
             key={tab}
@@ -207,14 +217,16 @@ const SellerPage = () => {
                     return true;
                   if (tab === "dagiao" && order.trangThaiDonHang === 3)
                     return true;
-                  if (tab === "dahuy" && order.trangThaiDonHang === 4)
+                  if (tab === "dahuy" && order.trangThaiDonHang === 5)
+                    return true;
+                  if (tab === "yeucauhuydon" && order.trangThaiDonHang === 4)
                     return true;
                   return false;
                 })
                 .map((order) => (
                   <div key={order.idDonHang} className="card mb-4">
                     <div className="card-header">
-                      <h5>Đơn hàng #{order.idDonHang}</h5>
+                      <h5>Đơn hàng #{order.idDonHang} - {order.hinhThucThanhToan === true ? "Chuyển Khoản" : "COD"}</h5>
                       <p>
                         <strong>Ngày tạo:</strong>{" "}
                         {new Date(order.ngayXuatDon).toLocaleDateString()}
@@ -270,7 +282,7 @@ const SellerPage = () => {
                             ? "Chờ giao hàng"
                             : order.trangThaiDonHang === 3
                             ? "Đã giao"
-                            : "Đã hủy - Lý do: " + order.lyDo}
+                            : "Khách hàng yêu cầu hủy - Lý do: " + order.lyDo}
                         </span>
                       </div>
                       <div>
@@ -280,6 +292,17 @@ const SellerPage = () => {
                             onClick={() => XacNhanDon(order.idDonHang, 1)}
                           >
                             Xác nhận
+                          </button>
+                        )}
+                        {order.trangThaiDonHang === 4 && (
+                          <button
+                            className="btn btn-success btn-sm"
+                            onClick={() =>{
+                              const newStatus = order.hinhThucThanhToan === true ? 9 : 5
+                              XacNhanDon(order.idDonHang, newStatus)}
+                            }
+                          >
+                            Xác nhận hủy
                           </button>
                         )}
                         {order.trangThaiDonHang === 1 && (
@@ -294,7 +317,10 @@ const SellerPage = () => {
                           order.trangThaiDonHang === 0) && (
                           <button
                             className="btn btn-danger btn-sm ms-2"
-                            onClick={() => HuyDon(order.idDonHang, 4)}
+                            onClick={() =>{
+                              const newStatus = order.hinhThucThanhToan === true ? 9 : 5
+                              HuyDon(order.idDonHang, newStatus)}
+                            } 
                           >
                             Hủy đơn
                           </button>

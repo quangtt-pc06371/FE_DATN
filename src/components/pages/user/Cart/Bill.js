@@ -53,9 +53,9 @@ const Bill = () => {
     setIsSubmitting(true);
     try {
       if (actionType === "cancel") {
-        await HuyDon(selectedOrderId, 4, selectedReason); // Call cancel function
+        await HuyDon(selectedOrderId, 4, selectedReason);
       } else if (actionType === "hoantien") {
-        await HoanTien(selectedOrderId, 5, selectedReason); // Call refund function
+        await HuyDon(selectedOrderId, 4, selectedReason);
       }
       setShowModal(false);
     } catch (error) {
@@ -123,6 +123,7 @@ const Bill = () => {
         status: status,
         lyDo: reason,
       };
+      console.log(body)
 
       const response = await axios.put(
         "http://localhost:8080/api/order/updateStatusOrder",
@@ -151,6 +152,7 @@ const Bill = () => {
         status: status,
         lyDo: reason,
       };
+      console.log(body)
 
       const response = await axios.put(
         "http://localhost:8080/api/order/updateStatusOrder",
@@ -172,19 +174,17 @@ const Bill = () => {
     }
   };
 
-  // Filter orders based on the active tab
   const filteredOrders = orders.filter((order) => {
     if (activeTab === "choxacnhan" && order.trangThaiDonHang === 0) return true;
     if (activeTab === "choguihang" && order.trangThaiDonHang === 1) return true;
     if (activeTab === "chogiaohang" && order.trangThaiDonHang === 2)
       return true;
     if (activeTab === "dagiao" && order.trangThaiDonHang === 3) return true;
-    if (activeTab === "dahuy" && order.trangThaiDonHang === 4) return true;
-    if (activeTab === "hoantien" && order.trangThaiDonHang === 5) return true;
+    if (activeTab === "dahuy" && order.trangThaiDonHang === 5) return true;
+    if (activeTab === "hoantien" && order.trangThaiDonHang === 9) return true;
     return false;
   });
 
-  // Group products by shop
   const groupByShop = (order) => {
     return order.chiTietDonHangs.reduce((groups, detail) => {
       const shopId = detail.sanPhamEntity.shop.id;
@@ -215,7 +215,7 @@ const Bill = () => {
   }, []);
   return (
     <div className="container mt-4">
-      <h2 className="text-center">Trang Quản Lý Đơn Hàng</h2>
+      <h2 className="text-center">Trang Quản Lý Đơn Hàng - Customer</h2>
 
       {/* Navigation Tab */}
       <ul className="nav nav-pills justify-content-center mt-4">
@@ -254,7 +254,7 @@ const Bill = () => {
             href="#dagiao"
             onClick={() => setActiveTab("dagiao")}
           >
-            Đã Giao
+            Đã Nhận
           </a>
         </li>
         <li className="nav-item">
@@ -284,7 +284,7 @@ const Bill = () => {
           return (
             <div key={order.idDonHang} className="card mb-4">
               <div className="card-header">
-                <h5>Đơn Hàng #{order.idDonHang}</h5>
+              <h5>Đơn hàng #{order.idDonHang} - {order.hinhThucThanhToan === true ? "Chuyển Khoản" : "COD"}</h5>
                 <p>{order.ngayXuatDon}</p>
               </div>
               <div className="card-body">
@@ -389,8 +389,11 @@ const Bill = () => {
                       : order.trangThaiDonHang === 3
                       ? "Đã giao"
                       : order.trangThaiDonHang === 4
-                      ? "Đã hủy - Lý do: " + order.lyDo
-                      :  "Đang chờ xét duyệt - Lý do Trả hàng/ Hoàn tiền " + order.lyDo}
+                      ? "Chờ Shop xét duyệt - Lý do: " + order.lyDo
+                      :  "Đang chờ xét duyệt - Lý do Trả hàng/ Hoàn tiền " + order.lyDo
+                      ? order.trangThaiDonHang === 9
+                      : "Đang chờ hoàn tiền - Lý do: " + order.lyDo
+                      }
                   </span>
 
                   {/* Thông báo cho đơn hàng đã chuyển khoản */}
