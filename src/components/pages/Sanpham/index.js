@@ -136,7 +136,8 @@ const SanPham = () => {
         sanPhamKhuyenMaiForm.forEach((doiTuong) => {
             const now = clearTime(new Date());
             const endDate = clearTime(new Date(doiTuong.khuyenMai.ngayKetThuc));
-    
+            console.log(now)
+            console.log(endDate)
             if (now > endDate) {
                 handleDeleteKhuyenMai(doiTuong.khuyenMai.idKhuyenMai);
                 handleDeleteSanPhamKhuyenMai(doiTuong.idSanPhamKM);

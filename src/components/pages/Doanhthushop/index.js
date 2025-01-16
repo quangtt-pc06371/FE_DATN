@@ -11,7 +11,7 @@ export default function DoanhThu() {
     const [totalRevenue, setTotalRevenue] = useState([]);
     const [error, setError] = useState("");
 
-    console.log(products)
+    // console.log(products)
     const shopId = shop.id;
 
     useEffect(() => {
@@ -44,19 +44,21 @@ export default function DoanhThu() {
         }
 
         try {
-            const revenueResponse = await axios.get("http://localhost:8080/api/thong-ke", {
-                params: { shopId, startDate, endDate },
-            });
-            setTotalRevenue(revenueResponse.data);
-
             const productsResponse = await axios.get("http://localhost:8080/api/thong-ke/hoadon", {
                 params: { shopId, startDate, endDate },
             });
-            setProducts(productsResponse.data);
+            if (Array.isArray(productsResponse.data)) {
+                setProducts(productsResponse.data);
+            } else {
+                setProducts([]);
+                setError("Dữ liệu trả về không hợp lệ.");
+            }
         } catch (err) {
+            setProducts([]);
             setError("Đã xảy ra lỗi khi lấy dữ liệu. Vui lòng thử lại!");
             console.error(err);
         }
+
     };
 
     const handleDetail = async (idDonHang) => {
@@ -70,7 +72,8 @@ export default function DoanhThu() {
             console.error(err);
         }
     };
-    console.log(products)
+    // console.log(products)
+    console.log(cthoadons)
     return (
         <div className="container my-5">
             <div className="card shadow-lg">
@@ -133,7 +136,7 @@ export default function DoanhThu() {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {products?.map((product, index) => (
+                                        {Array.isArray(products) && products.map((product, index) => (
                                             <tr key={index}>
                                                 <td>{index + 1}</td>
                                                 <td>{product?.chiTietDonHangs[0]?.tongTien.toLocaleString("vi-VN")} VNĐ</td>
@@ -149,6 +152,7 @@ export default function DoanhThu() {
                                             </tr>
                                         ))}
                                     </tbody>
+
                                 </table>
                             </div>
 
@@ -161,9 +165,12 @@ export default function DoanhThu() {
                                                 <th>#</th>
                                                 <th>Số lượng</th>
                                                 <th>Sản phẩm</th>
+                                                <th >thuộc tính</th>
                                                 <th>Tổng tiền</th>
                                                 <th>Ảnh</th>
+
                                             </tr>
+
                                         </thead>
                                         <tbody>
                                             {cthoadons.map((item, index) => (
@@ -171,6 +178,16 @@ export default function DoanhThu() {
                                                     <td>{index + 1}</td>
                                                     <td>{item.soLuong}</td>
                                                     <td>{item.sanPhamEntity.tenSanPham}</td>
+                                                    <td>
+                                                        {item.skuEntity?.tuyChonThuocTinhSkus
+                                                            ? item.skuEntity.tuyChonThuocTinhSkus
+                                                                .map(
+                                                                    (option) =>
+                                                                        `${option.tuyChonThuocTinh?.thuocTinh?.ten}: ${option.tuyChonThuocTinh?.giaTri}`
+                                                                )
+                                                                .join(", ")
+                                                            : "Không có thuộc tính"}
+                                                    </td>
                                                     <td>{item.tongTien.toLocaleString("vi-VN")} VNĐ</td>
                                                     <td>
                                                         <img

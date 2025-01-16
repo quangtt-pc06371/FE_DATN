@@ -53,7 +53,7 @@ const QuanLyKhuyenMai = () => {
     const token = Cookies.get('token');
 
 
-  
+
     async function handleAdd() {
         // Kiểm tra bỏ trống các trường
         if (
@@ -124,8 +124,12 @@ const QuanLyKhuyenMai = () => {
             const dataToSent = {
                 tenKhuyenMai: formData.tenKhuyenMai,
                 giaTriKhuyenMai: formData.giaTriKhuyenMai,
-                ngayBatDau: formData.ngayBatDau,
-                ngayKetThuc: formData.ngayKetThuc,
+                ngayBatDau: formData.ngayBatDau
+                ? `${formData.ngayBatDau} 00:00:00` // Thêm thời gian 23:59:59
+                    : null,
+                ngayKetThuc: formData.ngayKetThuc
+                    ? `${formData.ngayKetThuc} 23:59:59` // Thêm thời gian 23:59:59
+                    : null,
                 active: true,
                 ghiChu: formData.ghiChu,
             };

@@ -12,7 +12,7 @@ const CartPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectAll, setSelectAll] = useState(false); // Trạng thái chọn tất cả
   const [selectedIds, setSelectedIds] = useState([]); // Các ID được chọn
-   const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
+  const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
   const navigate = useNavigate(); // Tạo navigate hook
   console.log(cartDetail)
   // Nhóm sản phẩm theo shop
@@ -125,11 +125,11 @@ const CartPage = () => {
       console.log(payload)
 
       // Gửi yêu cầu cập nhật SKU và số lượng
-      await axios.put(`${BASE_URL}${API.Cart}${CART.Update}`, null, 
-      {
-        params: payload,
-        headers: { Authorization: `${token}` },
-      });
+      await axios.put(`${BASE_URL}${API.Cart}${CART.Update}`, null,
+        {
+          params: payload,
+          headers: { Authorization: `${token}` },
+        });
 
       // Cập nhật giỏ hàng sau khi thay đổi SKU
       const updatedCart = await axios.get(
@@ -160,9 +160,10 @@ const CartPage = () => {
     const newSelectedIds = [];
 
     Object.keys(updatedCartDetail).forEach((shopId) => {
-      updatedCartDetail[shopId].products = updatedCartDetail[
-        shopId
-      ].products.map((product) => {
+      updatedCartDetail[shopId].products = 
+      updatedCartDetail[shopId].products
+      .filter((product) => product.sanPhamEntity?.shop?.isActive !== false)
+      .map((product) => {
         product.isSelected = !selectAll;
         if (product.isSelected) {
           newSelectedIds.push(product.idDetail); // Thêm vào danh sách đã chọn nếu được chọn
@@ -210,28 +211,28 @@ const CartPage = () => {
   };
 
 
-  
- 
+
+
 
   const saveSelectedProductsToLocalStorage = () => {
     if (!cartDetail) return;
-  
+
     // Lọc ra sản phẩm được chọn
     const selectedProducts = Object.values(cartDetail)
       .flatMap((shop) => shop.products)
       .filter((product) => product.isSelected);
-  
+
     // Lưu vào localStorage
     localStorage.setItem("cart", JSON.stringify(selectedProducts));
-  
+
     console.log("Đã lưu sản phẩm vào localStorage:", selectedProducts);
   };
-  
+
   const handlePlaceOrder = () => {
     saveSelectedProductsToLocalStorage();
     navigate("/order"); // Điều hướng đến trang thanh toán
   };
-  
+
 
   // useEffect để thực hiện logic sau khi `selectedIds` thay đổi
   useEffect(() => {
@@ -262,27 +263,27 @@ const CartPage = () => {
     return <div className="loading-message">Đang tải giỏ hàng...</div>;
   }
 
-  
+
 
   const totalAmount = Object.values(cartDetail || {}) // Duyệt qua từng shop
-  .flatMap((shop) => shop.products) // Trải phẳng danh sách sản phẩm từ tất cả các shop
-  .filter((item) => item.isSelected) // Lọc các sản phẩm được chọn
-  .reduce((sum, item) => {
-    const giaGoc = item.skuEntity.giaSanPham || 0;
+    .flatMap((shop) => shop.products) // Trải phẳng danh sách sản phẩm từ tất cả các shop
+    .filter((item) => item.isSelected) // Lọc các sản phẩm được chọn
+    .reduce((sum, item) => {
+      const giaGoc = item.skuEntity.giaSanPham || 0;
 
-    // Tìm khuyến mãi liên quan đến sản phẩm
-    const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
-      (km) => km.sanPham.idSanPham === item.sanPhamEntity.idSanPham
-    );
+      // Tìm khuyến mãi liên quan đến sản phẩm
+      const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+        (km) => km.sanPham.idSanPham === item.sanPhamEntity.idSanPham
+      );
 
-    // Tính giá sau khuyến mãi
-    const giaSauKhuyenMai = doiTuongSanPhamKM
-      ? giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100
-      : giaGoc;
+      // Tính giá sau khuyến mãi
+      const giaSauKhuyenMai = doiTuongSanPhamKM
+        ? giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100
+        : giaGoc;
 
-    // Tính tổng tiền
-    return sum + giaSauKhuyenMai * item.soLuongMua;
-  }, 0); // Bắt đầu tổng từ 0
+      // Tính tổng tiền
+      return sum + giaSauKhuyenMai * item.soLuongMua;
+    }, 0); // Bắt đầu tổng từ 0
 
 
 
@@ -328,7 +329,12 @@ const CartPage = () => {
 
         <div className="row align-items-start">
           {cartDetail && Object.keys(cartDetail).length > 0 ? (
-            Object.keys(cartDetail).map((shopId) => (
+            Object.keys(cartDetail).filter(
+              (shopId) =>
+                cartDetail[shopId]?.products?.some(
+                  (product) => product?.sanPhamEntity?.shop?.isActive !== false
+                )
+            ).map((shopId) => (
               <div key={shopId} className="mb-4">
                 {/* Khung bao quanh từng cửa hàng */}
                 <div className="card border shadow-sm">

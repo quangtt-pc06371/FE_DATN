@@ -41,13 +41,13 @@ export default function DoanhThu() {
         acc[shopName].push(item);
         return acc;
     }, {});
-    
+
     // Tính tổng tiền và triết khấu cho từng shop
     const shopDiscounts = Object.keys(groupedOrders).map((shopName) => {
         const totalAmount = groupedOrders[shopName].reduce((sum, order) => sum + order.tongTien, 0);
         const discount = totalAmount * 0.05; // 5% triết khấu
         const finalAmount = totalAmount - discount;
-        
+
 
         return { shopName, totalAmount, discount, finalAmount };
     });
@@ -72,7 +72,7 @@ export default function DoanhThu() {
                                     className="form-control"
                                     value={startDate}
                                     onChange={(e) => setStartDate(e.target.value)}
-                                    // required
+                                // required
                                 />
                             </div>
                             <div className="col-md-6">
@@ -85,7 +85,7 @@ export default function DoanhThu() {
                                     className="form-control"
                                     value={endDate}
                                     onChange={(e) => setEndDate(e.target.value)}
-                                    // required
+                                // required
                                 />
                             </div>
                         </div>
@@ -93,18 +93,18 @@ export default function DoanhThu() {
                             <i className="fas fa-chart-line"></i> Thống kê
                         </button>
                     </form>
-    
+
                     {error && <div className="alert alert-danger mt-3">{error}</div>}
-    
+
                     {/* Hiển thị tổng triết khấu */}
                     <div className="alert alert-info mt-4">
                         <h4>Tổng số tiền triết khấu: {totalDiscount.toLocaleString("vi-VN")} VNĐ</h4>
                     </div>
-    
+
                     <div className="accordion mt-4" id="accordionExample">
                         {Object.keys(groupedOrders).map((shopName, index) => {
                             const shopData = shopDiscounts.find((shop) => shop.shopName === shopName);
-    
+
                             return (
                                 <div className="accordion-item" key={index}>
                                     <h2 className="accordion-header" id={`heading-${index}`}>
@@ -138,13 +138,14 @@ export default function DoanhThu() {
                                                 <strong>Sau triết khấu: </strong>
                                                 {shopData.finalAmount.toLocaleString("vi-VN")} VNĐ
                                             </p>
-    
+
                                             <table className="table table-striped table-hover">
                                                 <thead className="table-dark">
                                                     <tr>
                                                         <th>#</th>
                                                         <th>Số lượng</th>
                                                         <th>Tên sản phẩm</th>
+                                                        <th> thuộc tính  </th>
                                                         <th>Tổng tiền</th>
                                                         <th>Ảnh</th>
                                                     </tr>
@@ -155,6 +156,16 @@ export default function DoanhThu() {
                                                             <td>{idx + 1}</td>
                                                             <td>{item.soLuong}</td>
                                                             <td>{item.sanPhamEntity.tenSanPham}</td>
+                                                            <td>
+                                                                {item.skuEntity?.tuyChonThuocTinhSkus
+                                                                    ? item.skuEntity.tuyChonThuocTinhSkus
+                                                                        .map(
+                                                                            (option) =>
+                                                                                `${option.tuyChonThuocTinh?.thuocTinh?.ten}: ${option.tuyChonThuocTinh?.giaTri}`
+                                                                        )
+                                                                        .join(", ")
+                                                                    : "Không có thuộc tính"}
+                                                            </td>
                                                             <td>{item.tongTien.toLocaleString("vi-VN")} VNĐ</td>
                                                             <td>
                                                                 <img

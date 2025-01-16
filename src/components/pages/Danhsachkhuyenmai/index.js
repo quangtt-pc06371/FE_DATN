@@ -9,7 +9,7 @@ import moment from 'moment';
 export default function DanhSachkhuyenMai() {
     const [shop, setShop] = useState(null);
     const [dataKhuyenMai, setDataKhuyenMai] = useState([]);
-
+    console.log(dataKhuyenMai)
     async function hienThiKhuyenMai() {
         try {
             const apiShop = 'http://localhost:8080/api/khuyenmai/shop';
@@ -118,9 +118,9 @@ export default function DanhSachkhuyenMai() {
                         </thead>
                         <tbody>
                             {dataKhuyenMai.filter(khuyenMai => khuyenMai.active !== false).map((khuyenMai, filteredIndex) => {
-                                const now = clearTime(new Date());
+                                const now = new Date();
                                 // Chuyển đổi ngày bắt đầu và kết thúc của khuyến mãi thành đối tượng Date
-                                const endDate = clearTime(new Date(khuyenMai.ngayKetThuc));
+                                const endDate = new Date(khuyenMai.ngayKetThuc);
                                 console.log(now);
                                 console.log(endDate);
 
