@@ -9,10 +9,22 @@ const TransactionResult = () => {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const orderData = JSON.parse(localStorage.getItem("order"));
   const shippingFeeID = JSON.parse(localStorage.getItem("shippingFeeID"))
-
+  const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
   // Sử dụng useRef để tránh gọi API nhiều lần
   const isOrderSubmitted = useRef(false);
+  async function getSanPhamKhuyenMai() {
+    try {
+      const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+      setSanPhamKhuyenMaiForm(response.data);
+    } catch (error) {
 
+    }
+  }
+  useEffect(() => {
+    getSanPhamKhuyenMai();
+
+  }, []);
+  console.log(sanPhamKhuyenMaiForm)
   useEffect(() => {
     // Lấy thông tin trạng thái thanh toán từ URL
     const queryParams = new URLSearchParams(location.search);
@@ -36,18 +48,38 @@ const TransactionResult = () => {
 
       const payload = {
         tongSoTien: orderData.totals.totalAmount,
-        trangThaiThanhToan: "Đã thanh toán",      
+        trangThaiThanhToan: "Đã thanh toán",
         hinhThucThanhToan: true,
         ngayXuatDon: new Date().toISOString(), // Thiết lập ngày giờ hiện tại
         phiVanChuyen: shippingFeeID, // Lấy phí vận chuyển cho shop hiện tại
         trangThaiDonHang: 0,
         chiTietDonHangs: orderData.cartData.map((item) => {
+          const tongTien = item.giaSauKhuyenMai = null ? item.skuEntity.giaSanPham * item.soLuongMua  : item.giaSauKhuyenMai * item.soLuongMua;
+          console.log(tongTien)
+          // const giaGoc = item.skuEntity.giaSanPham || 0;
+          // console.log(giaGoc)
+          // const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+          //   (kmItem) => kmItem.sanPham.idSanPham === item.sanPhamEntity.idSanPham
+          // );
+          // console.log(doiTuongSanPhamKM)
+          // let giaSauKhuyenMai = giaGoc;
+          // let khuyenMaiConHieuLuc = true;
+
+          // if (doiTuongSanPhamKM) {
+          //   giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+          //   khuyenMaiConHieuLuc = true;
+          // }
+
+          // const tongTien = khuyenMaiConHieuLuc
+          //   ? giaSauKhuyenMai * item.soLuongMua
+          //   : giaGoc * item.soLuongMua;
+          //   console.log(tongTien)
+
           return {
             idSku: item.skuEntity.idSku,
             soLuong: item.soLuongMua,
             idVoucher: 2,
-            tongTien:
-              item.sanPhamEntity.skus[0].giaSanPham * item.soLuongMua,
+            tongTien: tongTien,
             sanPhamDTO: {
               idShop: item.sanPhamEntity.shop.id,
               tenSanPham: item.sanPhamEntity.tenSanPham,
@@ -82,7 +114,7 @@ const TransactionResult = () => {
     <div className="d-flex justify-content-center align-items-center min-vh-100 bg-light">
       <div className="card shadow-sm p-4 w-75 w-md-50 w-lg-25">
         <div className="text-center mb-4">
-          {paymentStatus === "success"  || paymentStatus === "tienMatSuccess" ? (
+          {paymentStatus === "success" || paymentStatus === "tienMatSuccess" ? (
             <i
               className="bi bi-check-circle text-success"
               style={{ fontSize: "50px" }}

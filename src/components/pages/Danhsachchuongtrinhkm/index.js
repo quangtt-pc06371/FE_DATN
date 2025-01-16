@@ -81,20 +81,21 @@ const DanhSachSanPhamKM = () => {
     fetchShop();
   }, []);
 
-  
+
   useEffect(() => {
     if (dataSanPhamKhuyenMai.length > 0) {
-      const now = clearTime(new Date());
-  
+      const now = new Date();
+      console.log(now)
       // Lọc danh sách các sản phẩm khuyến mãi hết hạn
       const expiredIds = dataSanPhamKhuyenMai
         .filter((sanPhamKhuyenMai) => {
-          const endDate = clearTime(new Date(sanPhamKhuyenMai.khuyenMai.ngayKetThuc));
+          const endDate = new Date(sanPhamKhuyenMai.khuyenMai.ngayKetThuc);
+          console.log(endDate)
           const hieuLucKhuyenMai = sanPhamKhuyenMai.khuyenMai.active;
           return now > endDate || hieuLucKhuyenMai === false;
         })
         .map((sanPhamKhuyenMai) => sanPhamKhuyenMai.idSanPhamKM);
-  
+
       // Xóa từng sản phẩm theo thứ tự
       const deleteExpiredPromotions = async () => {
         for (const id of expiredIds) {
@@ -107,7 +108,7 @@ const DanhSachSanPhamKM = () => {
         }
         console.log("Hoàn thành xử lý các sản phẩm khuyến mãi hết hạn.");
       };
-  
+
       deleteExpiredPromotions();
     }
   }, [dataSanPhamKhuyenMai]);
@@ -146,6 +147,7 @@ const DanhSachSanPhamKM = () => {
             </thead>
             <tbody>
               {dataSanPhamKhuyenMai.map((sanPhamKhuyenMai, filteredIndex) => {
+               
 
                 const giaGoc = sanPhamKhuyenMai.sanPham.skus[0]?.giaSanPham || 0;
                 const khuyenMai = sanPhamKhuyenMai.khuyenMai.giaTriKhuyenMai || 0;

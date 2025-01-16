@@ -1,33 +1,18 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { FaStore } from "react-icons/fa";
 
 const AdminBill = () => {
-  const [orders, setOrders] = useState([]);
-  const [activeTab, setActiveTab] = useState("allOrders");
+  const [activeTab, setActiveTab] = useState("allOrders"); 
   const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
-  const reasonsCancel = [
-    "Thay đổi địa chỉ nhận hàng",
-    "Không muốn mua nữa",
-    "Đặt nhầm sản phẩm",
-    "Giá cao",
-    "Giao hàng quá lâu",
-    "Lý do khác",
-  ];
+  const [orders, setOrders] = useState([]);
 
   const fetchOrders = async () => {
     try {
-      const token = Cookies.get("token");
-      console.log(token)
-      if (!token) {
-        alert("Vui lòng đăng nhập.");
-        return;
-      }
-
-      const response = await axios.get("http://localhost:8080/api/order/list", {
-        headers: { Authorization: `${token}` },
-      });
-
+      const response = await axios.get(
+        "http://localhost:8080/api/order/list/admin"
+      );
       if (response.status === 200) {
         const allOrders = response.data.donHang;
         setOrders(allOrders);
@@ -39,7 +24,7 @@ const AdminBill = () => {
     }
   };
 
-  const XacNhanDon = async (orderId, status) => {
+  const XacNhanHoanTien = async (orderId, status) => {
     try {
       const body = {
         idDonHang: orderId,
@@ -66,59 +51,24 @@ const AdminBill = () => {
     }
   };
 
-  const HuyDon = async (orderId, status) => {
-    try {
-      const body = {
-        idDonHang: orderId,
-        status: status,
-        lyDo: "Thay đổi địa chỉ giao hàng",
-      };
+  const filteredOrders = orders.filter((order) => {
+    if (activeTab === "choxacnhan" && order.trangThaiDonHang === 9) return true;
+    if (activeTab === "hoantien" && order.trangThaiDonHang === 10) return true;
+    return false;
+  });
 
-      const response = await axios.put(
-        "http://localhost:8080/api/order/updateStatusOrder",
-        body,
-        {
-          headers: { Authorization: Cookies.get("token") },
-        }
-      );
-
-      if (response.status === 200) {
-        alert("Trạng thái đơn hàng đã được cập nhật.");
-        fetchOrders(); // Load lại danh sách đơn hàng
-      } else {
-        alert("Cập nhật trạng thái đơn hàng thất bại.");
+  const groupByShop = (order) => {
+    return order.chiTietDonHangs.reduce((groups, detail) => {
+      const shopId = detail.sanPhamEntity.shop.id;
+      if (!groups[shopId]) {
+        groups[shopId] = {
+          shopName: detail.sanPhamEntity.shop.shopName,
+          products: [],
+        };
       }
-    } catch (error) {
-      console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
-      alert("Có lỗi xảy ra khi cập nhật trạng thái đơn hàng.");
-    }
-  };
-
-  const GuiDonHang = async (orderId, status) => {
-    try {
-      const body = {
-        idDonHang: orderId,
-        status: status,
-      };
-
-      const response = await axios.put(
-        "http://localhost:8080/api/order/updateStatusOrder",
-        body,
-        {
-          headers: { Authorization: Cookies.get("token") },
-        }
-      );
-
-      if (response.status === 200) {
-        alert("Trạng thái đơn hàng đã được cập nhật.");
-        fetchOrders(); // Load lại danh sách đơn hàng
-      } else {
-        alert("Cập nhật trạng thái đơn hàng thất bại.");
-      }
-    } catch (error) {
-      console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
-      alert("Có lỗi xảy ra khi cập nhật trạng thái đơn hàng.");
-    }
+      groups[shopId].products.push(detail);
+      return groups;
+    }, {});
   };
 
   useEffect(() => {
@@ -131,15 +81,14 @@ const AdminBill = () => {
         "http://localhost:8080/api/sanphamkhuyenmai"
       );
       setSanPhamKhuyenMaiForm(response.data);
-    } catch (error) { }
+    } catch (error) {}
   }
   useEffect(() => {
     getSanPhamKhuyenMai();
   }, []);
-
   return (
     <div className="container mt-4">
-      <h2 className="text-center">Trang Quản Lý Đơn Hàng</h2>
+      <h2 className="text-center">Trang Quản Lý Đơn Hàng - Admin</h2>
 
       {/* Navigation Tab */}
       <ul className="nav nav-pills justify-content-center mt-4">
@@ -154,54 +103,47 @@ const AdminBill = () => {
         </li>
         <li className="nav-item">
           <a
-            className={`nav-link ${activeTab === "dagiao" ? "active" : ""}`}
-            href="#dagiao"
-            onClick={() => setActiveTab("dagiao")}
+            className={`nav-link ${activeTab === "hoantien" ? "active" : ""}`}
+            href="#hoantien"
+            onClick={() => setActiveTab("hoantien")}
           >
-            Đã Duyệt
+            Đã Hoàn Tiền
           </a>
         </li>
       </ul>
 
       {/* Tab Content */}
       <div className="tab-content mt-4">
-        {[
-          "choxacnhan",
-          "dagiao",      
-        ].map((tab) => (
-          <div
-            key={tab}
-            className={`tab-pane fade ${activeTab === tab ? "show active" : ""
-              }`}
-            id={tab}
-          >
-            {orders.length > 0 ? (
-              orders
-                .filter((order) => {
-                  if (tab === "choxacnhan" && order.trangThaiDonHang === 5)
-                    return true;                
-                  if (tab === "dagiao" && order.trangThaiDonHang === 6)
-                    return true;                 
-                  return false;
-                })
-                .map((order) => (
-                  <div key={order.idDonHang} className="card mb-4">
-                    <div className="card-header">
-                      <h5>Đơn hàng #{order.idDonHang}</h5>
-                      <p>
-                        <strong>Ngày tạo:</strong>{" "}
-                        {new Date(order.ngayXuatDon).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="card-body">
-                      <h6>Sản phẩm</h6>
-                      {order.chiTietDonHangs.map((item) => {
-                        const giaGoc = item.skuEntity.giaSanPham || 0;
+        {filteredOrders.map((order) => {
+          const groupedByShop = groupByShop(order);
+          return (
+            <div key={order.idDonHang} className="card mb-4">
+              <div className="card-header">
+                <h5>
+                  Đơn hàng #{order.idDonHang} -{" "}
+                  {order.hinhThucThanhToan === true ? "Chuyển Khoản" : "COD"}
+                </h5>
+                <p>{order.ngayXuatDon}</p>
+              </div>
+              <div className="card-body">
+                {/* Render products grouped by shop */}
+                {Object.keys(groupedByShop).map((shopId) => {
+                  const shop = groupedByShop[shopId];
+                  return (
+                    <div key={shopId}>
+                      <div className="d-flex">
+                        <FaStore className="me-2" />
+                        <i class="bi bi-shop me-2"></i>
+                        <h6>{shop.shopName}</h6>
+                      </div>
+
+                      {shop.products.map((detail) => {
+                        const giaGoc = detail.skuEntity.giaSanPham || 0;
 
                         const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
                           (kmItem) =>
                             kmItem.sanPham.idSanPham ===
-                            Number(item.sanPhamEntity.idSanPham)
+                            Number(detail.sanPhamEntity.idSanPham)
                         );
 
                         let giaSauKhuyenMai = giaGoc;
@@ -211,39 +153,42 @@ const AdminBill = () => {
                           giaSauKhuyenMai =
                             giaGoc -
                             giaGoc *
-                            (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai /
-                              100);
+                              (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai /
+                                100);
                           khuyenMaiConHieuLuc = true;
                         }
                         const giaHienThi = khuyenMaiConHieuLuc
                           ? giaSauKhuyenMai
                           : giaGoc;
-                        const tongTien = giaHienThi * item.soLuong;
-
+                        const tongTien = giaHienThi * detail.soLuong;
                         return (
-
                           <div
-                            key={item.idChiTiet}
-                            className="row g-0 align-items-center mb-3"
+                            key={detail.idChiTietDonHang}
+                            className="row g-0 align-items-center mb-3 border-bottom"
                           >
-                            <div className="col-md-3">
+                            <div className="col-md-2">
                               <img
-                                src={item.skuEntity.hinhAnh.tenAnh}
-                                alt={item.sanPhamEntity.tenSanPham}
-                                className="img-fluid rounded"
+                                src={detail.skuEntity.hinhAnh.tenAnh}
+                                alt={detail.sanPhamEntity.tenSanPham}
+                                className="img-fluid"
                                 style={{ width: "80px", height: "80px" }}
                               />
                             </div>
-                            <div className="col-md-6">
-                              <strong>{item.sanPhamEntity.tenSanPham}</strong>
+                            <div className="col-md-4">
+                              <strong>{detail.sanPhamEntity.tenSanPham}</strong>
                               <p>
                                 {
-                                  item.skuEntity.tuyChonThuocTinhSkus[0]
+                                  detail.skuEntity.tuyChonThuocTinhSkus[0]
+                                    .tuyChonThuocTinh.thuocTinh.ten
+                                }{" "}
+                                -{" "}
+                                {
+                                  detail.skuEntity.tuyChonThuocTinhSkus[0]
                                     .tuyChonThuocTinh.giaTri
                                 }
                               </p>
                             </div>
-                            <div className="col-md-3">
+                            <div className="col-md-2">
                               {khuyenMaiConHieuLuc ? (
                                 <>
                                   <span className="text-decoration-line-through text-muted d-block">
@@ -259,48 +204,45 @@ const AdminBill = () => {
                                 </span>
                               )}
                             </div>
-
+                            <div className="col-md-2">x{detail.soLuong}</div>
+                            <div className="col-md-2  fw-bold">
+                              {tongTien.toLocaleString()} VND
+                            </div>
                           </div>
-                        )
+                        );
                       })}
-
-                      <div className="text-end mt-3">
-                        <strong>
-                          Tổng: {order.tongSoTien.toLocaleString()} VND
-                        </strong>
-                      </div>
-
-
                     </div>
-                    <div className="card-footer d-flex justify-content-between">
-                      <div>
-                        <span>
-                          Trạng thái:{" "}
-                          {order.trangThaiDonHang === 5
-                            ? "Đơn hàng đang chờ hoàn tiền"
-                            : order.trangThaiDonHang === 6
-                              ? "Đã hoàn tiền"                             
-                                  : "Đã hủy - Lý do: " + order.lyDo}
-                        </span>
-                      </div>
-                      <div>
-                        {order.trangThaiDonHang === 5 && (
-                          <button
-                            className="btn btn-success btn-sm"
-                            onClick={() => XacNhanDon(order.idDonHang, 6)}
-                          >
-                            Xác nhận Hoàn Tiền
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                  );
+                })}
+              </div>
+              <div className="card-footer d-flex justify-content-between">
+                <div>
+                  <span>
+                    Trạng thái:{" "}
+                    {order.trangThaiDonHang === 9
+                      ? "Đang hàng đang chờ hoàn tiền"
+                      : "Đã hoàn tiền"}
+                  </span>
+                  <div>
+                    <strong>
+                      Tổng: {order.tongSoTien.toLocaleString()} VND
+                    </strong>
                   </div>
-                ))
-            ) : (
-              <p className="text-center">Không có đơn hàng nào.</p>
-            )}
-          </div>
-        ))}
+                </div>
+                <div>
+                  {order.trangThaiDonHang === 9 && (
+                    <button
+                      className="btn btn-success btn-sm"
+                      onClick={() => XacNhanHoanTien(order.idDonHang, 10)}
+                    >
+                      Xác Nhận Hoàn Tiền
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

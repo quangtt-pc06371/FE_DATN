@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { FaStore } from "react-icons/fa";
 import { format } from "date-fns";
-
 const Bill = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedReason, setSelectedReason] = useState("");
@@ -54,9 +54,9 @@ const Bill = () => {
     setIsSubmitting(true);
     try {
       if (actionType === "cancel") {
-        await HuyDon(selectedOrderId, 4, selectedReason); // Call cancel function
+        await HuyDon(selectedOrderId, 4, selectedReason);
       } else if (actionType === "hoantien") {
-        await HoanTien(selectedOrderId, 5, selectedReason); // Call refund function
+        await HuyDon(selectedOrderId, 6, selectedReason);
       }
       setShowModal(false);
     } catch (error) {
@@ -124,6 +124,7 @@ const Bill = () => {
         status: status,
         lyDo: reason,
       };
+      console.log(body)
 
       const response = await axios.put(
         "http://localhost:8080/api/order/updateStatusOrder",
@@ -152,6 +153,7 @@ const Bill = () => {
         status: status,
         lyDo: reason,
       };
+      console.log(body)
 
       const response = await axios.put(
         "http://localhost:8080/api/order/updateStatusOrder",
@@ -173,19 +175,17 @@ const Bill = () => {
     }
   };
 
-  // Filter orders based on the active tab
   const filteredOrders = orders.filter((order) => {
     if (activeTab === "choxacnhan" && order.trangThaiDonHang === 0) return true;
     if (activeTab === "choguihang" && order.trangThaiDonHang === 1) return true;
     if (activeTab === "chogiaohang" && order.trangThaiDonHang === 2)
       return true;
     if (activeTab === "dagiao" && order.trangThaiDonHang === 3) return true;
-    if (activeTab === "dahuy" && order.trangThaiDonHang === 4) return true;
-    if (activeTab === "hoantien" && order.trangThaiDonHang === 5) return true;
+    if (activeTab === "dahuy" && order.trangThaiDonHang === 5) return true;
+    if (activeTab === "hoantien" && (order.trangThaiDonHang === 10 || order.trangThaiDonHang === 9 || order.trangThaiDonHang === 6 || order.trangThaiDonHang === 4)) return true;
     return false;
   });
 
-  // Group products by shop
   const groupByShop = (order) => {
     return order.chiTietDonHangs.reduce((groups, detail) => {
       const shopId = detail.sanPhamEntity.shop.id;
@@ -200,13 +200,6 @@ const Bill = () => {
     }, {});
   };
 
-  function getFormatDate(dateString) {
-          if (!dateString) return ""; // Kiểm tra nếu không có giá trị
-          const date = new Date(dateString);
-          if (isNaN(date.getTime())) return ""; // Kiểm tra nếu không phải là ngày hợp lệ
-          return format(date, 'dd/MM/yyyy');
-      }
-
   useEffect(() => {
     fetchOrders();
   }, []);
@@ -216,14 +209,21 @@ const Bill = () => {
         "http://localhost:8080/api/sanphamkhuyenmai"
       );
       setSanPhamKhuyenMaiForm(response.data);
-    } catch (error) {}
+    } catch (error) { }
   }
   useEffect(() => {
     getSanPhamKhuyenMai();
   }, []);
+
+  function getFormatDate(dateString) {
+    if (!dateString) return ""; // Kiểm tra nếu không có giá trị
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return ""; // Kiểm tra nếu không phải là ngày hợp lệ
+    return format(date, 'dd/MM/yyyy');
+  }
   return (
     <div className="container mt-4">
-      <h2 className="text-center">Trang Quản Lý Đơn Hàng</h2>
+      <h2 className="text-center">Trang Quản Lý Đơn Hàng - Customer</h2>
 
       {/* Navigation Tab */}
       <ul className="nav nav-pills justify-content-center mt-4">
@@ -247,9 +247,8 @@ const Bill = () => {
         </li>
         <li className="nav-item">
           <a
-            className={`nav-link ${
-              activeTab === "chogiaohang" ? "active" : ""
-            }`}
+            className={`nav-link ${activeTab === "chogiaohang" ? "active" : ""
+              }`}
             href="#chogiohang"
             onClick={() => setActiveTab("chogiaohang")}
           >
@@ -262,7 +261,7 @@ const Bill = () => {
             href="#dagiao"
             onClick={() => setActiveTab("dagiao")}
           >
-            Đã Giao
+            Đã Nhận
           </a>
         </li>
         <li className="nav-item">
@@ -292,44 +291,36 @@ const Bill = () => {
           return (
             <div key={order.idDonHang} className="card mb-4">
               <div className="card-header">
-                <h5>Đơn Hàng #{order.idDonHang}</h5>
+                <h5>Đơn hàng #{order.idDonHang} - {order.hinhThucThanhToan === true ? "Chuyển Khoản" : "COD"}</h5>
                 <p>{getFormatDate(order.ngayXuatDon)}</p>
               </div>
               <div className="card-body">
                 {/* Render products grouped by shop */}
                 {Object.keys(groupedByShop).map((shopId) => {
                   const shop = groupedByShop[shopId];
+                  console.log(shop)
                   return (
                     <div key={shopId}>
                       <div className="d-flex">
+                        <FaStore className="me-2" />
                         <i class="bi bi-shop me-2"></i>
                         <h6>{shop.shopName}</h6>
                       </div>
 
                       {shop.products.map((detail) => {
-                        const giaGoc = detail.skuEntity.giaSanPham || 0;
 
-                        const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
-                          (kmItem) =>
-                            kmItem.sanPham.idSanPham ===
-                            Number(detail.sanPhamEntity.idSanPham)
-                        );
 
-                        let giaSauKhuyenMai = giaGoc;
-                        let khuyenMaiConHieuLuc = false;
 
-                        if (doiTuongSanPhamKM) {
-                          giaSauKhuyenMai =
-                            giaGoc -
-                            giaGoc *
-                              (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai /
-                                100);
-                          khuyenMaiConHieuLuc = true;
-                        }
-                        const giaHienThi = khuyenMaiConHieuLuc
-                          ? giaSauKhuyenMai
-                          : giaGoc;
-                        const tongTien = giaHienThi * detail.soLuong;
+
+
+
+
+
+
+
+                        const tongSoTien = detail.tongTien ;
+
+
                         return (
                           <div
                             key={detail.idChiTietDonHang}
@@ -357,25 +348,16 @@ const Bill = () => {
                                 }
                               </p>
                             </div>
-                            <div className="col-md-2">
-                              {khuyenMaiConHieuLuc ? (
-                                <>
-                                  <span className="text-decoration-line-through text-muted d-block">
-                                    {giaGoc.toLocaleString()} VND
-                                  </span>
-                                  <span className="text-danger fw-bold">
-                                    {giaHienThi.toLocaleString()} VND
-                                  </span>
-                                </>
-                              ) : (
-                                <span className="fw-bold">
-                                  {giaGoc.toLocaleString()} VND
-                                </span>
-                              )}
-                            </div>
+                            {/* <div className="col-md-2">
+
+                              <span className=" fw-bold">
+                                {detail.tongTien.toLocaleString()} VND
+                              </span>
+
+                            </div> */}
                             <div className="col-md-2">x{detail.soLuong}</div>
                             <div className="col-md-2  fw-bold">
-                              {tongTien.toLocaleString()} VND
+                              {tongSoTien.toLocaleString()} VND
                             </div>
                           </div>
                         );
@@ -391,14 +373,17 @@ const Bill = () => {
                     {order.trangThaiDonHang === 0
                       ? "Chờ xác nhận"
                       : order.trangThaiDonHang === 1
-                      ? "Đơn hàng đã được gửi"
-                      : order.trangThaiDonHang === 2
-                      ? "Đơn hàng đang trên đường giao đến bạn"
-                      : order.trangThaiDonHang === 3
-                      ? "Đã giao"
-                      : order.trangThaiDonHang === 4
-                      ? "Đã hủy - Lý do: " + order.lyDo
-                      :  "Đang chờ xét duyệt - Lý do Trả hàng/ Hoàn tiền " + order.lyDo}
+                        ? "Đơn hàng đã được gửi"
+                        : order.trangThaiDonHang === 2
+                          ? "Đơn hàng đang trên đường giao đến bạn"
+                          : order.trangThaiDonHang === 3
+                            ? "Đã giao"
+                            : order.trangThaiDonHang === 4 || order.trangThaiDonHang === 6
+                              ? "Chờ Shop xét duyệt - Lý do: " + order.lyDo
+                              : order.trangThaiDonHang === 9
+                                ? "Chờ hoàn tiền"
+                                : "Đã hoàn tiền"
+                    }
                   </span>
 
                   {/* Thông báo cho đơn hàng đã chuyển khoản */}
@@ -416,6 +401,11 @@ const Bill = () => {
                         </p>
                       </div>
                     )}
+                  <div>
+                    <strong>
+                      Tổng: {order.tongSoTien.toLocaleString()} VND
+                    </strong>
+                  </div>
                 </div>
 
                 <div>
@@ -429,24 +419,24 @@ const Bill = () => {
                   )}
                   {(order.trangThaiDonHang === 1 ||
                     order.trangThaiDonHang === 0) && (
-                    <button
-                      className="btn btn-danger btn-sm ms-2"
-                      onClick={() => handleOpenModal(order.idDonHang, "cancel")}
-                    >
-                      Hủy đơn
-                    </button>
-                  )}
+                      <button
+                        className="btn btn-danger btn-sm ms-2"
+                        onClick={() => handleOpenModal(order.idDonHang, "cancel")}
+                      >
+                        Hủy đơn
+                      </button>
+                    )}
                   {(
                     order.trangThaiDonHang === 2) && (
-                    <button
-                      className="btn btn-warning btn-sm ms-2"
-                      onClick={() =>
-                        handleOpenModal(order.idDonHang, "hoantien")
-                      }
-                    >
-                      Trả hàng/Hoàn tiền
-                    </button>
-                  )}
+                      <button
+                        className="btn btn-warning btn-sm ms-2"
+                        onClick={() =>
+                          handleOpenModal(order.idDonHang, "hoantien")
+                        }
+                      >
+                        Trả hàng/Hoàn tiền
+                      </button>
+                    )}
                 </div>
                 {/* Modal */}
                 <div
@@ -510,8 +500,8 @@ const Bill = () => {
                           {isSubmitting
                             ? "Đang xử lý..."
                             : actionType === "cancel"
-                            ? "Hủy đơn"
-                            : "Trả hàng/Hoàn tiền"}
+                              ? "Hủy đơn"
+                              : "Trả hàng/Hoàn tiền"}
                         </button>
                       </div>
                     </div>

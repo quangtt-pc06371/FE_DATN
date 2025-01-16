@@ -219,7 +219,17 @@ export default function ShopSanPham() {
                                 let khuyenMaiConHieuLuc = true;
 
                                 if (doiTuongSanPhamKM) {
-                                    giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+                                    const ngayBatDau = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+                                    const ngayKetThuc = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+                                    const ngayHienTai = new Date();
+                                    if (ngayHienTai >= ngayBatDau && ngayHienTai <= ngayKetThuc) {
+                                        khuyenMaiConHieuLuc = true; // Đánh dấu khuyến mãi hợp lệ
+                                        giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+                                    } else {
+                                        khuyenMaiConHieuLuc = false;
+                                        giaSauKhuyenMai = giaGoc; // Không áp dụng khuyến mãi
+                                    }
+
                                 } else {
                                     khuyenMaiConHieuLuc = false;
                                     giaSauKhuyenMai = giaGoc;

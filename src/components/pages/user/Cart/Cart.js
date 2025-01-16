@@ -72,6 +72,12 @@ const CartPage = () => {
     fetchCart();
   }, []);
 
+  useEffect(() => {
+    // Xóa dữ liệu trong sessionStorage khi tải lại trang
+    sessionStorage.removeItem("cart");
+  }, []); // Chỉ chạy một lần khi component được mount
+
+
   //Gọi API Để Xóa Detail
   const handleRemoveProduct = async (idDetail) => {
     try {
@@ -160,16 +166,15 @@ const CartPage = () => {
     const newSelectedIds = [];
 
     Object.keys(updatedCartDetail).forEach((shopId) => {
-      updatedCartDetail[shopId].products = 
-      updatedCartDetail[shopId].products
-      .filter((product) => product.sanPhamEntity?.shop?.isActive !== false)
-      .map((product) => {
-        product.isSelected = !selectAll;
-        if (product.isSelected) {
-          newSelectedIds.push(product.idDetail); // Thêm vào danh sách đã chọn nếu được chọn
-        }
-        return product;
-      });
+      updatedCartDetail[shopId].products = updatedCartDetail[shopId].products
+        .filter((product) => product.sanPhamEntity?.shop?.isActive !== false)
+        .map((product) => {
+          product.isSelected = !selectAll;
+          if (product.isSelected) {
+            newSelectedIds.push(product.idDetail); // Thêm vào danh sách đã chọn nếu được chọn
+          }
+          return product;
+        });
     });
 
     setCartDetail(updatedCartDetail);
@@ -210,25 +215,61 @@ const CartPage = () => {
     setSelectAll(allSelected); // Cập nhật trạng thái "Chọn tất cả"
   };
 
-
-
-
-
   const saveSelectedProductsToLocalStorage = () => {
     if (!cartDetail) return;
 
-    // Lọc ra sản phẩm được chọn
+    // Lọc và xử lý sản phẩm được chọn
     const selectedProducts = Object.values(cartDetail)
-      .flatMap((shop) => shop.products)
-      .filter((product) => product.isSelected);
+      .flatMap((shop) => shop.products) // Trải phẳng danh sách sản phẩm từ các shop
+      .filter((item) => item.isSelected) // Lọc các sản phẩm được chọn
+      .map((item) => {
+        const giaGoc = item.skuEntity.giaSanPham || 0;
 
-    // Lưu vào localStorage
-    localStorage.setItem("cart", JSON.stringify(selectedProducts));
+        // Tìm khuyến mãi liên quan đến sản phẩm
+        const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+          (km) => km.sanPham.idSanPham === item.sanPhamEntity.idSanPham
+        );
 
-    console.log("Đã lưu sản phẩm vào localStorage:", selectedProducts);
+        let giaSauKhuyenMai = 0;
+        if (doiTuongSanPhamKM) {
+          const ngayBatDau = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+          const ngayKetThuc = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+          const ngayHienTai = new Date();
+          console.log(ngayBatDau)
+          console.log(ngayKetThuc)
+          console.log(ngayHienTai)
+          
+          if (ngayHienTai >= ngayBatDau && ngayHienTai <= ngayKetThuc) {
+            // Tính giá sau khuyến mãi
+            giaSauKhuyenMai = giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100;
+          } else {
+            giaSauKhuyenMai = giaGoc
+          }
+        } else {
+          giaSauKhuyenMai = giaGoc
+        }
+
+        // Trả về sản phẩm với giá khuyến mãi
+        return {
+          ...item, // Giữ nguyên các thông tin ban đầu của sản phẩm
+          giaSauKhuyenMai, // Thêm giá sau khuyến mãi
+        };
+      });
+
+    // Lưu vào sessionStorage
+    sessionStorage.setItem("cart", JSON.stringify(selectedProducts));
+
+    console.log("Đã lưu sản phẩm vào sessionStorage:", selectedProducts);
   };
 
+
   const handlePlaceOrder = () => {
+    const storedCart = JSON.parse(sessionStorage.getItem("cart")) || []; // Lấy dữ liệu từ sessionStorage
+
+    if (storedCart.length === 0) {
+      alert("Vui lòng chọn ít nhất một sản phẩm trước khi đặt hàng."); // Hiển thị thông báo
+      return; // Dừng hàm nếu chưa có sản phẩm nào được chọn
+    }
     saveSelectedProductsToLocalStorage();
     navigate("/order"); // Điều hướng đến trang thanh toán
   };
@@ -275,16 +316,25 @@ const CartPage = () => {
       const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
         (km) => km.sanPham.idSanPham === item.sanPhamEntity.idSanPham
       );
-
-      // Tính giá sau khuyến mãi
-      const giaSauKhuyenMai = doiTuongSanPhamKM
-        ? giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100
-        : giaGoc;
-
+      let giaSauKhuyenMai = 0;
+      if (doiTuongSanPhamKM) {
+        const ngayBatDau = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+        const ngayKetThuc = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+        const ngayHienTai = new Date();
+        if (ngayHienTai >= ngayBatDau && ngayHienTai <= ngayKetThuc) {
+          // Tính giá sau khuyến mãi
+          giaSauKhuyenMai =
+            giaGoc -
+            (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100;
+        } else {
+          giaSauKhuyenMai = giaGoc
+        }
+      } else {
+        giaSauKhuyenMai = giaGoc
+      }
       // Tính tổng tiền
       return sum + giaSauKhuyenMai * item.soLuongMua;
     }, 0); // Bắt đầu tổng từ 0
-
 
 
   return (

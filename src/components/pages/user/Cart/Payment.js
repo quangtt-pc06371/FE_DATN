@@ -50,24 +50,8 @@ function Checkout() {
         trangThaiDonHang: 0,
         ngayXuatDon: new Date().toISOString(), // Thiết lập ngày giờ hiện tại
         chiTietDonHangs: orderData.cartData.map((item) => {
-
-          const giaGoc = item.skuEntity.giaSanPham || 0;
-
-          const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
-            (kmItem) => kmItem.sanPham.idSanPham === item.sanPhamEntity.idSanPham
-          );
-
-          let giaSauKhuyenMai = giaGoc;
-          let khuyenMaiConHieuLuc = true;
-
-          if (doiTuongSanPhamKM) {
-            giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
-            khuyenMaiConHieuLuc = true;
-          }
-
-          const tongTien = khuyenMaiConHieuLuc
-            ? giaSauKhuyenMai * item.soLuongMua
-            : giaGoc * item.soLuongMua;
+          const tongTien = item.giaSauKhuyenMai = null ? item.skuEntity.giaSanPham * item.soLuongMua : item.giaSauKhuyenMai * item.soLuongMua;
+          console.log(tongTien)
           return {
             idSku: item.skuEntity.idSku,
             soLuong: item.soLuongMua,

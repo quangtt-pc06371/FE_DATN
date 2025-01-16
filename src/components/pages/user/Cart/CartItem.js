@@ -16,8 +16,8 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   const handleSkuSelect = (sku) => {
     setSelectedSku(sku.idSku); // Cập nhật SKU đã chọn
   };
-  console.log(onSelect)
-  console.log(selectedSku)
+  console.log(onSelect);
+  console.log(selectedSku);
   // Xử lý khi thay đổi số lượng sản phẩm
   const handleSkuChange = (newQuantity) => {
     if (newQuantity < 1) return;
@@ -86,22 +86,21 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
     setModalQuantity(value > 0 ? value : 1); // Đảm bảo số lượng tối thiểu là 1
   };
 
-
   async function getSanPhamKhuyenMai() {
     try {
-      const response = await axios.get('http://localhost:8080/api/sanphamkhuyenmai');
+      const response = await axios.get(
+        "http://localhost:8080/api/sanphamkhuyenmai"
+      );
       setSanPhamKhuyenMaiForm(response.data);
-    } catch (error) {
-
-    }
+    } catch (error) { }
   }
   useEffect(() => {
     getSanPhamKhuyenMai();
-
   }, []);
 
-
-  const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find((item) => item.sanPham.idSanPham === product.sanPhamEntity.idSanPham);
+  const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+    (item) => item.sanPham.idSanPham === product.sanPhamEntity.idSanPham
+  );
 
   const giaGoc = product.skuEntity.giaSanPham || 0;
 
@@ -109,14 +108,22 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   let khuyenMaiConHieuLuc = true;
 
   if (doiTuongSanPhamKM) {
-    giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
-    console.log(giaSauKhuyenMai)
+    const ngayBatDau = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+    const ngayKetThuc = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+    const ngayHienTai = new Date();
+
+    if (ngayHienTai >= ngayBatDau && ngayHienTai <= ngayKetThuc) {
+      khuyenMaiConHieuLuc = true; // Đánh dấu khuyến mãi hợp lệ
+      giaSauKhuyenMai = giaGoc - giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100);
+    } else {
+      khuyenMaiConHieuLuc = false;
+      giaSauKhuyenMai = giaGoc; // Không áp dụng khuyến mãi
+    }
+
   } else {
     khuyenMaiConHieuLuc = false;
     giaSauKhuyenMai = giaGoc;
   }
-
-
 
   return (
     <>
@@ -156,15 +163,11 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
                 className="btn btn-info btn-sm w-100 h-auto"
                 style={{ minWidth: "120px", height: "40px" }}
               >
-                {
-                  product.skuEntity.tuyChonThuocTinhSkus[0].tuyChonThuocTinh
-                    .giaTri
-                }{" "}
-                -
-                {
-                  product.skuEntity.tuyChonThuocTinhSkus[0].tuyChonThuocTinh
-                    .thuocTinh.ten
-                }
+                <div>
+                  {product.skuEntity.tuyChonThuocTinhSkus
+                    .map((option) => option.tuyChonThuocTinh.giaTri)
+                    .join(" - ")}
+                </div>
               </button>
             </div>
 
@@ -182,10 +185,11 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
                   </strong>
                 </div>
               ) : (
-                <strong>{product.skuEntity.giaSanPham.toLocaleString()} VND</strong>
+                <strong>
+                  {product.skuEntity.giaSanPham.toLocaleString()} VND
+                </strong>
               )}
             </div>
-
 
             {/* Số lượng */}
             <div className="col-lg-2 d-flex align-items-center justify-content-center">
@@ -222,11 +226,11 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
                 </strong>
               ) : (
                 <strong>
-                  {(product.skuEntity.giaSanPham * quantity).toLocaleString()} VND
+                  {(product.skuEntity.giaSanPham * quantity).toLocaleString()}{" "}
+                  VND
                 </strong>
               )}
             </div>
-
 
             {/*Xóa Detail*/}
             <div className="col-md-1 d-flex align-items-center justify-content-center">
@@ -240,84 +244,85 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
             </div>
           </div>
         </div>
-      </div >
+      </div>
 
       {/* Modal và các phần khác */}
-      {
-        isModalOpen && (
-          <div className="modal show" tabIndex="-1" style={{ display: "block" }}>
-            <div className="modal-dialog">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Chọn SKU</h5>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={closeModal}
-                  ></button>
-                </div>
-                <div className="modal-body">
-                  {error && <p className="text-danger">{error}</p>}
+      {isModalOpen && (
+        <div className="modal show" tabIndex="-1" style={{ display: "block" }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Chọn SKU</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeModal}
+                ></button>
+              </div>
+              <div className="modal-body">
+                {error && <p className="text-danger">{error}</p>}
 
-                  {/* Kiểm tra nếu skuList có giá trị */}
-                  {skuList && skuList.length > 0 ? (
-                    <ul className="list-group">
-                      {skuList.map((sku) => (
-                        <li
-                          key={sku.idSku}
-                          className={`list-group-item ${sku.idSku === selectedSku ? "active" : ""
-                            }`}
-                          onClick={() => handleSkuSelect(sku)}
-                        >
-                          {/* Hiển thị các tùy chọn thuộc tính SKU */}
-                          {sku.tuyChonThuocTinhSkus.map((tt) => (
-                            <span key={tt.idTuyChonTtSku}>
-                              {tt.tuyChonThuocTinh.giaTri} -
-                              {tt.tuyChonThuocTinh.thuocTinh.ten}
-                            </span>
-                          ))}
-                          <br />
-                          Giá: {sku.giaSanPham.toLocaleString()} VND
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>Không có SKU nào để chọn.</p>
-                  )}
+                {/* Kiểm tra nếu skuList có giá trị */}
+                {skuList && skuList.length > 0 ? (
+                  <ul className="list-group">
+                    {skuList.map((sku) => (
+                      <li
+                        key={sku.idSku}
+                        className={`list-group-item ${sku.idSku === selectedSku ? "active" : ""
+                          }`}
+                        onClick={() => handleSkuSelect(sku)}
+                      >
+                        {/* Hiển thị các tùy chọn thuộc tính SKU */}
+                        {sku.tuyChonThuocTinhSkus.map((tt) => (
+                          <span key={tt.idTuyChonTtSku}>
+                            {tt.tuyChonThuocTinh.thuocTinh.ten}:
+                            {" "}
+                            {tt.tuyChonThuocTinh.giaTri}
+                            {" - "}
+                          </span>
+                        ))}
+                        Số lượng: {sku.soLuong}
+                        <br />
+                        Giá: {sku.giaSanPham.toLocaleString()} VND
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Không có SKU nào để chọn.</p>
+                )}
 
-                  <div className="mt-3">
-                    <label>Số lượng:</label>
-                    <input
-                      type="number"
-                      value={modalQuantity}
-                      min="1"
-                      onChange={handleModalQuantityChange}
-                      className="form-control"
-                    />
-                  </div>
+                <div className="mt-3">
+                  <label>Số lượng:</label>
+                  <input
+                    type="number"
+                    value={modalQuantity}
+                    min="1"
+                    onChange={handleModalQuantityChange}
+                    className="form-control"
+                  />
                 </div>
-                <div className="modal-footer">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={closeModal}
-                  >
-                    Đóng
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={saveSku}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? "Đang lưu..." : "Xác nhận"}
-                  </button>
-                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={closeModal}
+                >
+                  Đóng
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={saveSku}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Đang lưu..." : "Xác nhận"}
+                </button>
               </div>
             </div>
           </div>
-        )
-      }
+        </div>
+      )}
     </>
   );
 };

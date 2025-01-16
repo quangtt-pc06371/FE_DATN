@@ -29,9 +29,9 @@ export default function DanhSachNguoiDung() {
         .filter((user) => user.hoTen.toLowerCase().includes(searchNoShop.toLowerCase()))
         .filter((user) => !user.quyens.some((role) => role.name === 'ROLE_Admin'));
     const filteredHasShop = data
-        .filter((user) => user.shop !== null)
+        .filter((user) => user.shop !== null && user.shop.isApproved === true)
         .filter((user) => user.hoTen.toLowerCase().includes(searchHasShop.toLowerCase()));
-
+    console.log(data)
     // Tính số trang
     const totalPagesNoShop = Math.ceil(filteredNoShop.length / itemsPerPage);
     const totalPagesHasShop = Math.ceil(filteredHasShop.length / itemsPerPage);

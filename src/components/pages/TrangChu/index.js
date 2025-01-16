@@ -140,7 +140,7 @@ const TrangChu = () => {
                             >
                                 <i className="fa fa-envelope"></i>
                             </span>
-                            <span>nguyentronghieu25122004@gmail.com</span>
+                            <span>topspot.hotro@gmail.com</span>
                         </span>
 
                         <form

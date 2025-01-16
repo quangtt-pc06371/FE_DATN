@@ -16,7 +16,7 @@ function Order() {
   console.log(totalShippingFee)
   console.log(totalProduct)
   // Giỏ hàng từ localStorage
-  const cartData = JSON.parse(localStorage.getItem("cart")) || [];
+  const cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
 
   // Lấy dữ liệu đơn hàng hiện tại từ localStorage
   const existingOrder = JSON.parse(localStorage.getItem("order")) || [];
@@ -44,10 +44,21 @@ function Order() {
             (km) => km.sanPham.idSanPham === item.sanPhamEntity.idSanPham
           );
 
-          // Tính giá sau khuyến mãi
-          const giaSauKhuyenMai = doiTuongSanPhamKM
-            ? giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100
-            : giaGoc;
+          let giaSauKhuyenMai = 0;
+          if (doiTuongSanPhamKM) {
+            const ngayBatDau = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+            const ngayKetThuc = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+            const ngayHienTai = new Date();
+            if (ngayHienTai >= ngayBatDau && ngayHienTai <= ngayKetThuc) {
+              // Tính giá sau khuyến mãi
+              giaSauKhuyenMai = giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100;
+            } else {
+              giaSauKhuyenMai = giaGoc
+            }
+
+          } else {
+            giaSauKhuyenMai = giaGoc
+          }
 
           return sum + giaSauKhuyenMai * item.soLuongMua;
         },
@@ -57,7 +68,7 @@ function Order() {
         (existingOrder.shippingFees && existingOrder.shippingFees[shopName]) ||
         0;
 
-
+      console.log(totalShopAmount)
       console.log(shippingFee)
       totalProductAmount += totalShopAmount;
       console.log(totalProductAmount)
@@ -175,12 +186,24 @@ function Order() {
                   (kmItem) => kmItem.sanPham.idSanPham === Number(item.sanPhamEntity.idSanPham)
                 );
 
-                let giaSauKhuyenMai = giaGoc;
+                let giaSauKhuyenMai = 0;
                 let khuyenMaiConHieuLuc = false;
 
                 if (doiTuongSanPhamKM) {
-                  giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
-                  khuyenMaiConHieuLuc = true;
+                  const ngayBatDau = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+                  const ngayKetThuc = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+                  const ngayHienTai = new Date();
+                  if (ngayHienTai >= ngayBatDau && ngayHienTai <= ngayKetThuc) {
+                    khuyenMaiConHieuLuc = true;
+                    // Tính giá sau khuyến mãi
+                    giaSauKhuyenMai = giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100;
+                  } else {
+                    khuyenMaiConHieuLuc = false;
+                    giaSauKhuyenMai = giaGoc
+                  }
+                } else {
+                  khuyenMaiConHieuLuc = false;
+                  giaSauKhuyenMai = giaGoc
                 }
 
                 return (
@@ -258,11 +281,22 @@ function Order() {
                       const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
                         (km) => km.sanPham.idSanPham === item.sanPhamEntity.idSanPham
                       );
+                      let giaSauKhuyenMai = 0;
+                      if (doiTuongSanPhamKM) {
+                        const ngayBatDau = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+                        const ngayKetThuc = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+                        const ngayHienTai = new Date();
+                        if (ngayHienTai >= ngayBatDau && ngayHienTai <= ngayKetThuc) {
+                          // Tính giá sau khuyến mãi
+                          giaSauKhuyenMai = giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100;
+                        } else {
+                          giaSauKhuyenMai = giaGoc
+                        }
 
-                      // Tính giá sau khuyến mãi
-                      const giaSauKhuyenMai = doiTuongSanPhamKM
-                        ? giaGoc - (giaGoc * doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai) / 100
-                        : giaGoc;
+                      } else {
+                        giaSauKhuyenMai = giaGoc
+                      }
+
 
                       return sum + giaSauKhuyenMai * item.soLuongMua;
                     }, 0).toLocaleString()}{" "}
@@ -278,10 +312,7 @@ function Order() {
       <div className="bg-light text-dark p-3 mt-3 border border-secondary rounded-3">
         <h6>Tổng tiền sản phẩm: {totalProduct.toLocaleString()} VND</h6>
         <h6>Tổng phí vận chuyển: {totalShippingFee.toLocaleString()} VND</h6>
-        <h6>
-          Giảm giá: -{""}
-          {totalDiscount.toLocaleString()} VND
-        </h6>
+
         <h4>
           Tổng thanh toán: {(totalProduct + totalShippingFee).toLocaleString()}{" "}
           VND

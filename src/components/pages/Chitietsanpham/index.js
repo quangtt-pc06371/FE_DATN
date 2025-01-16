@@ -186,8 +186,8 @@ export default function ChiTietSanPham() {
     }, [data.shop?.id]);
     useEffect(() => {
         sanPhamKhuyenMaiForm.forEach((doiTuong) => {
-            const now = clearTime(new Date());
-            const endDate = clearTime(new Date(doiTuong.khuyenMai.ngayKetThuc));
+            const now = new Date();
+            const endDate = new Date(doiTuong.khuyenMai.ngayKetThuc);
 
             if (now > endDate) {
                 handleDeleteKhuyenMai(doiTuong.khuyenMai.idKhuyenMai);
@@ -208,7 +208,20 @@ export default function ChiTietSanPham() {
     let giaSauKhuyenMai = 0;
     let khuyenMaiConHieuLuc = true;
     if (doiTuongSanPhamKM) {
-        giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+        const ngayBatDau = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+        const ngayKetThuc = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+        const ngayHienTai = new Date();
+        console.log(ngayBatDau)
+        console.log(ngayKetThuc)
+        console.log(ngayHienTai)
+        if (ngayHienTai >= ngayBatDau && ngayHienTai <= ngayKetThuc) {
+            khuyenMaiConHieuLuc = true; // Đánh dấu khuyến mãi hợp lệ
+            giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+        } else {
+            khuyenMaiConHieuLuc = false;
+            giaSauKhuyenMai = giaGoc; // Không áp dụng khuyến mãi
+        }
+
     } else {
         khuyenMaiConHieuLuc = false;
         giaSauKhuyenMai = giaGoc;
@@ -405,7 +418,17 @@ export default function ChiTietSanPham() {
 
 
                         if (doiTuongSanPhamKM) {
-                            giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+                            const ngayBatDau = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+                            const ngayKetThuc = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+                            const ngayHienTai = new Date();
+                            if (ngayHienTai >= ngayBatDau && ngayHienTai <= ngayKetThuc) {
+                                khuyenMaiConHieuLuc = true; // Đánh dấu khuyến mãi hợp lệ
+                                giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+                            } else {
+                                khuyenMaiConHieuLuc = false;
+                                giaSauKhuyenMai = giaGoc; // Không áp dụng khuyến mãi
+                            }
+
                         } else {
                             khuyenMaiConHieuLuc = false;
                             giaSauKhuyenMai = giaGoc;

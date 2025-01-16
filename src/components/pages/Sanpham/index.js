@@ -134,8 +134,8 @@ const SanPham = () => {
 
     useEffect(() => {
         sanPhamKhuyenMaiForm.forEach((doiTuong) => {
-            const now = clearTime(new Date());
-            const endDate = clearTime(new Date(doiTuong.khuyenMai.ngayKetThuc));
+            const now = new Date();
+            const endDate = new Date(doiTuong.khuyenMai.ngayKetThuc);
             console.log(now)
             console.log(endDate)
             if (now > endDate) {
@@ -144,7 +144,7 @@ const SanPham = () => {
             }
         });
     }, [sanPhamKhuyenMaiForm]);
-    
+
 
     const findKhuyenMai = (sanPham) => {
         return sanPhamKhuyenMaiForm.find(
@@ -152,8 +152,8 @@ const SanPham = () => {
         );
     };
     console.log(sanPhamKhuyenMaiForm)
- 
-    
+
+
 
     function clearTime(date) {
         date.setHours(0, 0, 0, 0); // Đặt lại giờ, phút, giây và mili-giây về 0
@@ -198,7 +198,7 @@ const SanPham = () => {
                                 </div>
                             </div>
                         )}
-                        <div className='card border shadow-sm rounded-3 mt-3'>
+                        {/* <div className='card border shadow-sm rounded-3 mt-3'>
                             <div className='card-body'>
                                 <Carousel >
                                     <Carousel.Item>
@@ -210,7 +210,7 @@ const SanPham = () => {
                                 </Carousel>
                             </div>
 
-                        </div>
+                        </div> */}
 
 
 
@@ -237,21 +237,42 @@ const SanPham = () => {
 
                                 console.log('sanPham.idSanPham:', sanPham.idSanPham);
                                 // const doiTuongSanPhamKM = findSanPhamKhuyenMai(sanPham)
-                                const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find((item) => item.sanPham.idSanPham === sanPham.idSanPham);
-                                console.log(doiTuongSanPhamKM)
+                                const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
+                                    (item) => item.sanPham.idSanPham === sanPham.idSanPham
+                                );
 
-                       
+                                console.log(doiTuongSanPhamKM);
+
                                 const giaGoc = sanPham.skus?.[0]?.giaSanPham || 0;
 
                                 let giaSauKhuyenMai = 0;
-                                let khuyenMaiConHieuLuc = true;
+                                let khuyenMaiConHieuLuc = false; // Mặc định khuyến mãi không hiệu lực
 
                                 if (doiTuongSanPhamKM) {
-                                    giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
-                                }else{
-                                    khuyenMaiConHieuLuc = false;
-                                    giaSauKhuyenMai = giaGoc;
+                                    const ngayBatDau = new Date(doiTuongSanPhamKM.khuyenMai.ngayBatDau);
+                                    const ngayKetThuc = new Date(doiTuongSanPhamKM.khuyenMai.ngayKetThuc);
+                                    const ngayHienTai = new Date();
+                                    console.log(ngayBatDau)
+                                    console.log(ngayKetThuc)
+                                    console.log(ngayHienTai)
+                                    // Kiểm tra nếu ngày hiện tại nằm trong khoảng thời gian khuyến mãi
+                                    if (ngayHienTai >= ngayBatDau && ngayHienTai <= ngayKetThuc) {
+                                        khuyenMaiConHieuLuc = true; // Đánh dấu khuyến mãi hợp lệ
+                                        giaSauKhuyenMai = giaGoc - (giaGoc * (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai / 100));
+                                    } else {
+                                        giaSauKhuyenMai = giaGoc; // Không áp dụng khuyến mãi
+                                    }
+                                } else {
+                                    giaSauKhuyenMai = giaGoc; // Không có khuyến mãi nào cho sản phẩm này
                                 }
+
+                                // Hiển thị kết quả
+                                console.log({
+                                    giaGoc,
+                                    giaSauKhuyenMai,
+                                    khuyenMaiConHieuLuc,
+                                });
+
 
 
                                 const firstSku = sanPham.skus?.[0];

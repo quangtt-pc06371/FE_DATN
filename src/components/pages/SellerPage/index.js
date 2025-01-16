@@ -23,9 +23,12 @@ const SellerPage = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:8080/api/order/list/shop", {
-        headers: { Authorization: `${token}` },
-      });
+      const response = await axios.get(
+        "http://localhost:8080/api/order/list/shop",
+        {
+          headers: { Authorization: `${token}` },
+        }
+      );
 
       if (response.status === 200) {
         const allOrders = response.data.donHang;
@@ -135,10 +138,10 @@ const SellerPage = () => {
   useEffect(() => {
     getSanPhamKhuyenMai();
   }, []);
-
+  console.log(orders)
   return (
     <div className="container mt-4">
-      <h2 className="text-center">Trang Quản Lý Đơn Hàng</h2>
+      <h2 className="text-center">Trang Quản Lý Đơn Hàng - Seller</h2>
 
       {/* Navigation Tab */}
       <ul className="nav nav-pills justify-content-center mt-4">
@@ -176,7 +179,7 @@ const SellerPage = () => {
             href="#dagiao"
             onClick={() => setActiveTab("dagiao")}
           >
-            Đã Nhận Hàng
+            Đã Giao
           </a>
         </li>
         <li className="nav-item">
@@ -186,6 +189,16 @@ const SellerPage = () => {
             onClick={() => setActiveTab("dahuy")}
           >
             Đã Hủy
+          </a>
+        </li>
+        <li className="nav-item">
+          <a
+            className={`nav-link ${activeTab === "yeucauhuydon" ? "active" : ""
+              }`}
+            href="#yeucauhuydon"
+            onClick={() => setActiveTab("yeucauhuydon")}
+          >
+            Yêu Cầu Hủy Đơn
           </a>
         </li>
       </ul>
@@ -198,6 +211,7 @@ const SellerPage = () => {
           "chogiaohang",
           "dagiao",
           "dahuy",
+          "yeucauhuydon",
         ].map((tab) => (
           <div
             key={tab}
@@ -216,57 +230,66 @@ const SellerPage = () => {
                     return true;
                   if (tab === "dagiao" && order.trangThaiDonHang === 3)
                     return true;
-                  if (tab === "dahuy" && order.trangThaiDonHang === 4)
+                  if (
+                    tab === "dahuy" &&
+                    (order.trangThaiDonHang === 5 ||
+                      order.trangThaiDonHang === 9 ||
+                      order.trangThaiDonHang === 10)
+                  )
+                    return true;
+                  if (
+                    tab === "yeucauhuydon" &&
+                    (order.trangThaiDonHang === 4 ||
+                      order.trangThaiDonHang === 6)
+                  )
                     return true;
                   return false;
                 })
                 .map((order) => (
                   <div key={order.idDonHang} className="card mb-4">
                     <div className="card-header">
-                      <h5>Đơn hàng #{order.idDonHang}</h5>
+                      <h5>
+                        Đơn hàng #{order.idDonHang} -{" "}
+                        {order.hinhThucThanhToan === true
+                          ? "Chuyển Khoản"
+                          : "COD"}
+                      </h5>
                       <p>
                         <strong>Ngày tạo:</strong>{" "}
                         {new Date(order.ngayXuatDon).toLocaleDateString()}
                       </p>
+                      <div className="d-flex">
+                        Khách Hàng:{" "}
+                        <h5 className="ms-2 me-3">
+                          {order.taiKhoanEntity.hoTen}
+                        </h5>
+                        Số Điện Thoại:{" "}
+                        <h5 className="ms-2">{order.taiKhoanEntity.sdt}</h5>
+                      </div>
                     </div>
                     <div className="card-body">
                       <h6>Sản phẩm</h6>
-
-
-
-
                       {order.chiTietDonHangs.map((item) => {
-                        const giaGoc = item.skuEntity.giaSanPham || 0;
 
-                        const doiTuongSanPhamKM = sanPhamKhuyenMaiForm.find(
-                          (kmItem) =>
-                            kmItem.sanPham.idSanPham ===
-                            Number(item.sanPhamEntity.idSanPham)
-                        );
 
-                        let giaSauKhuyenMai = giaGoc;
-                        let khuyenMaiConHieuLuc = false;
 
-                        if (doiTuongSanPhamKM) {
-                          giaSauKhuyenMai =
-                            giaGoc -
-                            giaGoc *
-                            (doiTuongSanPhamKM.khuyenMai.giaTriKhuyenMai /
-                              100);
-                          khuyenMaiConHieuLuc = true;
-                        }
-                        const giaHienThi = khuyenMaiConHieuLuc
-                          ? giaSauKhuyenMai
-                          : giaGoc;
-                        const tongTien = giaHienThi * item.soLuong;
+
 
                         return (
-
                           <div
                             key={item.idChiTiet}
-                            className="row g-0 align-items-center mb-3"
+                            className="d-flex align-items-center mb-3"
+                            style={{
+                              border: "1px solid #ddd",
+                              borderRadius: "8px",
+                              padding: "10px",
+                              backgroundColor: "#f9f9f9",
+                            }}
                           >
-                            <div className="col-md-3">
+                            {/* Hình ảnh sản phẩm */}
+                            <div
+                              style={{ flex: "0 0 80px", marginRight: "15px" }}
+                            >
                               <img
                                 src={item.skuEntity.hinhAnh.tenAnh}
                                 alt={item.sanPhamEntity.tenSanPham}
@@ -274,32 +297,32 @@ const SellerPage = () => {
                                 style={{ width: "80px", height: "80px" }}
                               />
                             </div>
-                            <div className="col-md-6">
+
+                            {/* Thông tin sản phẩm */}
+                            <div style={{ flex: "1", marginRight: "15px" }}>
                               <strong>{item.sanPhamEntity.tenSanPham}</strong>
-                              <p>
+                              <p style={{ margin: "0", color: "#555" }}>
                                 {
                                   item.skuEntity.tuyChonThuocTinhSkus[0]
                                     .tuyChonThuocTinh.giaTri
                                 }
                               </p>
                             </div>
-                            <div className="col-md-3">
-                              {khuyenMaiConHieuLuc ? (
-                                <>
-                                  <span className="text-decoration-line-through text-muted d-block">
-                                    {giaGoc.toLocaleString()} VND
-                                  </span>
-                                  <span className="text-danger fw-bold">
-                                    {giaHienThi.toLocaleString()} VND
-                                  </span>
-                                </>
-                              ) : (
-                                <span className="fw-bold">
-                                  {giaGoc.toLocaleString()} VND
-                                </span>
-                              )}
+
+                            {/* Số lượng */}
+                            <div
+                              style={{ flex: "0 0 auto", marginRight: "15px" }}
+                            >
+                              <strong>x{item.soLuong}</strong>
                             </div>
 
+                            {/* Giá sản phẩm */}
+                            <div style={{ flex: "0 0 auto", textAlign: "right" }}>
+                              <strong>
+                                {item.tongTien.toLocaleString()}{" "}
+                                VND
+                              </strong>
+                            </div>
                           </div>
                         )
                       })}
@@ -309,8 +332,6 @@ const SellerPage = () => {
                           Tổng: {order.tongSoTien.toLocaleString()} VND
                         </strong>
                       </div>
-
-
                     </div>
                     <div className="card-footer d-flex justify-content-between">
                       <div>
@@ -319,12 +340,21 @@ const SellerPage = () => {
                           {order.trangThaiDonHang === 0
                             ? "Người mua đang chờ xác nhận"
                             : order.trangThaiDonHang === 1
-                              ? "Phía vận chuyển đang đến lấy hàng"
+                              ? "Phía vận chuyển đã đến lấy hàng"
                               : order.trangThaiDonHang === 2
                                 ? "Chờ giao hàng"
                                 : order.trangThaiDonHang === 3
-                                  ? "Giao hàng thành công"
-                                  : "Đã hủy - Lý do: " + order.lyDo}
+                                  ? "Đã giao"
+                                  : order.trangThaiDonHang === 4
+                                    ? "Khách hàng yêu cầu hủy - Lý do: " + order.lyDo
+                                    : order.trangThaiDonHang === 6
+                                      ? "Khách hàng yêu cầu trả hàng - Lý do: " +
+                                      order.lyDo
+                                      : order.trangThaiDonHang === 9
+                                        ? "Chờ hoàn tiền"
+                                        : order.trangThaiDonHang === 10
+                                          ? "Đã hoàn tiền"
+                                          : "Đã hủy thành công"}
                         </span>
                       </div>
                       <div>
@@ -336,6 +366,19 @@ const SellerPage = () => {
                             Xác nhận
                           </button>
                         )}
+                        {(order.trangThaiDonHang === 4 ||
+                          order.trangThaiDonHang === 6) && (
+                            <button
+                              className="btn btn-success btn-sm"
+                              onClick={() => {
+                                const newStatus =
+                                  order.hinhThucThanhToan === true ? 9 : 5;
+                                XacNhanDon(order.idDonHang, newStatus);
+                              }}
+                            >
+                              Xác nhận hủy
+                            </button>
+                          )}
                         {order.trangThaiDonHang === 1 && (
                           <button
                             className="btn btn-success btn-sm"
@@ -348,7 +391,11 @@ const SellerPage = () => {
                           order.trangThaiDonHang === 0) && (
                             <button
                               className="btn btn-danger btn-sm ms-2"
-                              onClick={() => HuyDon(order.idDonHang, 4)}
+                              onClick={() => {
+                                const newStatus =
+                                  order.hinhThucThanhToan === true ? 9 : 5;
+                                HuyDon(order.idDonHang, newStatus);
+                              }}
                             >
                               Hủy đơn
                             </button>

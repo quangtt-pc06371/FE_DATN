@@ -232,8 +232,12 @@ const QuanLyKhuyenMai = () => {
             const dataToUpdate = {
                 tenKhuyenMai: formData.tenKhuyenMai,
                 giaTriKhuyenMai: formData.giaTriKhuyenMai,
-                ngayBatDau: formData.ngayBatDau,
-                ngayKetThuc: formData.ngayKetThuc,
+                ngayBatDau: formData.ngayBatDau
+                ? `${formData.ngayBatDau} 00:00:00` // Thêm thời gian 23:59:59
+                    : null,
+                ngayKetThuc: formData.ngayKetThuc
+                    ? `${formData.ngayKetThuc} 23:59:59` // Thêm thời gian 23:59:59
+                    : null,
                 active: true,
                 ghiChu: formData.ghiChu,
                 shop: { id: parseInt(formData.shop.id) }, // Kiểm tra nếu cần đảm bảo `formData.shop.id` là số
