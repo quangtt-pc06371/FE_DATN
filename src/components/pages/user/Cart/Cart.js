@@ -72,6 +72,12 @@ const CartPage = () => {
     fetchCart();
   }, []);
 
+  useEffect(() => {
+    // Xóa dữ liệu trong sessionStorage khi tải lại trang
+    sessionStorage.removeItem("cart");
+  }, []); // Chỉ chạy một lần khi component được mount
+  
+
   //Gọi API Để Xóa Detail
   const handleRemoveProduct = async (idDetail) => {
     try {
@@ -209,10 +215,6 @@ const CartPage = () => {
     setSelectAll(allSelected); // Cập nhật trạng thái "Chọn tất cả"
   };
 
-
-  
- 
-
   const saveSelectedProductsToLocalStorage = () => {
     if (!cartDetail) return;
   
@@ -222,12 +224,18 @@ const CartPage = () => {
       .filter((product) => product.isSelected);
   
     // Lưu vào localStorage
-    localStorage.setItem("cart", JSON.stringify(selectedProducts));
+    sessionStorage.setItem("cart", JSON.stringify(selectedProducts));
   
     console.log("Đã lưu sản phẩm vào localStorage:", selectedProducts);
   };
   
   const handlePlaceOrder = () => {
+    const storedCart = JSON.parse(sessionStorage.getItem("cart")) || []; // Lấy dữ liệu từ sessionStorage
+  
+  if (storedCart.length === 0) {
+    alert("Vui lòng chọn ít nhất một sản phẩm trước khi đặt hàng."); // Hiển thị thông báo
+    return; // Dừng hàm nếu chưa có sản phẩm nào được chọn
+  }
     saveSelectedProductsToLocalStorage();
     navigate("/order"); // Điều hướng đến trang thanh toán
   };

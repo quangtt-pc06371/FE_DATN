@@ -62,6 +62,7 @@ import DanhSachVoucher from './components/pages/Danhsachvoucher';
 import QuanLyVoucher from './components/pages/Quanlyvoucher';
 import DanhSachNguoiDung from './components/pages/admin/Danhsachnguoidung';
 import SellerPage from './components/pages/SellerPage';
+import OrderAdmin from './components/pages/admin/QuanLyDonHang/index';
 // import 'bootstrap-icons/font/bootstrap-icons.css';
 export default function App() {
   const router = createBrowserRouter(
@@ -159,6 +160,7 @@ export default function App() {
             <Route path="shop-approval" element={<ShopApproval />} />
             <Route path="shop-management" element={<ShopManagement />} />
             <Route path="user-management" element={<DanhSachNguoiDung />} />
+            <Route path="order-admin" element={<OrderAdmin />} />
           </Route>
 
         </Route>

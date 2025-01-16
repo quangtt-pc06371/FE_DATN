@@ -16,7 +16,7 @@ function Order() {
   console.log(totalShippingFee)
   console.log(totalProduct)
   // Giỏ hàng từ localStorage
-  const cartData = JSON.parse(localStorage.getItem("cart")) || [];
+  const cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
 
   // Lấy dữ liệu đơn hàng hiện tại từ localStorage
   const existingOrder = JSON.parse(localStorage.getItem("order")) || [];
@@ -235,13 +235,6 @@ function Order() {
                 );
               })}
             </div>
-
-
-
-
-
-
-
             <div className="card-footer">
               <ShippingCalculator
                 shop={groupedByShop[shopName]}

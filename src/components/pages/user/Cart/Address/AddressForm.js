@@ -32,9 +32,7 @@ function AddressForm() {
 
         if (response.data) {
           setAddresses(response.data.diaChi); // Set the fetched addresses to state
-        } else {
-          alert("Không tìm thấy địa chỉ");
-        }
+        } 
       } catch (error) {
         console.error("Lỗi khi lấy địa chỉ: ", error);
         alert("Không thể tải địa chỉ.");
@@ -55,9 +53,6 @@ function AddressForm() {
     try {
       const response = await axios.put(
       `http://localhost:8080/api/addresses/updateSelectAddress/${idDiaChi}`,
-        // {
-        //   idDiaChi: idDiaChi,
-        // },
         {
           headers: { Authorization: `${token}` },
         }
@@ -65,8 +60,6 @@ function AddressForm() {
       console(response.data)
       if (response.data) {
         setAddresses(response.data.diaChi);
-      } else {
-        alert("Không tìm thấy địa chỉ");
       }
     } catch (error) {
       console.error("Lỗi khi lấy địa chỉ: ", error);

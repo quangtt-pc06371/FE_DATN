@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { FaStore } from "react-icons/fa";
 
 const Bill = () => {
   const [showModal, setShowModal] = useState(false);
@@ -55,7 +56,7 @@ const Bill = () => {
       if (actionType === "cancel") {
         await HuyDon(selectedOrderId, 4, selectedReason);
       } else if (actionType === "hoantien") {
-        await HuyDon(selectedOrderId, 4, selectedReason);
+        await HuyDon(selectedOrderId, 6, selectedReason);
       }
       setShowModal(false);
     } catch (error) {
@@ -181,7 +182,7 @@ const Bill = () => {
       return true;
     if (activeTab === "dagiao" && order.trangThaiDonHang === 3) return true;
     if (activeTab === "dahuy" && order.trangThaiDonHang === 5) return true;
-    if (activeTab === "hoantien" && order.trangThaiDonHang === 9) return true;
+    if (activeTab === "hoantien" && ( order.trangThaiDonHang === 10 || order.trangThaiDonHang === 9 || order.trangThaiDonHang === 6 || order.trangThaiDonHang === 4)) return true;
     return false;
   });
 
@@ -294,6 +295,7 @@ const Bill = () => {
                   return (
                     <div key={shopId}>
                       <div className="d-flex">
+                      <FaStore className="me-2" />
                         <i class="bi bi-shop me-2"></i>
                         <h6>{shop.shopName}</h6>
                       </div>
@@ -388,11 +390,11 @@ const Bill = () => {
                       ? "Đơn hàng đang trên đường giao đến bạn"
                       : order.trangThaiDonHang === 3
                       ? "Đã giao"
-                      : order.trangThaiDonHang === 4
+                      : order.trangThaiDonHang === 4 || order.trangThaiDonHang === 6
                       ? "Chờ Shop xét duyệt - Lý do: " + order.lyDo
-                      :  "Đang chờ xét duyệt - Lý do Trả hàng/ Hoàn tiền " + order.lyDo
-                      ? order.trangThaiDonHang === 9
-                      : "Đang chờ hoàn tiền - Lý do: " + order.lyDo
+                      : order.trangThaiDonHang === 9
+                      ? "Chờ hoàn tiền"
+                      : "Đã hoàn tiền"
                       }
                   </span>
 
@@ -411,6 +413,11 @@ const Bill = () => {
                         </p>
                       </div>
                     )}
+                    <div>
+                    <strong>
+                          Tổng: {order.tongSoTien.toLocaleString()} VND
+                        </strong>
+                    </div>
                 </div>
 
                 <div>

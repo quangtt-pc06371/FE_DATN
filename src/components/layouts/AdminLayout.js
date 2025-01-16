@@ -27,6 +27,9 @@ const AdminLayout = () => {
           <li>
             <Link to="/admin/user-management">Quản lý người dùng</Link>
           </li>
+          <li>
+            <Link to="/admin/order-admin">Quản lý đơn hàng</Link>
+          </li>
         </ul>
       </div>
 

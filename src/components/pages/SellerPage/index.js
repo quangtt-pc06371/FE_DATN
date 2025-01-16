@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 const SellerPage = () => {
   const [orders, setOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("allOrders");
- 
+
   const reasonsCancel = [
     "Thay đổi địa chỉ nhận hàng",
     "Không muốn mua nữa",
@@ -14,7 +14,7 @@ const SellerPage = () => {
     "Giao hàng quá lâu",
     "Lý do khác",
   ];
-  
+
   const fetchOrders = async () => {
     try {
       const token = Cookies.get("token");
@@ -23,9 +23,12 @@ const SellerPage = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:8080/api/order/list/shop", {
-        headers: { Authorization: `${token}` },
-      });
+      const response = await axios.get(
+        "http://localhost:8080/api/order/list/shop",
+        {
+          headers: { Authorization: `${token}` },
+        }
+      );
 
       if (response.status === 200) {
         const allOrders = response.data.donHang;
@@ -123,7 +126,7 @@ const SellerPage = () => {
   useEffect(() => {
     fetchOrders();
   }, []);
- 
+
   return (
     <div className="container mt-4">
       <h2 className="text-center">Trang Quản Lý Đơn Hàng - Seller</h2>
@@ -179,11 +182,13 @@ const SellerPage = () => {
         </li>
         <li className="nav-item">
           <a
-            className={`nav-link ${activeTab === "yeucauhuydon" ? "active" : ""}`}
+            className={`nav-link ${
+              activeTab === "yeucauhuydon" ? "active" : ""
+            }`}
             href="#yeucauhuydon"
             onClick={() => setActiveTab("yeucauhuydon")}
           >
-            Yêu Cầu Trả Hàng
+            Yêu Cầu Hủy Đơn
           </a>
         </li>
       </ul>
@@ -196,7 +201,7 @@ const SellerPage = () => {
           "chogiaohang",
           "dagiao",
           "dahuy",
-          "yeucauhuydon"
+          "yeucauhuydon",
         ].map((tab) => (
           <div
             key={tab}
@@ -208,7 +213,6 @@ const SellerPage = () => {
             {orders.length > 0 ? (
               orders
                 .filter((order) => {
-                  if (tab === "allOrders") return true;
                   if (tab === "choxacnhan" && order.trangThaiDonHang === 0)
                     return true;
                   if (tab === "choguihang" && order.trangThaiDonHang === 1)
@@ -217,29 +221,60 @@ const SellerPage = () => {
                     return true;
                   if (tab === "dagiao" && order.trangThaiDonHang === 3)
                     return true;
-                  if (tab === "dahuy" && order.trangThaiDonHang === 5)
+                  if (
+                    tab === "dahuy" &&
+                    (order.trangThaiDonHang === 5 ||
+                      order.trangThaiDonHang === 9 ||
+                      order.trangThaiDonHang === 10)
+                  )
                     return true;
-                  if (tab === "yeucauhuydon" && order.trangThaiDonHang === 4)
+                  if (
+                    tab === "yeucauhuydon" &&
+                    (order.trangThaiDonHang === 4 ||
+                      order.trangThaiDonHang === 6)
+                  )
                     return true;
                   return false;
                 })
                 .map((order) => (
                   <div key={order.idDonHang} className="card mb-4">
                     <div className="card-header">
-                      <h5>Đơn hàng #{order.idDonHang} - {order.hinhThucThanhToan === true ? "Chuyển Khoản" : "COD"}</h5>
+                      <h5>
+                        Đơn hàng #{order.idDonHang} -{" "}
+                        {order.hinhThucThanhToan === true
+                          ? "Chuyển Khoản"
+                          : "COD"}
+                      </h5>
                       <p>
                         <strong>Ngày tạo:</strong>{" "}
                         {new Date(order.ngayXuatDon).toLocaleDateString()}
                       </p>
+                      <div className="d-flex">
+                        Khách Hàng:{" "}
+                        <h5 className="ms-2 me-3">
+                          {order.taiKhoanEntity.hoTen}
+                        </h5>
+                        Số Điện Thoại:{" "}
+                        <h5 className="ms-2">{order.taiKhoanEntity.sdt}</h5>
+                      </div>
                     </div>
                     <div className="card-body">
                       <h6>Sản phẩm</h6>
                       {order.chiTietDonHangs.map((item) => (
                         <div
                           key={item.idChiTiet}
-                          className="row g-0 align-items-center mb-3"
+                          className="d-flex align-items-center mb-3"
+                          style={{
+                            border: "1px solid #ddd",
+                            borderRadius: "8px",
+                            padding: "10px",
+                            backgroundColor: "#f9f9f9",
+                          }}
                         >
-                          <div className="col-md-3">
+                          {/* Hình ảnh sản phẩm */}
+                          <div
+                            style={{ flex: "0 0 80px", marginRight: "15px" }}
+                          >
                             <img
                               src={item.skuEntity.hinhAnh.tenAnh}
                               alt={item.sanPhamEntity.tenSanPham}
@@ -247,16 +282,27 @@ const SellerPage = () => {
                               style={{ width: "80px", height: "80px" }}
                             />
                           </div>
-                          <div className="col-md-6">
+
+                          {/* Thông tin sản phẩm */}
+                          <div style={{ flex: "1", marginRight: "15px" }}>
                             <strong>{item.sanPhamEntity.tenSanPham}</strong>
-                            <p>
+                            <p style={{ margin: "0", color: "#555" }}>
                               {
                                 item.skuEntity.tuyChonThuocTinhSkus[0]
                                   .tuyChonThuocTinh.giaTri
                               }
                             </p>
                           </div>
-                          <div className="col-md-3">
+
+                          {/* Số lượng */}
+                          <div
+                            style={{ flex: "0 0 auto", marginRight: "15px" }}
+                          >
+                            <strong>x{item.soLuong}</strong>
+                          </div>
+
+                          {/* Giá sản phẩm */}
+                          <div style={{ flex: "0 0 auto", textAlign: "right" }}>
                             <strong>
                               {item.sanPhamEntity.skus[0].giaSanPham.toLocaleString()}{" "}
                               VND
@@ -264,6 +310,7 @@ const SellerPage = () => {
                           </div>
                         </div>
                       ))}
+
                       <div className="text-end mt-3">
                         <strong>
                           Tổng: {order.tongSoTien.toLocaleString()} VND
@@ -282,7 +329,16 @@ const SellerPage = () => {
                             ? "Chờ giao hàng"
                             : order.trangThaiDonHang === 3
                             ? "Đã giao"
-                            : "Khách hàng yêu cầu hủy - Lý do: " + order.lyDo}
+                            : order.trangThaiDonHang === 4
+                            ? "Khách hàng yêu cầu hủy - Lý do: " + order.lyDo
+                            : order.trangThaiDonHang === 6
+                            ? "Khách hàng yêu cầu trả hàng - Lý do: " +
+                              order.lyDo
+                            : order.trangThaiDonHang === 9
+                            ? "Chờ hoàn tiền"
+                            : order.trangThaiDonHang === 10
+                            ? "Đã hoàn tiền"
+                            : "Đã hủy thành công"}
                         </span>
                       </div>
                       <div>
@@ -294,13 +350,15 @@ const SellerPage = () => {
                             Xác nhận
                           </button>
                         )}
-                        {order.trangThaiDonHang === 4 && (
+                        {(order.trangThaiDonHang === 4 ||
+                          order.trangThaiDonHang === 6) && (
                           <button
                             className="btn btn-success btn-sm"
-                            onClick={() =>{
-                              const newStatus = order.hinhThucThanhToan === true ? 9 : 5
-                              XacNhanDon(order.idDonHang, newStatus)}
-                            }
+                            onClick={() => {
+                              const newStatus =
+                                order.hinhThucThanhToan === true ? 9 : 5;
+                              XacNhanDon(order.idDonHang, newStatus);
+                            }}
                           >
                             Xác nhận hủy
                           </button>
@@ -317,10 +375,11 @@ const SellerPage = () => {
                           order.trangThaiDonHang === 0) && (
                           <button
                             className="btn btn-danger btn-sm ms-2"
-                            onClick={() =>{
-                              const newStatus = order.hinhThucThanhToan === true ? 9 : 5
-                              HuyDon(order.idDonHang, newStatus)}
-                            } 
+                            onClick={() => {
+                              const newStatus =
+                                order.hinhThucThanhToan === true ? 9 : 5;
+                              HuyDon(order.idDonHang, newStatus);
+                            }}
                           >
                             Hủy đơn
                           </button>
