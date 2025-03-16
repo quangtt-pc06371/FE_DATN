@@ -49,13 +49,18 @@ export default function DoanhThu() {
             });
             if (Array.isArray(productsResponse.data)) {
                 setProducts(productsResponse.data);
+            
             } else {
                 setProducts([]);
                 setError("Dữ liệu trả về không hợp lệ.");
             }
+            setTotalRevenue(
+                productsResponse.data.reduce((acc, product) => acc + product?.chiTietDonHangs[0]?.tongTien || 0, 0)
+            );
         } catch (err) {
             setProducts([]);
-            setError("Đã xảy ra lỗi khi lấy dữ liệu. Vui lòng thử lại!");
+            setTotalRevenue("")
+            setError("không có hóa đơn nào trong khoản thời gian này . Vui lòng thử lại!");
             console.error(err);
         }
 
@@ -72,12 +77,13 @@ export default function DoanhThu() {
             console.error(err);
         }
     };
+    
     // console.log(products)
     console.log(cthoadons)
     return (
         <div className="container my-5">
             <div className="card shadow-lg">
-                <div className="card-header bg-primary text-white text-center">
+                <div className="card-header text-white text-center">
                     <h2>
                         <i className="fas fa-chart-line me-2"></i>Thống kê doanh thu
                     </h2>

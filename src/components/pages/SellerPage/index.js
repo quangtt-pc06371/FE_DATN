@@ -261,10 +261,18 @@ const SellerPage = () => {
                       <div className="d-flex">
                         Khách Hàng:{" "}
                         <h5 className="ms-2 me-3">
-                          {order.taiKhoanEntity.hoTen}
+                          {order.chiTietDonHangs[0].sanPhamEntity.shop.diaChiEntities[0].hoTen}
                         </h5>
                         Số Điện Thoại:{" "}
-                        <h5 className="ms-2">{order.taiKhoanEntity.sdt}</h5>
+                        <h5 className="ms-2">{order.chiTietDonHangs[0].sanPhamEntity.shop.diaChiEntities[0].soDienThoai}</h5>
+                      </div>
+                      <div className="d-flex">
+                         Địa Chỉ Giao Hàng: {" "}
+                        <h5 className="ms-2">{order.chiTietDonHangs[0].sanPhamEntity.shop.diaChiEntities[0].diachiDetail} {", "}
+                           {order.chiTietDonHangs[0].sanPhamEntity.shop.diaChiEntities[0].nameWard} {", "}
+                           {order.chiTietDonHangs[0].sanPhamEntity.shop.diaChiEntities[0].nameDistrict} {", "}
+                           {order.chiTietDonHangs[0].sanPhamEntity.shop.diaChiEntities[0].nameProvince}
+                        </h5>
                       </div>
                     </div>
                     <div className="card-body">

@@ -221,6 +221,7 @@ const Bill = () => {
     if (isNaN(date.getTime())) return ""; // Kiểm tra nếu không phải là ngày hợp lệ
     return format(date, 'dd/MM/yyyy');
   }
+  console.log(filteredOrders)
   return (
     <div className="container mt-4">
       <h2 className="text-center">Trang Quản Lý Đơn Hàng - Customer</h2>
@@ -293,6 +294,7 @@ const Bill = () => {
               <div className="card-header">
                 <h5>Đơn hàng #{order.idDonHang} - {order.hinhThucThanhToan === true ? "Chuyển Khoản" : "COD"}</h5>
                 <p>{getFormatDate(order.ngayXuatDon)}</p>
+
               </div>
               <div className="card-body">
                 {/* Render products grouped by shop */}
@@ -308,14 +310,6 @@ const Bill = () => {
                       </div>
 
                       {shop.products.map((detail) => {
-
-
-
-
-
-
-
-
 
 
                         const tongSoTien = detail.tongTien ;
@@ -378,6 +372,8 @@ const Bill = () => {
                           ? "Đơn hàng đang trên đường giao đến bạn"
                           : order.trangThaiDonHang === 3
                             ? "Đã giao"
+                            : order.trangThaiDonHang === 5
+                            ? "Huỷ đơn thành công"
                             : order.trangThaiDonHang === 4 || order.trangThaiDonHang === 6
                               ? "Chờ Shop xét duyệt - Lý do: " + order.lyDo
                               : order.trangThaiDonHang === 9
@@ -388,16 +384,19 @@ const Bill = () => {
 
                   {/* Thông báo cho đơn hàng đã chuyển khoản */}
                   {order.hinhThucThanhToan === true &&
-                    (order.trangThaiThanhToan === "Trả hàng/Hoàn tiền" ||
-                      order.trangThaiThanhToan === "Hủy đơn") && (
+                    order.trangThaiDonHang === 9
+                      && (
                       <div className="alert alert-info mt-3">
                         <h5 className="alert-heading">Thông báo quan trọng</h5>
                         <p>
-                          Đơn hàng đã chuyển khoản, xin vui lòng liên hệ đến
-                          chúng tôi để nhận lại tiền.
+                          Đơn hàng của bạn đã chuyển khoản, xin vui lòng liên hệ đến
+                          chúng tôi để được hoàn lại tiền.
                         </p>
                         <p className="mb-0 font-weight-bold">
                           Hotline: <a href="tel:0942768652">0942768652</a>
+                        </p>
+                        <p>
+                          Email hỗ trợ: <a href="email">topspot.hotro@gmail.com</a>
                         </p>
                       </div>
                     )}

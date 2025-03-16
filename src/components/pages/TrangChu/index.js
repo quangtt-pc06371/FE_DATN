@@ -197,7 +197,7 @@ const TrangChu = () => {
                                     <a className="nav-link text-white fs-5 fw-bold" href="/">Trang Chủ</a>
                                 </li>
                                 <li className="nav-item mx-3">
-                                    <a className="nav-link text-white fs-5 fw-bold" href="/sanpham">Sản Phẩm</a>
+                                    <a className="nav-link text-white fs-5 fw-bold" href="/">Sản Phẩm</a>
                                 </li>
                                 <li className="nav-item mx-3">
                                     <a className="nav-link text-white fs-5 fw-bold" href="/gioithieu">Giới Thiệu</a>
@@ -263,14 +263,13 @@ const TrangChu = () => {
                                 <h5 className="mb-2" style={{ fontSize: '15px' }}>
                                     Chúng tôi luôn cam kết với khách hàng mang lại các sản phẩm với giá cả phải chăng.
                                 </h5>
-                                <h5 className="mb-2" style={{ fontSize: '15px' }}>Ngõ 15 Duy Tân, Mỹ Đình 2, Từ Liêm, Hà Nội</h5>
-                                <h5 className="mb-2" style={{ fontSize: '15px' }}>info@janus.com</h5>
+                                <h5 className="mb-2" style={{ fontSize: '15px' }}>An Khánh, Ninh Kiều, Cần Thơ</h5>
+                                <h5 className="mb-2" style={{ fontSize: '15px' }}>topspot.hotro@gmail.com</h5>
                             </div>
                         </div>
                     </div>
-                    <hr />
-                    <h6 className="text-center opacity-50 mb-0"> Copyright © 2016 Janus Fashion - All rights reserved. Powered by Haravan
-                    </h6>
+                   
+                   
                 </div>
             </footer>
         </>

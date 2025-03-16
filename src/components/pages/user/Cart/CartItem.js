@@ -21,6 +21,10 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   // Xử lý khi thay đổi số lượng sản phẩm
   const handleSkuChange = (newQuantity) => {
     if (newQuantity < 1) return;
+    if (newQuantity > product.skuEntity.soLuong) {
+      alert("Kho hàng không đủ số lượng yêu cầu.");
+      return;
+    }
     setQuantity(newQuantity);
     onSkuChange(product.idDetail, newQuantity, selectedSku);
   };
@@ -291,7 +295,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
                   <p>Không có SKU nào để chọn.</p>
                 )}
 
-                <div className="mt-3">
+<div className="mt-3">
                   <label>Số lượng:</label>
                   <input
                     type="number"
@@ -299,6 +303,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
                     min="1"
                     onChange={handleModalQuantityChange}
                     className="form-control"
+                    disabled={modalQuantity <= 1}
                   />
                 </div>
               </div>

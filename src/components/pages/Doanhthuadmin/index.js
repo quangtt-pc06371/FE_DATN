@@ -51,12 +51,13 @@ export default function DoanhThu() {
 
         return { shopName, totalAmount, discount, finalAmount };
     });
+    console.log(groupedOrders)
     const totalDiscount = shopDiscounts.reduce((sum, shop) => sum + shop.discount, 0);
 
     return (
         <div className="container my-5">
             <div className="card shadow-lg">
-                <div className="card-header bg-primary text-white">
+                <div className="card-header  text-white">
                     <h2 className="text-center">Thống kê doanh thu theo thời gian</h2>
                 </div>
                 <div className="card-body">
@@ -104,7 +105,13 @@ export default function DoanhThu() {
                     <div className="accordion mt-4" id="accordionExample">
                         {Object.keys(groupedOrders).map((shopName, index) => {
                             const shopData = shopDiscounts.find((shop) => shop.shopName === shopName);
-
+                            console.log(groupedOrders)
+                            const shopPhoneNumber = groupedOrders[shopName][0]?.sanPhamEntity?.shop?.diaChiEntities?.[0]?.soDienThoai;
+                            const diachiDetail = groupedOrders[shopName][0]?.sanPhamEntity?.shop?.diaChiEntities?.[0]?.diachiDetail;
+                            const nameDistrict = groupedOrders[shopName][0]?.sanPhamEntity?.shop?.diaChiEntities?.[0]?.nameDistrict;
+                            const nameProvince = groupedOrders[shopName][0]?.sanPhamEntity?.shop?.diaChiEntities?.[0]?.nameProvince;
+                            const nameWard = groupedOrders[shopName][0]?.sanPhamEntity?.shop?.diaChiEntities?.[0]?.nameWard;
+                            console.log(diachiDetail)
                             return (
                                 <div className="accordion-item" key={index}>
                                     <h2 className="accordion-header" id={`heading-${index}`}>
@@ -116,7 +123,17 @@ export default function DoanhThu() {
                                             aria-expanded="true"
                                             aria-controls={`collapse-${index}`}
                                         >
-                                            <strong>{shopName}</strong>
+                                            <strong className="ms-2 me-3">{shopName}</strong>
+                                            {" - "}   
+                                            <div className="ms-3 me-3">{shopPhoneNumber}</div>
+                                            {" - "} 
+                                            <div className="ms-3 me-1">{diachiDetail}</div>
+                                          
+                                            <div className="ms-1 me-1">{nameDistrict}</div>
+                                           
+                                            <div className="ms-1 me-1">{nameProvince}</div>
+                                          
+                                            <div className="ms-1 me-1">{nameWard}</div>
                                         </button>
                                     </h2>
                                     <div
