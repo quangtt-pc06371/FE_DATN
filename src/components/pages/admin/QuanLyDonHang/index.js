@@ -3,14 +3,8 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { FaStore } from "react-icons/fa";
 
-const Bill = () => {
-  const [showModal, setShowModal] = useState(false);
-  const [selectedReason, setSelectedReason] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentOrderId, setCurrentOrderId] = useState(null);
-  const [activeTab, setActiveTab] = useState("allOrders");
-  const [actionType, setActionType] = useState(""); // New state to track action type
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
+const AdminBill = () => {
+  const [activeTab, setActiveTab] = useState("allOrders"); 
   const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
   const [orders, setOrders] = useState([]);
 
@@ -254,4 +248,4 @@ const Bill = () => {
   );
 };
 
-export default Bill;
+export default AdminBill;

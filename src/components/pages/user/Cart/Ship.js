@@ -32,12 +32,6 @@ function ShippingCalculator({ shop, onChange }) {
         (acc, item) => acc + item.soLuongMua * item.sanPhamEntity.weight,
         0
       );
-      console.log(shop)
-      console.log(fromDistrictId)
-      console.log(fromWardCode)
-      console.log(toDistrictId)
-      console.log(toWardCode)
-      console.log(totalWeight)
 
       if (
         !fromDistrictId ||

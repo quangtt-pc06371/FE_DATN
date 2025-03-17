@@ -13,8 +13,6 @@ function Order() {
   const [totalProduct, setTotalProduct] = useState(0);
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [sanPhamKhuyenMaiForm, setSanPhamKhuyenMaiForm] = useState([]);
-  console.log(totalShippingFee)
-  console.log(totalProduct)
   // Giỏ hàng từ localStorage
   const cartData = JSON.parse(sessionStorage.getItem("cart")) || [];
 
@@ -160,13 +158,6 @@ function Order() {
                 <i className="bi bi-shop"></i> {shopName}
               </h5>
             </div>
-
-
-
-
-
-
-
             <div className="card-body">
               {groupedByShop[shopName].map((item) => {
                 const giaGoc = item.skuEntity.giaSanPham || 0;

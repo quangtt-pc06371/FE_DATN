@@ -392,6 +392,8 @@ const Bill = () => {
                       ? "Đã giao"
                       : order.trangThaiDonHang === 4 || order.trangThaiDonHang === 6
                       ? "Chờ Shop xét duyệt - Lý do: " + order.lyDo
+                      : order.trangThaiDonHang === 5
+                      ? "Hủy đơn thành công"
                       : order.trangThaiDonHang === 9
                       ? "Chờ hoàn tiền"
                       : "Đã hoàn tiền"
@@ -400,16 +402,19 @@ const Bill = () => {
 
                   {/* Thông báo cho đơn hàng đã chuyển khoản */}
                   {order.hinhThucThanhToan === true &&
-                    (order.trangThaiThanhToan === "Trả hàng/Hoàn tiền" ||
-                      order.trangThaiThanhToan === "Hủy đơn") && (
+                    order.trangThaiDonHang === 9
+                      && (
                       <div className="alert alert-info mt-3">
                         <h5 className="alert-heading">Thông báo quan trọng</h5>
                         <p>
-                          Đơn hàng đã chuyển khoản, xin vui lòng liên hệ đến
-                          chúng tôi để nhận lại tiền.
+                          Đơn hàng của bạn đã chuyển khoản, xin vui lòng liên hệ đến
+                          chúng tôi để được hoàn lại tiền.
                         </p>
                         <p className="mb-0 font-weight-bold">
                           Hotline: <a href="tel:0942768652">0942768652</a>
+                        </p>
+                        <p>
+                          Email hỗ trợ: <a href="email">topspot.hotro@gmail.com</a>
                         </p>
                       </div>
                     )}

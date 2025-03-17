@@ -257,6 +257,14 @@ const SellerPage = () => {
                         Số Điện Thoại:{" "}
                         <h5 className="ms-2">{order.taiKhoanEntity.sdt}</h5>
                       </div>
+                      <div className="d-flex">
+                         Địa Chỉ Giao Hàng: {" "}
+                        <h5 className="ms-2">{order.chiTietDonHangs[0].sanPhamEntity.shop.diaChiEntities[0].diachiDetail} {", "}
+                           {order.chiTietDonHangs[0].sanPhamEntity.shop.diaChiEntities[0].nameWard} {", "}
+                           {order.chiTietDonHangs[0].sanPhamEntity.shop.diaChiEntities[0].nameDistrict} {", "}
+                           {order.chiTietDonHangs[0].sanPhamEntity.shop.diaChiEntities[0].nameProvince}
+                        </h5>
+                      </div>
                     </div>
                     <div className="card-body">
                       <h6>Sản phẩm</h6>

@@ -18,9 +18,14 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
   };
   console.log(onSelect);
   console.log(selectedSku);
+
   // Xử lý khi thay đổi số lượng sản phẩm
   const handleSkuChange = (newQuantity) => {
     if (newQuantity < 1) return;
+    if (newQuantity > product.skuEntity.soLuong) {
+      alert("Kho hàng không đủ số lượng yêu cầu.");
+      return; // Dừng nếu vượt quá số lượng tồn kho
+    }
     setQuantity(newQuantity);
     onSkuChange(product.idDetail, newQuantity, selectedSku);
   };
@@ -82,8 +87,8 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
 
   // Xử lý thay đổi số lượng trong modal
   const handleModalQuantityChange = (e) => {
-    const value = parseInt(e.target.value, 10);
-    setModalQuantity(value > 0 ? value : 1); // Đảm bảo số lượng tối thiểu là 1
+    const value = parseInt(e.target.value, 100);
+    setModalQuantity(value > 0 ? value : 1);
   };
 
   async function getSanPhamKhuyenMai() {
@@ -291,6 +296,7 @@ const CartItem = ({ product, onSkuChange, onSelect, deleteDetail }) => {
                     min="1"
                     onChange={handleModalQuantityChange}
                     className="form-control"
+                    disabled={modalQuantity <= 1}
                   />
                 </div>
               </div>
